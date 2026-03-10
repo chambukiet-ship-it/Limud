@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>שאלון – למידה בחופשה</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #f0f9ff;
+    color: #1e293b;
+    padding-bottom: 50px;
+    direction: rtl;
+  }
+
+  .header {
+    background: linear-gradient(135deg, #0369a1, #0ea5e9);
+    color: white;
+    padding: 28px 20px;
+    text-align: center;
+  }
+  .header h1 { font-size: 22px; font-weight: 900; margin-top: 8px; }
+  .header p  { font-size: 14px; opacity: 0.85; margin-top: 4px; }
+
+  .reading-box {
+    margin: 16px;
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  }
+  .reading-title {
+    background: linear-gradient(90deg, #0369a1, #0ea5e9);
+    color: white;
+    padding: 12px 16px;
+    font-weight: 700;
+    font-size: 15px;
+  }
+  .reading-text {
+    padding: 16px;
+    font-size: 15px;
+    line-height: 1.8;
+    color: #334155;
+    max-height: 160px;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+  }
+  .reading-text.open { max-height: 1000px; }
+  .reading-text p { margin-bottom: 10px; }
+  .toggle-btn {
+    width: 100%;
+    padding: 11px;
+    background: #e0f2fe;
+    color: #0369a1;
+    border: none;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+  }
+
+  .progress-box {
+    margin: 0 16px 4px;
+    background: white;
+    border-radius: 14px;
+    padding: 12px 16px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+  }
+  .progress-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    font-weight: 600;
+    color: #64748b;
+    margin-bottom: 8px;
+  }
+  .bar-bg { height: 9px; background: #e2e8f0; border-radius: 99px; overflow: hidden; }
+  .bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #0ea5e9, #38bdf8);
+    border-radius: 99px;
+    width: 0%;
+    transition: width 0.4s;
+  }
+
+  .section-label {
+    margin: 20px 16px 2px;
+    font-size: 13px;
+    font-weight: 800;
+    color: #0ea5e9;
+  }
+
+  .q-card {
+    margin: 10px 16px 0;
+    background: white;
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    border: 2px solid transparent;
+    transition: border-color 0.3s;
+  }
+  .q-card.done-correct { border-color: #22c55e; background: #f0fdf4; }
+  .q-card.done-wrong   { border-color: #ef4444; background: #fef2f2; }
+
+  .q-badge {
+    display: inline-block;
+    background: #e0f2fe;
+    color: #0369a1;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 2px 10px;
+    border-radius: 99px;
+    margin-bottom: 8px;
+  }
+  .q-text {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.5;
+    margin-bottom: 14px;
+  }
+
+  .options { display: flex; flex-direction: column; gap: 9px; }
+  .opt-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    text-align: right;
+    padding: 12px 14px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    background: #f8fafc;
+    font-size: 15px;
+    font-weight: 500;
+    color: #1e293b;
+    cursor: pointer;
+    font-family: inherit;
+    direction: rtl;
+  }
+  .opt-btn:active { opacity: 0.8; }
+  .opt-letter {
+    min-width: 28px; height: 28px;
+    border: 2px solid #cbd5e1;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 800;
+    flex-shrink: 0;
+    color: #64748b;
+  }
+  .opt-btn.hl-correct { border-color: #22c55e !important; background: #dcfce7 !important; color: #15803d; font-weight: 700; }
+  .opt-btn.hl-wrong   { border-color: #ef4444 !important; background: #fee2e2 !important; color: #b91c1c; font-weight: 700; }
+  .opt-btn:disabled { cursor: default; }
+
+  .tf-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .tf-btn {
+    padding: 14px 10px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    background: #f8fafc;
+    font-size: 16px;
+    font-weight: 700;
+    color: #1e293b;
+    cursor: pointer;
+    text-align: center;
+    font-family: inherit;
+  }
+  .tf-btn:active { opacity: 0.8; }
+  .tf-btn.hl-correct { border-color: #22c55e !important; background: #dcfce7 !important; color: #15803d; }
+  .tf-btn.hl-wrong   { border-color: #ef4444 !important; background: #fee2e2 !important; color: #b91c1c; }
+  .tf-btn:disabled { cursor: default; }
+
+  .feedback {
+    margin-top: 10px;
+    padding: 9px 13px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    display: none;
+  }
+  .feedback.show { display: block; }
+  .fb-correct { background: #dcfce7; color: #15803d; }
+  .fb-wrong   { background: #fee2e2; color: #b91c1c; }
+
+  .submit-wrap { padding: 22px 16px 0; }
+  .submit-btn {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, #0369a1, #0ea5e9);
+    color: white;
+    border: none;
+    border-radius: 16px;
+    font-size: 18px;
+    font-weight: 800;
+    cursor: pointer;
+    font-family: inherit;
+    box-shadow: 0 4px 14px rgba(14,165,233,0.35);
+  }
+  .submit-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .results-card {
+    margin: 20px 16px 0;
+    background: white;
+    border-radius: 20px;
+    padding: 30px 20px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    display: none;
+  }
+  .results-card.show { display: block; }
+  .res-emoji { font-size: 54px; }
+  .res-score { font-size: 50px; font-weight: 900; color: #0369a1; margin: 10px 0 4px; }
+  .res-stars { font-size: 26px; letter-spacing: 4px; margin-bottom: 10px; }
+  .res-msg { font-size: 15px; color: #475569; line-height: 1.6; margin-bottom: 20px; }
+  .retry-btn {
+    padding: 13px 28px;
+    background: #e0f2fe;
+    color: #0369a1;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+  }
+
+  .name-input {
+    width: 100%;
+    padding: 13px 16px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 16px;
+    font-family: inherit;
+    direction: rtl;
+    text-align: right;
+    margin-bottom: 12px;
+    color: #1e293b;
+  }
+  .name-input:focus { outline: none; border-color: #0ea5e9; }
+
+  .wa-btn {
+    width: 100%;
+    padding: 15px;
+    background: #25D366;
+    color: white;
+    border: none;
+    border-radius: 14px;
+    font-size: 17px;
+    font-weight: 800;
+    cursor: pointer;
+    font-family: inherit;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .wa-btn:active { opacity: 0.85; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div style="font-size:40px">☀️</div>
+  <h1>למה ללמוד גם בחופשה?</h1>
+  <p>קראי את הטקסט וענו על השאלות</p>
+</div>
+
+<div class="reading-box" style="margin-top:16px">
+  <div class="reading-title">📖 קראי בעיון</div>
+  <div class="reading-text" id="readText">
+    <p>החופשה הגיעה סוף סוף! ימים של שינה, טיולים, חברים ו... למידה? רגע, אל תברחו! מסתבר שלמידה בזמן חופשה לא רק שהיא לא מפחידה – היא יכולה להיות ממש כיפית.</p>
+    <p>המוח שלנו עובד כמו שריר. כשאנחנו לא משתמשות בו, הוא "מחליד" – כלומר, מה שלמדנו נשכח מהר. מחקרים מראים שתלמידות שלא למדו כלל בחופשה חוזרות לבית הספר עם פערים של עד שלושה חודשי לימוד. זה הרבה! לעומת זאת, מי שלמדה אפילו 15–20 דקות ביום שמרה על רוב הידע שצברה.</p>
+    <p>אבל אל תחשבי על שיעורי בית מייגעים. למידה בחופשה יכולה להיראות אחרת לגמרי: קריאת ספר מעניין, צפייה בסרט בשפה זרה, משחקי חשיבה, בישול לפי מתכון (מתמטיקה ומדע בפעולה!), ואפילו שיחות עם בני משפחה על נושאים חדשים.</p>
+    <p>יש יתרון נוסף: בחופשה אין לחץ! אפשר ללמוד בקצב שלנו, להתעמק בנושאים שאנחנו אוהבות, ולגלות תחומים חדשים. הרבה המצאות ורעיונות גדולים בהיסטוריה נולדו דווקא בזמן מנוחה ומשחק – כי המוח הרפוי פתוח יותר לרעיונות יצירתיים.</p>
+    <p>אז מה המסקנה? לא צריך לוותר על החופשה – אבל שווה לשלב בה קצת למידה. מוח פעיל הוא מוח מאושר! 😊</p>
+  </div>
+  <button class="toggle-btn" id="toggleBtn" onclick="toggleRead()">▼ קראי עוד</button>
+</div>
+
+<div class="progress-box">
+  <div class="progress-row">
+    <span>התקדמות</span>
+    <span id="progressText">0 / 10</span>
+  </div>
+  <div class="bar-bg"><div class="bar-fill" id="barFill"></div></div>
+</div>
+
+<div class="section-label">חלק א׳ – רב-ברירה</div>
+
+<div class="q-card" id="card1">
+  <div class="q-badge">שאלה 1</div>
+  <div class="q-text">לפי הטקסט, מה קורה למוח כשלא משתמשים בו?</div>
+  <div class="options" id="opts1">
+    <button class="opt-btn" onclick="pickMC(1,0,1)"><span class="opt-letter">א</span>הוא גדל ומתפתח לבד</button>
+    <button class="opt-btn" onclick="pickMC(1,1,1)"><span class="opt-letter">ב</span>הוא "מחליד" והידע נשכח</button>
+    <button class="opt-btn" onclick="pickMC(1,2,1)"><span class="opt-letter">ג</span>הוא נח ומתחזק</button>
+    <button class="opt-btn" onclick="pickMC(1,3,1)"><span class="opt-letter">ד</span>הוא ממשיך לעבוד כרגיל</button>
+  </div>
+  <div class="feedback" id="fb1"></div>
+</div>
+
+<div class="q-card" id="card2">
+  <div class="q-badge">שאלה 2</div>
+  <div class="q-text">כמה זמן למידה ביום מספיק לשמור על הידע בחופשה?</div>
+  <div class="options" id="opts2">
+    <button class="opt-btn" onclick="pickMC(2,0,2)"><span class="opt-letter">א</span>שעה שלמה</button>
+    <button class="opt-btn" onclick="pickMC(2,1,2)"><span class="opt-letter">ב</span>30–45 דקות</button>
+    <button class="opt-btn" onclick="pickMC(2,2,2)"><span class="opt-letter">ג</span>15–20 דקות</button>
+    <button class="opt-btn" onclick="pickMC(2,3,2)"><span class="opt-letter">ד</span>אין צורך ללמוד</button>
+  </div>
+  <div class="feedback" id="fb2"></div>
+</div>
+
+<div class="q-card" id="card3">
+  <div class="q-badge">שאלה 3</div>
+  <div class="q-text">מה אחד מיתרונות הלמידה בחופשה לפי הטקסט?</div>
+  <div class="options" id="opts3">
+    <button class="opt-btn" onclick="pickMC(3,0,1)"><span class="opt-letter">א</span>יש יותר שיעורי בית לתרגל</button>
+    <button class="opt-btn" onclick="pickMC(3,1,1)"><span class="opt-letter">ב</span>אפשר ללמוד בלי לחץ בקצב אישי</button>
+    <button class="opt-btn" onclick="pickMC(3,2,1)"><span class="opt-letter">ג</span>הציונים עולים אוטומטית</button>
+    <button class="opt-btn" onclick="pickMC(3,3,1)"><span class="opt-letter">ד</span>המורות מרוצות יותר</button>
+  </div>
+  <div class="feedback" id="fb3"></div>
+</div>
+
+<div class="q-card" id="card4">
+  <div class="q-badge">שאלה 4</div>
+  <div class="q-text">מה ההבדל בין מי שלמדה בחופשה למי שלא?</div>
+  <div class="options" id="opts4">
+    <button class="opt-btn" onclick="pickMC(4,0,0)"><span class="opt-letter">א</span>מי שלמדה שמרה על רוב הידע שלה</button>
+    <button class="opt-btn" onclick="pickMC(4,1,0)"><span class="opt-letter">ב</span>אין הבדל בין השתיים</button>
+    <button class="opt-btn" onclick="pickMC(4,2,0)"><span class="opt-letter">ג</span>מי שלא למדה קיבלה ציונים גבוהים</button>
+    <button class="opt-btn" onclick="pickMC(4,3,0)"><span class="opt-letter">ד</span>שתיהן שכחו הכל</button>
+  </div>
+  <div class="feedback" id="fb4"></div>
+</div>
+
+<div class="q-card" id="card5">
+  <div class="q-badge">שאלה 5</div>
+  <div class="q-text">למה, לפי הטקסט, נולדו המצאות גדולות בזמן מנוחה?</div>
+  <div class="options" id="opts5">
+    <button class="opt-btn" onclick="pickMC(5,0,2)"><span class="opt-letter">א</span>כי אנשים חכמים יותר בחופשה</button>
+    <button class="opt-btn" onclick="pickMC(5,1,2)"><span class="opt-letter">ב</span>כי אין מה לעשות ואז חושבים</button>
+    <button class="opt-btn" onclick="pickMC(5,2,2)"><span class="opt-letter">ג</span>כי המוח הרפוי פתוח יותר לרעיונות יצירתיים</button>
+    <button class="opt-btn" onclick="pickMC(5,3,2)"><span class="opt-letter">ד</span>כי לומדים יותר בחופשה מאשר בבית הספר</button>
+  </div>
+  <div class="feedback" id="fb5"></div>
+</div>
+
+<div class="section-label" style="margin-top:24px">חלק ב׳ – נכון או לא נכון</div>
+
+<div class="q-card" id="card6">
+  <div class="q-badge">שאלה 6</div>
+  <div class="q-text">תלמידות שלא למדו בחופשה חוזרות עם פערים של חודש לימוד בלבד.</div>
+  <div class="tf-row">
+    <button class="tf-btn" id="tf6t" onclick="pickTF(6,true,false)">✅ נכון</button>
+    <button class="tf-btn" id="tf6f" onclick="pickTF(6,false,false)">❌ לא נכון</button>
+  </div>
+  <div class="feedback" id="fb6"></div>
+</div>
+
+<div class="q-card" id="card7">
+  <div class="q-badge">שאלה 7</div>
+  <div class="q-text">בישול לפי מתכון נחשב לדרך למידה לפי הטקסט.</div>
+  <div class="tf-row">
+    <button class="tf-btn" id="tf7t" onclick="pickTF(7,true,true)">✅ נכון</button>
+    <button class="tf-btn" id="tf7f" onclick="pickTF(7,false,true)">❌ לא נכון</button>
+  </div>
+  <div class="feedback" id="fb7"></div>
+</div>
+
+<div class="q-card" id="card8">
+  <div class="q-badge">שאלה 8</div>
+  <div class="q-text">מוח רפוי ופתוח יכול להביא לרעיונות יצירתיים יותר.</div>
+  <div class="tf-row">
+    <button class="tf-btn" id="tf8t" onclick="pickTF(8,true,true)">✅ נכון</button>
+    <button class="tf-btn" id="tf8f" onclick="pickTF(8,false,true)">❌ לא נכון</button>
+  </div>
+  <div class="feedback" id="fb8"></div>
+</div>
+
+<div class="q-card" id="card9">
+  <div class="q-badge">שאלה 9</div>
+  <div class="q-text">לפי הטקסט, למידה בחופשה חייבת להיות דרך שיעורי בית רגילים.</div>
+  <div class="tf-row">
+    <button class="tf-btn" id="tf9t" onclick="pickTF(9,true,false)">✅ נכון</button>
+    <button class="tf-btn" id="tf9f" onclick="pickTF(9,false,false)">❌ לא נכון</button>
+  </div>
+  <div class="feedback" id="fb9"></div>
+</div>
+
+<div class="q-card" id="card10">
+  <div class="q-badge">שאלה 10</div>
+  <div class="q-text">הטקסט טוען שצריך לוותר על החופשה כדי ללמוד.</div>
+  <div class="tf-row">
+    <button class="tf-btn" id="tf10t" onclick="pickTF(10,true,false)">✅ נכון</button>
+    <button class="tf-btn" id="tf10f" onclick="pickTF(10,false,false)">❌ לא נכון</button>
+  </div>
+  <div class="feedback" id="fb10"></div>
+</div>
+
+<div class="submit-wrap">
+  <button class="submit-btn" id="submitBtn" disabled onclick="showResults()">📊 בדקי את הציון שלך</button>
+</div>
+
+<div class="results-card" id="resultsCard">
+  <div class="res-emoji" id="resEmoji"></div>
+  <div class="res-stars" id="resStars"></div>
+  <div class="res-score" id="resScore"></div>
+  <div class="res-msg" id="resMsg"></div>
+  <div style="margin-bottom:16px">
+    <input class="name-input" type="text" id="studentName" placeholder="כתבי את שמך כאן..." />
+    <button class="wa-btn" onclick="sendWhatsApp()">
+      <span>📲</span> שלחי ציון למורה בוואטסאפ
+    </button>
+  </div>
+  <button class="retry-btn" onclick="location.reload()">🔄 נסי שוב</button>
+</div>
+
+<script>
+var answered = {};
+var score = 0;
+var TOTAL = 10;
+
+function updateProgress() {
+  var count = Object.keys(answered).length;
+  document.getElementById('progressText').textContent = count + ' / ' + TOTAL;
+  document.getElementById('barFill').style.width = (count / TOTAL * 100) + '%';
+  document.getElementById('submitBtn').disabled = (count < TOTAL);
+}
+
+function showFB(n, isCorrect, correctLabel) {
+  var fb = document.getElementById('fb' + n);
+  fb.className = 'feedback show ' + (isCorrect ? 'fb-correct' : 'fb-wrong');
+  fb.textContent = isCorrect
+    ? '✅ כל הכבוד! תשובה נכונה!'
+    : '❌ לא בדיוק. התשובה הנכונה: ' + correctLabel;
+}
+
+function pickMC(n, chosen, correct) {
+  if (answered[n]) return;
+  answered[n] = true;
+
+  var btns = document.getElementById('opts' + n).getElementsByTagName('button');
+  var letters = ['א','ב','ג','ד'];
+  var isCorrect = (chosen === correct);
+  if (isCorrect) score++;
+
+  for (var i = 0; i < btns.length; i++) {
+    btns[i].disabled = true;
+    if (i === chosen && isCorrect)  btns[i].classList.add('hl-correct');
+    if (i === chosen && !isCorrect) btns[i].classList.add('hl-wrong');
+    if (i === correct && !isCorrect) btns[i].classList.add('hl-correct');
+  }
+
+  document.getElementById('card' + n).classList.add(isCorrect ? 'done-correct' : 'done-wrong');
+  showFB(n, isCorrect, letters[correct]);
+  updateProgress();
+}
+
+function pickTF(n, chosen, correct) {
+  if (answered[n]) return;
+  answered[n] = true;
+
+  var tBtn = document.getElementById('tf' + n + 't');
+  var fBtn = document.getElementById('tf' + n + 'f');
+  tBtn.disabled = true;
+  fBtn.disabled = true;
+
+  var isCorrect = (chosen === correct);
+  if (isCorrect) score++;
+
+  var chosenBtn = chosen ? tBtn : fBtn;
+  var correctBtn = correct ? tBtn : fBtn;
+
+  chosenBtn.classList.add(isCorrect ? 'hl-correct' : 'hl-wrong');
+  if (!isCorrect) correctBtn.classList.add('hl-correct');
+
+  document.getElementById('card' + n).classList.add(isCorrect ? 'done-correct' : 'done-wrong');
+  showFB(n, isCorrect, correct ? 'נכון' : 'לא נכון');
+  updateProgress();
+}
+
+function toggleRead() {
+  var txt = document.getElementById('readText');
+  var btn = document.getElementById('toggleBtn');
+  var open = txt.classList.toggle('open');
+  btn.textContent = open ? '▲ הסתרי' : '▼ קראי עוד';
+}
+
+function sendWhatsApp() {
+  var name = document.getElementById('studentName').value.trim();
+  if (!name) {
+    alert('אנא כתבי את שמך לפני השליחה 😊');
+    return;
+  }
+  var pct = Math.round((score / TOTAL) * 100);
+  var msg = 'שלום! אני ' + name + ' סיימתי את השאלון על למידה בחופשה.\nציון: ' + score + ' מתוך ' + TOTAL + ' (' + pct + '%) 🎉';
+  var url = 'https://wa.me/972529577005?text=' + encodeURIComponent(msg);
+  window.open(url, '_blank');
+}
+
+function showResults() {
+  var card = document.getElementById('resultsCard');
+  card.classList.add('show');
+  document.getElementById('resScore').textContent = score + ' / ' + TOTAL;
+
+  var emoji, stars, msg;
+  if (score === 10)     { emoji='🏆'; stars='⭐⭐⭐⭐⭐'; msg='מושלם לחלוטין! את אלופה אמיתית!'; }
+  else if (score >= 8)  { emoji='🌟'; stars='⭐⭐⭐⭐';   msg='עבודה מצוינת! כמעט מושלמת!'; }
+  else if (score >= 6)  { emoji='😊'; stars='⭐⭐⭐';     msg='יפה מאוד! קראי שוב את הטקסט לשיפור.'; }
+  else if (score >= 4)  { emoji='💪'; stars='⭐⭐';       msg='יש על מה לעבוד – נסי שוב אחרי קריאה נוספת!'; }
+  else                  { emoji='📖'; stars='⭐';         msg='כדאי לקרוא את הטקסט שוב בעיון. את יכולה לעשות הרבה יותר טוב!'; }
+
+  document.getElementById('resEmoji').textContent = emoji;
+  document.getElementById('resStars').textContent = stars;
+  document.getElementById('resMsg').textContent = msg;
+  card.scrollIntoView({ behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
