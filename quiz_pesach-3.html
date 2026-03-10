@@ -15,27 +15,20 @@
   .header {
     background: linear-gradient(135deg, #1a7a8a, #2E8B9A);
     color: white;
-    padding: 22px 20px 18px;
+    padding: 28px 20px 20px;
     text-align: center;
     box-shadow: 0 4px 15px rgba(0,0,0,0.2);
   }
-  .header h1 {
-    font-size: 1.9em;
-    margin-bottom: 5px;
-    display: flex; align-items: center; justify-content: center; gap: 12px;
-    white-space: nowrap; flex-wrap: nowrap;
-  }
-  .header h1 span.candle { font-size: 1em; line-height: 1; }
-  .header p { font-size: 0.98em; opacity: 0.9; }
+  .header h1 { font-size: 2em; margin-bottom: 6px; }
+  .header p { font-size: 1em; opacity: 0.9; }
 
-  /* START */
-  #startScreen { max-width: 500px; margin: 36px auto; padding: 16px; text-align: center; }
-  .start-card { background: white; border-radius: 20px; padding: 34px 28px; box-shadow: 0 4px 25px rgba(0,0,0,0.12); }
-  .start-card h2 { font-size: 1.45em; color: #1a7a8a; margin-bottom: 10px; }
-  .start-card p  { color: #555; margin-bottom: 7px; font-size: 1.02em; line-height: 1.6; }
+  #startScreen { max-width: 520px; margin: 40px auto; padding: 20px; text-align: center; }
+  .start-card { background: white; border-radius: 20px; padding: 36px 30px; box-shadow: 0 4px 25px rgba(0,0,0,0.12); }
+  .start-card h2 { font-size: 1.5em; color: #1a7a8a; margin-bottom: 10px; }
+  .start-card p { color: #555; margin-bottom: 8px; font-size: 1.05em; line-height: 1.6; }
   .name-input {
     width: 100%; padding: 13px 16px; border: 2px solid #d0e8ee; border-radius: 12px;
-    font-size: 1.1em; font-family: Arial, sans-serif; margin: 16px 0 10px;
+    font-size: 1.1em; font-family: Arial, sans-serif; margin: 18px 0 10px;
     direction: rtl; text-align: right; outline: none; transition: border 0.2s;
   }
   .name-input:focus { border-color: #2E8B9A; }
@@ -45,53 +38,38 @@
     font-family: Arial, sans-serif; font-weight: bold; cursor: pointer; margin-top: 8px; transition: all 0.3s;
   }
   .start-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
-  .badge-row { display: flex; justify-content: center; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
-  .badge { background: #e8f4f8; border-radius: 20px; padding: 5px 13px; font-size: 0.86em; color: #1a7a8a; font-weight: bold; }
+  .badge-row { display: flex; justify-content: center; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
+  .badge { background: #e8f4f8; border-radius: 20px; padding: 6px 14px; font-size: 0.88em; color: #1a7a8a; font-weight: bold; }
 
-  /* QUIZ */
-  .quiz-container { max-width: 780px; margin: 0 auto; padding: 18px; display: none; }
+  .quiz-container { max-width: 800px; margin: 0 auto; padding: 20px; display: none; }
   .quiz-top {
     display: flex; justify-content: space-between; align-items: center;
-    margin-bottom: 12px; padding: 11px 16px; background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    margin-bottom: 14px; padding: 12px 18px; background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   }
-  .progress-text { font-weight: bold; color: #555; font-size: 0.98em; }
-  .score-text    { font-weight: bold; color: #2E8B9A; font-size: 0.98em; }
-  .progress-bar  { height: 9px; background: #e0e0e0; border-radius: 5px; margin-bottom: 16px; overflow: hidden; }
+  .progress-text { font-weight: bold; color: #555; }
+  .score-text { font-weight: bold; color: #2E8B9A; }
+  .progress-bar { height: 9px; background: #e0e0e0; border-radius: 5px; margin-bottom: 18px; overflow: hidden; }
   .progress-fill { height: 100%; background: linear-gradient(90deg, #2E8B9A, #27ae60); border-radius: 5px; transition: width 0.5s; }
 
-  .question-card { background: white; border-radius: 18px; padding: 26px 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
-  .q-meta { margin-bottom: 12px; }
-  .question-num  { display: inline-block; background: #2E8B9A; color: white; padding: 3px 13px; border-radius: 20px; font-size: 0.86em; }
-  .q-type-badge  { display: inline-block; padding: 3px 11px; border-radius: 20px; font-size: 0.82em; font-weight: bold; margin-right: 6px; }
+  .question-card { background: white; border-radius: 18px; padding: 28px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); margin-bottom: 16px; }
+  .q-type-badge { display: inline-block; padding: 3px 12px; border-radius: 20px; font-size: 0.82em; font-weight: bold; margin-bottom: 10px; margin-left: 8px; }
   .q-type-mc { background: #e8f4f8; color: #1a7a8a; }
-  .q-type-tf { background: #fef0e7; color: #b85c00; }
-  .question-text { font-size: 1.22em; color: #2c3e50; line-height: 1.65; margin-bottom: 20px; }
+  .q-type-tf { background: #fef0e7; color: #c0550b; }
+  .question-num { display: inline-block; background: #2E8B9A; color: white; padding: 3px 13px; border-radius: 20px; font-size: 0.88em; margin-bottom: 10px; }
+  .question-text { font-size: 1.25em; color: #2c3e50; line-height: 1.65; margin-bottom: 22px; }
 
-  /* MC options – labeled א ב ג ד in a clean grid */
-  .options { display: flex; flex-direction: column; gap: 10px; }
+  .options { display: flex; flex-direction: column; gap: 11px; }
   .option-btn {
-    display: flex; align-items: center; gap: 0;
-    padding: 0; border: 2px solid #e0e0e0; border-radius: 12px; background: white;
-    font-size: 1.06em; font-family: Arial, sans-serif; cursor: pointer;
+    padding: 13px 18px; border: 2px solid #e0e0e0; border-radius: 12px; background: white;
+    font-size: 1.08em; font-family: Arial, sans-serif; cursor: pointer;
     text-align: right; direction: rtl; transition: all 0.22s; color: #2c3e50;
-    overflow: hidden;
   }
-  .option-btn:hover:not(:disabled) { border-color: #2E8B9A; background: #f0f9fb; }
-  .opt-label {
-    background: #f0f4f8; color: #2E8B9A; font-weight: bold; font-size: 1em;
-    padding: 12px 14px; min-width: 44px; text-align: center; flex-shrink: 0;
-    border-left: 2px solid #e0e0e0; transition: background 0.22s;
-  }
-  .opt-text { padding: 12px 14px; flex: 1; text-align: right; }
-  .option-btn.correct .opt-label { background: #c3e6cb; border-left-color: #27ae60; }
-  .option-btn.wrong   .opt-label { background: #f5c6cb; border-left-color: #c0392b; }
-  .option-btn.reveal  .opt-label { background: #c3e6cb; border-left-color: #27ae60; }
+  .option-btn:hover:not(:disabled) { border-color: #2E8B9A; background: #f0f9fb; transform: translateX(-4px); }
   .option-btn.correct { background: #d4edda; border-color: #27ae60; color: #155724; }
   .option-btn.wrong   { background: #f8d7da; border-color: #c0392b; color: #721c24; }
   .option-btn.reveal  { background: #d4edda; border-color: #27ae60; color: #155724; }
 
-  /* TF buttons */
-  .tf-row { display: flex; gap: 14px; }
+  .tf-row { display: flex; gap: 16px; margin-top: 4px; }
   .tf-btn {
     flex: 1; padding: 20px 10px; border: 3px solid #e0e0e0; border-radius: 14px;
     background: white; font-size: 1.3em; font-family: Arial, sans-serif; font-weight: bold;
@@ -103,78 +81,83 @@
   .tf-btn.wrong   { background: #f8d7da; border-color: #c0392b; color: #721c24; }
   .tf-btn.reveal  { background: #d4edda; border-color: #27ae60; color: #155724; }
 
-  .feedback { margin-top: 16px; padding: 12px 16px; border-radius: 12px; font-size: 1.02em; line-height: 1.6; display: none; }
+  .feedback { margin-top: 18px; padding: 13px 18px; border-radius: 12px; font-size: 1.03em; line-height: 1.6; display: none; }
   .feedback.correct { background: #d4edda; color: #155724; border-right: 5px solid #27ae60; }
   .feedback.wrong   { background: #f8d7da; color: #721c24; border-right: 5px solid #c0392b; }
 
   .next-btn {
-    display: none; margin-top: 14px; padding: 12px 34px;
+    display: none; margin-top: 14px; padding: 13px 36px;
     background: linear-gradient(135deg, #2E8B9A, #1a7a8a); color: white;
-    border: none; border-radius: 12px; font-size: 1.08em; font-family: Arial, sans-serif;
+    border: none; border-radius: 12px; font-size: 1.1em; font-family: Arial, sans-serif;
     cursor: pointer; transition: all 0.3s; font-weight: bold;
   }
   .next-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.18); }
 
-  /* RESULTS */
-  #results { display: none; max-width: 580px; margin: 28px auto; padding: 16px; }
+  #results { display: none; max-width: 660px; margin: 30px auto; padding: 20px; }
   .results-card { background: white; border-radius: 20px; padding: 36px 28px; box-shadow: 0 4px 25px rgba(0,0,0,0.13); text-align: center; }
-  .results-emoji { font-size: 3.6em; margin-bottom: 10px; }
-  .results-title { font-size: 1.85em; color: #2E8B9A; font-weight: bold; margin-bottom: 4px; }
-  .results-name  { font-size: 1.08em; color: #888; margin-bottom: 18px; }
-  .score-circle  {
-    width: 130px; height: 130px; border-radius: 50%; background: linear-gradient(135deg, #2E8B9A, #1a7a8a);
-    color: white; display: flex; flex-direction: column; align-items: center; justify-content: center;
-    margin: 0 auto 20px; box-shadow: 0 4px 18px rgba(46,139,154,0.35);
-  }
-  .score-circle .sc-num { font-size: 2em; font-weight: bold; line-height: 1; }
-  .score-circle .sc-pct { font-size: 1em; opacity: 0.88; }
-  .results-msg { font-size: 1.08em; color: #555; line-height: 1.7; margin-bottom: 28px; padding: 14px; background: #f8f9fa; border-radius: 12px; }
+  .results-emoji { font-size: 3.8em; margin-bottom: 12px; }
+  .results-title { font-size: 1.9em; color: #2E8B9A; font-weight: bold; margin-bottom: 4px; }
+  .results-name  { font-size: 1.1em; color: #888; margin-bottom: 16px; }
+  .results-score { font-size: 1.6em; color: #2c3e50; font-weight: bold; }
+  .results-pct   { font-size: 1.15em; color: #666; margin-bottom: 18px; }
+  .results-msg   { font-size: 1.08em; color: #555; line-height: 1.7; margin-bottom: 24px; padding: 14px; background: #f8f9fa; border-radius: 12px; }
 
-  .btn-row { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
-  .action-btn { padding: 12px 22px; border: none; border-radius: 12px; font-size: 1.03em; font-family: Arial, sans-serif; font-weight: bold; cursor: pointer; transition: all 0.3s; }
+  .type-stats { display: flex; gap: 12px; margin-bottom: 24px; }
+  .type-stat { flex: 1; background: #f0f9fb; border-radius: 12px; padding: 14px 10px; text-align: center; }
+  .ts-num   { font-size: 1.8em; font-weight: bold; color: #2E8B9A; }
+  .ts-label { font-size: 0.82em; color: #777; margin-top: 2px; }
+
+  .analytics { text-align: right; margin-bottom: 26px; }
+  .analytics h3 { font-size: 1.08em; color: #1a7a8a; margin-bottom: 10px; border-bottom: 2px solid #e8f4f8; padding-bottom: 6px; }
+  .ana-row { display: flex; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid #f0f0f0; font-size: 0.95em; gap: 8px; }
+  .ana-icon { font-size: 1.15em; min-width: 26px; padding-top: 1px; }
+  .ana-q { flex: 1; color: #444; line-height: 1.4; }
+  .ana-tag { display: inline-block; font-size: 0.74em; padding: 2px 8px; border-radius: 10px; font-weight: bold; margin-left: 6px; vertical-align: middle; }
+  .tag-mc { background: #e8f4f8; color: #1a7a8a; }
+  .tag-tf { background: #fef0e7; color: #c0550b; }
+
+  .btn-row { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 10px; }
+  .action-btn { padding: 13px 24px; border: none; border-radius: 12px; font-size: 1.05em; font-family: Arial, sans-serif; font-weight: bold; cursor: pointer; transition: all 0.3s; }
   .btn-restart { background: linear-gradient(135deg, #2E8B9A, #1a7a8a); color: white; }
   .btn-wa      { background: linear-gradient(135deg, #25d366, #128c7e); color: white; }
   .action-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 16px rgba(0,0,0,0.18); }
 
-  /* WA – copy text area, no phone needed */
   .wa-section { margin-top: 22px; padding: 18px; background: #f0fdf8; border-radius: 14px; border: 2px solid #b2dfdb; text-align: right; }
   .wa-section h4 { color: #128c7e; margin-bottom: 8px; font-size: 1.05em; }
-  .wa-section p  { font-size: 0.92em; color: #555; margin-bottom: 10px; line-height: 1.5; }
-  .wa-msg-box {
-    width: 100%; min-height: 110px; padding: 10px 12px; border: 2px solid #b2dfdb; border-radius: 10px;
-    font-size: 0.95em; font-family: Arial, sans-serif; direction: rtl; text-align: right;
-    resize: none; margin-bottom: 10px; background: white; color: #333;
+  .wa-section p { font-size: 0.93em; color: #555; margin-bottom: 10px; }
+  .wa-phone {
+    width: 100%; padding: 11px 14px; border: 2px solid #b2dfdb; border-radius: 10px;
+    font-size: 1.05em; font-family: Arial, sans-serif; direction: ltr; text-align: left;
+    margin-bottom: 10px; outline: none;
   }
-  .wa-btns { display: flex; gap: 10px; flex-wrap: wrap; }
-  .wa-copy-btn, .wa-open-btn {
-    flex: 1; padding: 10px 14px; border: none; border-radius: 10px; font-size: 1em;
-    font-family: Arial, sans-serif; font-weight: bold; cursor: pointer; transition: all 0.3s;
+  .wa-phone:focus { border-color: #25d366; }
+  .wa-send-btn {
+    padding: 11px 26px; background: linear-gradient(135deg, #25d366, #128c7e); color: white;
+    border: none; border-radius: 10px; font-size: 1.05em; font-family: Arial, sans-serif;
+    font-weight: bold; cursor: pointer; transition: all 0.3s;
   }
-  .wa-copy-btn { background: #e8f4f8; color: #1a7a8a; border: 2px solid #2E8B9A; }
-  .wa-open-btn { background: linear-gradient(135deg, #25d366, #128c7e); color: white; }
-  .wa-copy-btn:hover { background: #d0edf5; }
-  .wa-open-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(0,0,0,0.18); }
-  .copy-confirm { font-size: 0.88em; color: #27ae60; margin-top: 6px; display: none; }
+  .wa-send-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(0,0,0,0.18); }
 </style>
 </head>
 <body>
 
 <div class="header">
-  <h1><span class="candle">🕯️</span> שאלון הלכות פסח <span class="candle">🕯️</span></h1>
-  <p>חודש ניסן | בדיקת חמץ וביטולו</p>
+  <h1>🕯️ שאלון הלכות פסח 🕯️</h1>
+  <p>חודש ניסן | בדיקת חמץ וביטולו | כיתות ז׳–ט׳</p>
 </div>
 
 <!-- START -->
 <div id="startScreen">
   <div class="start-card">
-    <h2>ברוכות הבאות לשאלון! 🎉</h2>
+    <h2>ברוכים הבאים לשאלון! 🎉</h2>
     <p>השאלון כולל <strong>15 שאלות</strong>:</p>
     <p>📝 10 שאלות בחירה מרובה &nbsp;|&nbsp; ✅❌ 5 שאלות נכון/לא נכון</p>
-    <input class="name-input" type="text" id="studentName" placeholder="שם התלמידה" />
-    <button class="start-btn" onclick="startQuiz()">🚀 התחילי את השאלון</button>
+    <input class="name-input" type="text" id="studentName" placeholder="שם התלמיד/ה" />
+    <button class="start-btn" onclick="startQuiz()">🚀 התחל שאלון</button>
     <div class="badge-row">
       <span class="badge">📝 15 שאלות</span>
       <span class="badge">✅❌ נכון/לא נכון</span>
+      <span class="badge">📊 ניתוח תוצאות</span>
       <span class="badge">📲 שליחה לווטסאפ</span>
     </div>
   </div>
@@ -188,10 +171,8 @@
   </div>
   <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
   <div class="question-card">
-    <div class="q-meta">
-      <span class="question-num" id="questionNum">שאלה 1</span>
-      <span class="q-type-badge" id="qTypeBadge"></span>
-    </div>
+    <span class="question-num" id="questionNum">שאלה 1</span>
+    <span class="q-type-badge" id="qTypeBadge"></span>
     <div class="question-text" id="questionText"></div>
     <div id="optionsContainer"></div>
     <div class="feedback" id="feedback"></div>
@@ -204,84 +185,61 @@
   <div class="results-card">
     <div class="results-emoji" id="resultsEmoji">🎉</div>
     <div class="results-title">סיימת את השאלון!</div>
-    <div class="results-name" id="resultsName"></div>
-    <div class="score-circle">
-      <div class="sc-num" id="scNum">0/15</div>
-      <div class="sc-pct" id="scPct">0%</div>
-    </div>
-    <div class="results-msg" id="resultsMsg"></div>
-    <div class="btn-row">
-      <button class="action-btn btn-restart" onclick="restartQuiz()">🔄 שחקי שוב</button>
-      <button class="action-btn btn-wa" onclick="toggleWA()">📲 שלחי ציון למורה</button>
+    <div class="results-name"  id="resultsName"></div>
+    <div class="results-score" id="resultsScore"></div>
+    <div class="results-pct"   id="resultsPct"></div>
+    <div class="results-msg"   id="resultsMsg"></div>
+
+    <div class="type-stats">
+      <div class="type-stat"><div class="ts-num" id="mcStat">–</div><div class="ts-label">בחירה מרובה</div></div>
+      <div class="type-stat"><div class="ts-num" id="tfStat">–</div><div class="ts-label">נכון / לא נכון</div></div>
+      <div class="type-stat"><div class="ts-num" id="totalStat">–</div><div class="ts-label">סך הכל</div></div>
     </div>
 
-    <!-- WhatsApp – copy & open, no phone number needed -->
+    <div class="analytics">
+      <h3>📊 ניתוח שאלה אחר שאלה</h3>
+      <div id="analyticsList"></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="action-btn btn-restart" onclick="restartQuiz()">🔄 שחק שוב</button>
+      <button class="action-btn btn-wa" onclick="toggleWA()">📲 שלח ציון למורה</button>
+    </div>
+
     <div class="wa-section" id="waSection" style="display:none">
-      <h4>📲 שליחת הציון למורה בווטסאפ</h4>
-      <p>העתיקי את ההודעה למטה ושלחי אותה לוואטסאפ של המורה:</p>
-      <textarea class="wa-msg-box" id="waMsgBox" readonly></textarea>
-      <div class="wa-btns">
-        <button class="wa-copy-btn" onclick="copyMsg()">📋 העתיקי הודעה</button>
-        <button class="wa-open-btn" onclick="openWA()">📱 פתחי ווטסאפ</button>
-      </div>
-      <div class="copy-confirm" id="copyConfirm">✅ ההודעה הועתקה! עברי לווטסאפ והדביקי.</div>
+      <h4>📲 שליחת ציון למורה בווטסאפ</h4>
+      <p>הכניסו את מספר הטלפון של המורה (עם קידומת מדינה, למשל 972501234567):</p>
+      <input class="wa-phone" type="tel" id="teacherPhone" placeholder="972501234567" />
+      <button class="wa-send-btn" onclick="sendWhatsApp()">📤 שלח בווטסאפ</button>
     </div>
   </div>
 </div>
 
 <script>
-const LABELS = ['א','ב','ג','ד'];
-
 const allQuestions = [
-  // בחירה מרובה
-  { type:'mc', q:"כמה פתיתי חמץ מניחים לפני בדיקת חמץ?",
-    opts:["5 פתיתים","10 פתיתים","13 פתיתים","7 פתיתים"], ans:1,
-    explain:"מניחים עשרה פתיתי חמץ קשה, כל אחד כרוך בכפת נייר – על פי הקבלה." },
-  { type:'mc', q:"מתי בודקים את החמץ?",
-    opts:["בבוקר שלפני ערב פסח","בלילה שלפני ערב פסח","ביום ערב פסח","שבוע לפני פסח"], ans:1,
-    explain:"בלילה שלפני ערב פסח, לאחר תפילת ערבית." },
-  { type:'mc', q:"במה בודקים את החמץ?",
-    opts:["פנס חשמלי","נר שעוה ונוצת עוף","נרות קלועים","ללא אור"], ans:1,
-    explain:"בודקים לאור נר שעוה, ועל ידי נוצת עוף לאסוף את החמץ." },
-  { type:'mc', q:"מה אסור לעשות חצי שעה לפני תחילת הבדיקה?",
-    opts:["לדבר","להתפלל","לאכול או לעשות מלאכה","לישון"], ans:2,
-    explain:"אסור להתחיל לאכול או לעשות מלאכה חצי שעה קודם הלילה." },
-  { type:'mc', q:"מתי מבטלים את החמץ?",
-    opts:["לפני הבדיקה","מיד אחר הבדיקה","ביום ערב פסח","בסוף ליל הסדר"], ans:1,
-    explain:"אחר הבדיקה מבטלים מיד – אומרים 'כל חמירא...'." },
-  { type:'mc', q:"מה פרשת הנשיא שקוראים בחודש ניסן?",
-    opts:["פרשת בראשית","קרבנות נשיאי ישראל","פרשת יציאת מצרים","פרשת המן"], ans:1,
-    explain:"מראש חודש ניסן ועד י\"ב בו קוראים כל יום פרשת הנשיא." },
-  { type:'mc', q:"מה עושים עם החמץ שמוצאים בבדיקה?",
-    opts:["זורקים לפח","שומרים לאחר הפסח","מכניסים לשקית נייר","מבטלים מיד"], ans:2,
-    explain:"הבודקת מניחה את החמץ שמוצאת בשקית נייר לאיסוף." },
-  { type:'mc', q:"מה עיקר הביטול של חמץ על פי ההלכה?",
-    opts:["אמירת 'כל חמירא' בקול","הביטול בלב – שהחמץ כעפר","כתיבת ביטול","הוצאת החמץ מהבית"], ans:1,
-    explain:"עיקר הביטול הוא בלב. חכמים הוסיפו שיאמר זאת בפה." },
-  { type:'mc', q:"מה מנהג חב\"ד בתענית חלום בחודש ניסן?",
-    opts:["מתענים כרגיל","אין מתענים כלל","מתענים רק בשני וחמישי","מתענים חצי יום"], ans:1,
-    explain:"מנהג חב\"ד: אין מתענים בחודש ניסן אפילו תענית חלום." },
-  { type:'mc', q:"מצאה חמץ בחול המועד כזית – מה עושה?",
-    opts:["מבטלת בלב","מוציאה שורפת ומברכת","מכסה עד מוצאי פסח","מוכרת לנכרי"], ans:1,
-    explain:"מוציאה ושורפת, ומברכת 'על ביעור חמץ' אם יש כזית." },
-  // נכון / לא נכון
-  { type:'tf', q:"כל ימי חודש ניסן אין אומרים תחנון.", ans:true,
-    explain:"נכון! כל ימי חודש ניסן אין אומרים תחנון." },
-  { type:'tf', q:"מותר להתחיל לאכול חצי שעה לפני תחילת בדיקת החמץ.", ans:false,
-    explain:"לא נכון! אסור לאכול או לעשות מלאכה חצי שעה קודם הלילה." },
-  { type:'tf', q:"ניתן לבדוק כמה בתים בברכה אחת.", ans:true,
-    explain:"נכון! הברכה חלה על כל הבתים שתבדוק באותה בדיקה." },
-  { type:'tf', q:"חדרים שנמכרו לנכרי עם החמץ – חייבת לבדקם.", ans:false,
-    explain:"לא נכון! חדרים שנמכרו לנכרי עם החמץ – אין חייבת לבדקם." },
-  { type:'tf', q:"חתן וכלה מתענים ביום חופתם אפילו בחודש ניסן.", ans:true,
-    explain:"נכון! חתן וכלה מתענים ביום חופתם אפילו בראש חודש ניסן." }
+  // --- בחירה מרובה ---
+  { type:'mc', q:"כמה פתיתי חמץ מניחים לפני בדיקת חמץ?", opts:["5 פתיתים","10 פתיתים","13 פתיתים","7 פתיתים"], ans:1, explain:"מניחים עשרה פתיתי חמץ קשה, כל אחד כרוך בכפת נייר – על פי הקבלה." },
+  { type:'mc', q:"מתי בודקים את החמץ?", opts:["בבוקר שלפני ערב פסח","בלילה שלפני ערב פסח","ביום ערב פסח","שבוע לפני פסח"], ans:1, explain:"בלילה שלפני ערב פסח, לאחר תפילת ערבית." },
+  { type:'mc', q:"במה בודקים את החמץ?", opts:["פנס חשמלי","נר שעוה ונוצת עוף","נרות קלועים","ללא אור"], ans:1, explain:"בודקים לאור נר שעוה, ועל ידי נוצת עוף לאסוף את החמץ." },
+  { type:'mc', q:"מה אסור לעשות חצי שעה לפני תחילת הבדיקה?", opts:["לדבר","להתפלל","לאכול או לעשות מלאכה","לישון"], ans:2, explain:"אסור להתחיל לאכול או לעשות מלאכה חצי שעה קודם הלילה." },
+  { type:'mc', q:"מתי מבטלים את החמץ?", opts:["לפני הבדיקה","מיד אחר הבדיקה","ביום ערב פסח","בסוף ליל הסדר"], ans:1, explain:"אחר הבדיקה מבטלים מיד – אומרים 'כל חמירא...'." },
+  { type:'mc', q:"מה פרשת הנשיא שקוראים בחודש ניסן?", opts:["פרשת בראשית","קרבנות נשיאי ישראל","פרשת יציאת מצרים","פרשת המן"], ans:1, explain:"מראש חודש ניסן ועד י\"ב בו קוראים כל יום פרשת הנשיא." },
+  { type:'mc', q:"מה עושים עם החמץ שמוצאים בבדיקה?", opts:["זורקים לפח","שומרים לאחר הפסח","מכניסים לשקית נייר","מבטלים מיד"], ans:2, explain:"הבודק מניח את החמץ שמוצא בשקית נייר לאיסוף." },
+  { type:'mc', q:"מה עיקר הביטול של חמץ על פי ההלכה?", opts:["אמירת 'כל חמירא' בקול","הביטול בלב – שהחמץ כעפר","כתיבת ביטול","הוצאת החמץ מהבית"], ans:1, explain:"עיקר הביטול הוא בלב. חכמים הוסיפו שיאמר זאת בפה." },
+  { type:'mc', q:"מה מנהג חב\"ד בתענית חלום בחודש ניסן?", opts:["מתענים כרגיל","אין מתענים כלל","מתענים רק בשני וחמישי","מתענים חצי יום"], ans:1, explain:"מנהג חב\"ד: אין מתענים בחודש ניסן אפילו תענית חלום." },
+  { type:'mc', q:"מצא חמץ בחול המועד כזית – מה עושה?", opts:["מבטל בלב","מוציאו שורפו ומברך","מכסהו עד מוצאי פסח","מוכרו לנכרי"], ans:1, explain:"מוציאו ושורפו, ומברך 'על ביעור חמץ' אם יש כזית." },
+  // --- נכון / לא נכון ---
+  { type:'tf', q:"כל ימי חודש ניסן אין אומרים תחנון.", ans:true,  explain:"נכון! כל ימי חודש ניסן אין אומרים תחנון." },
+  { type:'tf', q:"מותר להתחיל לאכול חצי שעה לפני תחילת בדיקת החמץ.", ans:false, explain:"לא נכון! אסור לאכול או לעשות מלאכה חצי שעה קודם הלילה." },
+  { type:'tf', q:"ניתן לבדוק כמה בתים בברכה אחת.", ans:true,  explain:"נכון! הברכה חלה על כל הבתים שיבדוק באותה בדיקה." },
+  { type:'tf', q:"חדרים שנמכרו לנכרי עם החמץ – חייב לבדקם.", ans:false, explain:"לא נכון! חדרים שנמכרו לנכרי עם החמץ – אין חייב לבדקם." },
+  { type:'tf', q:"חתן וכלה מתענים ביום חופתם אפילו בחודש ניסן.", ans:true,  explain:"נכון! חתן וכלה מתענים ביום חופתם אפילו בראש חודש ניסן." }
 ];
 
 let questions=[], currentQ=0, score=0, answered=false, studentName='', answerLog=[];
-let waMessage = '';
 
 function startQuiz(){
-  studentName = document.getElementById('studentName').value.trim() || 'תלמידה';
+  studentName = document.getElementById('studentName').value.trim() || 'תלמיד/ה';
   questions = [...allQuestions].sort(()=>Math.random()-0.5);
   currentQ=0; score=0; answerLog=[];
   document.getElementById('startScreen').style.display='none';
@@ -301,24 +259,21 @@ function showQuestion(){
   document.getElementById('nextBtn').style.display='none';
   const badge=document.getElementById('qTypeBadge');
   badge.textContent = q.type==='tf' ? '✅❌ נכון / לא נכון' : '📝 בחירה מרובה';
-  badge.className   = 'q-type-badge '+(q.type==='tf'?'q-type-tf':'q-type-mc');
+  badge.className   = 'q-type-badge ' + (q.type==='tf' ? 'q-type-tf' : 'q-type-mc');
   const container=document.getElementById('optionsContainer');
   container.innerHTML='';
   if(q.type==='tf'){
     const row=document.createElement('div'); row.className='tf-row';
-    const tb=document.createElement('button'); tb.className='tf-btn true-btn';  tb.innerHTML='✅&nbsp; נכון';
-    const fb=document.createElement('button'); fb.className='tf-btn false-btn'; fb.innerHTML='❌&nbsp; לא נכון';
+    const tb=document.createElement('button'); tb.className='tf-btn true-btn';  tb.innerHTML='✅ נכון';
+    const fb=document.createElement('button'); fb.className='tf-btn false-btn'; fb.innerHTML='❌ לא נכון';
     tb.onclick=()=>selectTF(true,tb,fb);
     fb.onclick=()=>selectTF(false,tb,fb);
     row.appendChild(tb); row.appendChild(fb); container.appendChild(row);
   } else {
-    const opts=document.createElement('div'); opts.className='options';
     q.opts.forEach((opt,i)=>{
       const btn=document.createElement('button'); btn.className='option-btn';
-      btn.innerHTML=`<span class="opt-label">${LABELS[i]}</span><span class="opt-text">${opt}</span>`;
-      btn.onclick=()=>selectAnswer(i); opts.appendChild(btn);
+      btn.textContent=opt; btn.onclick=()=>selectAnswer(i); container.appendChild(btn);
     });
-    container.appendChild(opts);
   }
 }
 
@@ -351,9 +306,7 @@ function showFeedback(correct,explain){
   document.getElementById('scoreText').textContent=`✅ ${score}`;
   const fb=document.getElementById('feedback');
   fb.className='feedback '+(correct?'correct':'wrong');
-  fb.innerHTML=correct
-    ?`✅ <strong>כל הכבוד!</strong> ${explain}`
-    :`❌ <strong>לא נכון.</strong> ${explain}`;
+  fb.innerHTML=correct?`✅ <strong>כל הכבוד!</strong> ${explain}`:`❌ <strong>לא נכון.</strong> ${explain}`;
   fb.style.display='block';
   const nb=document.getElementById('nextBtn'); nb.style.display='block';
   nb.textContent=currentQ===questions.length-1?'סיום השאלון ✓':'שאלה הבאה ←';
@@ -366,40 +319,42 @@ function showResults(){
   document.getElementById('results').style.display='block';
   const total=questions.length, pct=Math.round((score/total)*100);
   let emoji,msg;
-  if(pct>=90){emoji='🏆'; msg='מצוין! ידע מרשים בהלכות פסח. את בהחלט מוכנה לפסח!';}
-  else if(pct>=75){emoji='🌟'; msg='יפה מאוד! ידע טוב. כדאי לחזור על מה שפספסת.';}
-  else if(pct>=55){emoji='📚'; msg='לא רע! אבל יש עוד מה ללמוד. תחזרי על החומר ותנסי שוב.';}
-  else{emoji='💪'; msg='צריך לחזור על החומר. את יכולה! קראי שוב ונסי שוב.';}
+  if(pct>=90){emoji='🏆';msg='מצוין! ידע מרשים. אתה בהחלט מוכן לפסח!';}
+  else if(pct>=75){emoji='🌟';msg='יפה מאוד! ידע טוב. כדאי לחזור על מה שפספסת.';}
+  else if(pct>=55){emoji='📚';msg='לא רע! אבל יש עוד מה ללמוד. תחזור על החומר ונסה שוב.';}
+  else{emoji='💪';msg='צריך לחזור על החומר. אתה יכול! קרא שוב ונסה שוב.';}
   document.getElementById('resultsEmoji').textContent=emoji;
   document.getElementById('resultsName').textContent=`שם: ${studentName}`;
-  document.getElementById('scNum').textContent=`${score}/${total}`;
-  document.getElementById('scPct').textContent=`${pct}%`;
+  document.getElementById('resultsScore').textContent=`${score} מתוך ${total}`;
+  document.getElementById('resultsPct').textContent=`(${pct}%)`;
   document.getElementById('resultsMsg').textContent=msg;
-
-  // Build WhatsApp message
-  const wrong=answerLog.filter(a=>!a.correct);
-  const wrongList=wrong.length>0
-    ? wrong.map((a,i)=>`${i+1}. ${a.q}`).join('\n')
-    : 'כל השאלות נענו נכון! 🎉';
-  waMessage=`📚 *תוצאות שאלון הלכות פסח*\n\n👤 *שם:* ${studentName}\n📊 *ציון:* ${score}/${total} (${pct}%)\n\n❌ *שאלות שטעתה בהן:*\n${wrongList}\n\n🕯️ _שאלון הלכות פסח_`;
-  document.getElementById('waMsgBox').value=waMessage;
+  const mcLog=answerLog.filter(a=>a.type==='mc'), tfLog=answerLog.filter(a=>a.type==='tf');
+  document.getElementById('mcStat').textContent=`${mcLog.filter(a=>a.correct).length}/${mcLog.length}`;
+  document.getElementById('tfStat').textContent=`${tfLog.filter(a=>a.correct).length}/${tfLog.length}`;
+  document.getElementById('totalStat').textContent=`${score}/${total}`;
+  const list=document.getElementById('analyticsList'); list.innerHTML='';
+  answerLog.forEach((a,i)=>{
+    const row=document.createElement('div'); row.className='ana-row';
+    const tag=a.type==='mc'?'<span class="ana-tag tag-mc">בחירה</span>':'<span class="ana-tag tag-tf">נכון/לא</span>';
+    row.innerHTML=`<span class="ana-icon">${a.correct?'✅':'❌'}</span><span class="ana-q">${tag}${i+1}. ${a.q}</span>`;
+    list.appendChild(row);
+  });
 }
 
 function toggleWA(){
   const s=document.getElementById('waSection');
   s.style.display=s.style.display==='none'?'block':'none';
-  document.getElementById('copyConfirm').style.display='none';
 }
 
-function copyMsg(){
-  const box=document.getElementById('waMsgBox');
-  box.select(); box.setSelectionRange(0,99999);
-  try{ document.execCommand('copy'); } catch(e){ navigator.clipboard.writeText(waMessage); }
-  document.getElementById('copyConfirm').style.display='block';
-}
-
-function openWA(){
-  window.open(`https://wa.me/?text=${encodeURIComponent(waMessage)}`,'_blank');
+function sendWhatsApp(){
+  const phone=document.getElementById('teacherPhone').value.trim().replace(/\D/g,'');
+  if(!phone){alert('נא להזין מספר טלפון');return;}
+  const total=questions.length, pct=Math.round((score/total)*100);
+  const mcLog=answerLog.filter(a=>a.type==='mc'), tfLog=answerLog.filter(a=>a.type==='tf');
+  const wrong=answerLog.filter(a=>!a.correct);
+  const wrongList=wrong.length>0?wrong.map((a,i)=>`${i+1}. ${a.q}`).join('\n'):'כל השאלות נענו נכון! 🎉';
+  const msg=`📚 *תוצאות שאלון הלכות פסח*\n\n👤 *שם:* ${studentName}\n📊 *ציון:* ${score}/${total} (${pct}%)\n\n📝 בחירה מרובה: ${mcLog.filter(a=>a.correct).length}/${mcLog.length}\n✅❌ נכון/לא נכון: ${tfLog.filter(a=>a.correct).length}/${tfLog.length}\n\n❌ *שאלות שטעה:*\n${wrongList}\n\n_נשלח מ-שאלון הלכות פסח 🕯️_`;
+  window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`,'_blank');
 }
 
 function restartQuiz(){
