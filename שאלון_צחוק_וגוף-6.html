@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>שאלון – מה קורה לגוף כשצוחקים?</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #fdf4ff;
+    color: #1e293b;
+    padding-bottom: 50px;
+    direction: rtl;
+  }
+
+  .header {
+    background: linear-gradient(135deg, #7e22ce, #a855f7);
+    color: white;
+    padding: 28px 20px;
+    text-align: center;
+  }
+  .header h1 { font-size: 22px; font-weight: 900; margin-top: 8px; }
+  .header p  { font-size: 14px; opacity: 0.85; margin-top: 4px; }
+
+  .reading-box {
+    margin: 16px;
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  }
+  .reading-title {
+    background: linear-gradient(90deg, #7e22ce, #a855f7);
+    color: white;
+    padding: 12px 16px;
+    font-weight: 700;
+    font-size: 15px;
+  }
+  .reading-text {
+    padding: 16px;
+    font-size: 15px;
+    line-height: 1.8;
+    color: #334155;
+    max-height: 160px;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+  }
+  .reading-text.open { max-height: 1000px; }
+  .reading-text p { margin-bottom: 10px; }
+  .toggle-btn {
+    width: 100%;
+    padding: 11px;
+    background: #f3e8ff;
+    color: #7e22ce;
+    border: none;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+  }
+
+  .progress-box {
+    margin: 0 16px 4px;
+    background: white;
+    border-radius: 14px;
+    padding: 12px 16px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+  }
+  .progress-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    font-weight: 600;
+    color: #64748b;
+    margin-bottom: 8px;
+  }
+  .bar-bg { height: 9px; background: #e2e8f0; border-radius: 99px; overflow: hidden; }
+  .bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #a855f7, #d946ef);
+    border-radius: 99px;
+    width: 0%;
+    transition: width 0.4s;
+  }
+
+  .section-label {
+    margin: 20px 16px 2px;
+    font-size: 13px;
+    font-weight: 800;
+    color: #a855f7;
+  }
+
+  .q-card {
+    margin: 10px 16px 0;
+    background: white;
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    border: 2px solid transparent;
+    transition: border-color 0.3s;
+  }
+  .q-card.done-correct { border-color: #22c55e; background: #f0fdf4; }
+  .q-card.done-wrong   { border-color: #ef4444; background: #fef2f2; }
+
+  .q-badge {
+    display: inline-block;
+    background: #f3e8ff;
+    color: #7e22ce;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 2px 10px;
+    border-radius: 99px;
+    margin-bottom: 8px;
+  }
+  .q-text {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.5;
+    margin-bottom: 14px;
+  }
+
+  .options { display: flex; flex-direction: column; gap: 9px; }
+  .opt-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    text-align: right;
+    padding: 12px 14px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    background: #f8fafc;
+    font-size: 15px;
+    font-weight: 500;
+    color: #1e293b;
+    cursor: pointer;
+    font-family: inherit;
+    direction: rtl;
+  }
+  .opt-btn:active { opacity: 0.8; }
+  .opt-letter {
+    min-width: 28px; height: 28px;
+    border: 2px solid #cbd5e1;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 800;
+    flex-shrink: 0;
+    color: #64748b;
+  }
+  .opt-btn.hl-correct { border-color: #22c55e !important; background: #dcfce7 !important; color: #15803d; font-weight: 700; }
+  .opt-btn.hl-wrong   { border-color: #ef4444 !important; background: #fee2e2 !important; color: #b91c1c; font-weight: 700; }
+  .opt-btn:disabled { cursor: default; }
+
+  .tf-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .tf-btn {
+    padding: 14px 10px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    background: #f8fafc;
+    font-size: 16px;
+    font-weight: 700;
+    color: #1e293b;
+    cursor: pointer;
+    text-align: center;
+    font-family: inherit;
+  }
+  .tf-btn:active { opacity: 0.8; }
+  .tf-btn.hl-correct { border-color: #22c55e !important; background: #dcfce7 !important; color: #15803d; }
+  .tf-btn.hl-wrong   { border-color: #ef4444 !important; background: #fee2e2 !important; color: #b91c1c; }
+  .tf-btn:disabled { cursor: default; }
+
+  .feedback {
+    margin-top: 10px;
+    padding: 9px 13px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    display: none;
+  }
+  .feedback.show { display: block; }
+  .fb-correct { background: #dcfce7; color: #15803d; }
+  .fb-wrong   { background: #fee2e2; color: #b91c1c; }
+
+  .submit-wrap { padding: 22px 16px 0; }
+  .submit-btn {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, #7e22ce, #a855f7);
+    color: white;
+    border: none;
+    border-radius: 16px;
+    font-size: 18px;
+    font-weight: 800;
+    cursor: pointer;
+    font-family: inherit;
+    box-shadow: 0 4px 14px rgba(168,85,247,0.35);
+  }
+  .submit-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .results-card {
+    margin: 20px 16px 0;
+    background: white;
+    border-radius: 20px;
+    padding: 30px 20px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    display: none;
+  }
+  .results-card.show { display: block; }
+  .res-emoji { font-size: 54px; }
+  .res-score { font-size: 50px; font-weight: 900; color: #7e22ce; margin: 10px 0 4px; }
+  .res-stars { font-size: 26px; letter-spacing: 4px; margin-bottom: 10px; }
+  .res-msg { font-size: 15px; color: #475569; line-height: 1.6; margin-bottom: 20px; }
+
+  .name-input {
+    width: 100%;
+    padding: 13px 16px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 16px;
+    font-family: inherit;
+    direction: rtl;
+    text-align: right;
+    margin-bottom: 12px;
+    color: #1e293b;
+  }
+  .name-input:focus { outline: none; border-color: #a855f7; }
+
+  .wa-btn {
+    width: 100%;
+    padding: 15px;
+    background: #25D366;
+    color: white;
+    border: none;
+    border-radius: 14px;
+    font-size: 17px;
+    font-weight: 800;
+    cursor: pointer;
+    font-family: inherit;
+    margin-bottom: 10px;
+  }
+  .retry-btn {
+    padding: 13px 28px;
+    background: #f3e8ff;
+    color: #7e22ce;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div style="font-size:40px">😂</div>
+  <h1>מה קורה לגוף שלנו כשצוחקים?</h1>
+  <p>קראו את הטקסט וענו על השאלות</p>
+</div>
+
+<div class="reading-box" style="margin-top:16px">
+  <div class="reading-title">📖 קראי בעיון</div>
+  <div class="reading-text" id="readText">
+    <p>צחוק – כולנו אוהבים אותו, אבל האם ידעתם שהוא עושה לגוף שלנו דברים מדהימים? מסתבר שצחוק הוא הרבה יותר מסתם תגובה מְשַׁעְשַׁעַת – הוא ממש תרופה טבעית!</p>
+    <p>כשצוחקים, המוח משחרר חומרים שנקראים <strong>אֶנְדּוֹרְפִינִים</strong> – אלה הם "הוֹרְמוֹנֵי האושר" של הגוף. הם גורמים לנו להרגיש טוב, מפחיתים כאב ואפילו מחזקים את מערכת הַחִיסּוּן שלנו. כן, צחוק ממש יכול לעזור לנו להיות פחות חולים!</p>
+    <p>בזמן צחוק, שרירי הבטן, הפנים והחזה עובדים קשה – לכן לפעמים הבטן כואבת מצחוק. זה כמו אימון ספורט קצר! בנוסף, הלב פועם מהר יותר, הנשימה מואצת, ויותר חמצן מגיע למוח – מה שמעיר אותנו ועוזר לנו לחשוב טוב יותר.</p>
+    <p>למידה מַשְׁמַעוּתִית נוספת: צחוק מפחית את רמות הַקּוֹרְטִיזוֹל – ההורמון שאחראי על לחץ וחרדה. כלומר, כשצוחקים – ממש נרגעים! מחקרים מראים שאפילו חיוך מלאכותי יכול לשפר את מצב הרוח, כי המוח "מאמין" לשרירי הפנים.</p>
+    <p>מחקרים מראים שילדים צוחקים בממוצע 400 פעם ביום, בעוד מבוגרים צוחקים רק כ-15 פעמים ביום. כלומר – ככל שגדלים, צוחקים פחות! מחקר שנערך באוניברסיטה בארה"ב מצא שצחוק יחד עם אחרים מחזק את הַקֶּשֶׁר הרגשי בין אנשים ויוצר תחושת שייכות וביטחון.</p>
+    <p>מסקנה: הפעם הבאה שמישהו אומר לכם "תפסיקו לצחוק!" – תוכלו לענות בביטחון: "אנחנו פשוט מחזקים את מערכת הַחִיסּוּן שלנו!" 😄</p>
+  </div>
+  <button class="toggle-btn" id="toggleBtn" onclick="toggleRead()">▼ קראי עוד</button>
+</div>
+
+<div class="progress-box">
+  <div class="progress-row">
+    <span>התקדמות</span>
+    <span id="progressText">0 / 10</span>
+  </div>
+  <div class="bar-bg"><div class="bar-fill" id="barFill"></div></div>
+</div>
+
+<div class="section-label">חלק א׳ – רב-ברירה</div>
+
+<div class="q-card" id="card1">
+  <div class="q-badge">שאלה 1</div>
+  <div class="q-text">מה הם אנדורפינים לפי הטקסט?</div>
+  <div class="options" id="opts1">
+    <button class="opt-btn" onclick="pickMC(1,0,1)"><span class="opt-letter">א</span>חיידקים שגורמים למחלות</button>
+    <button class="opt-btn" onclick="pickMC(1,1,1)"><span class="opt-letter">ב</span>הורמוני האושר שמשחרר המוח</button>
+    <button class="opt-btn" onclick="pickMC(1,2,1)"><span class="opt-letter">ג</span>שרירים שעובדים בזמן צחוק</button>
+    <button class="opt-btn" onclick="pickMC(1,3,1)"><span class="opt-letter">ד</span>סוג של תרופה כימית</button>
+  </div>
+  <div class="feedback" id="fb1"></div>
+</div>
+
+<div class="q-card" id="card2">
+  <div class="q-badge">שאלה 2</div>
+  <div class="q-text">למה לפעמים הבטן כואבת מצחוק?</div>
+  <div class="options" id="opts2">
+    <button class="opt-btn" onclick="pickMC(2,0,2)"><span class="opt-letter">א</span>כי הצחוק מזיק לקיבה</button>
+    <button class="opt-btn" onclick="pickMC(2,1,2)"><span class="opt-letter">ב</span>כי האנדורפינים עוברים דרך הבטן</button>
+    <button class="opt-btn" onclick="pickMC(2,2,2)"><span class="opt-letter">ג</span>כי שרירי הבטן עובדים קשה בזמן צחוק</button>
+    <button class="opt-btn" onclick="pickMC(2,3,2)"><span class="opt-letter">ד</span>כי הנשימה נעצרת</button>
+  </div>
+  <div class="feedback" id="fb2"></div>
+</div>
+
+<div class="q-card" id="card3">
+  <div class="q-badge">שאלה 3</div>
+  <div class="q-text">כמה פעמים ביום צוחקים ילדים בממוצע?</div>
+  <div class="options" id="opts3">
+    <button class="opt-btn" onclick="pickMC(3,0,3)"><span class="opt-letter">א</span>15 פעמים</button>
+    <button class="opt-btn" onclick="pickMC(3,1,3)"><span class="opt-letter">ב</span>100 פעמים</button>
+    <button class="opt-btn" onclick="pickMC(3,2,3)"><span class="opt-letter">ג</span>200 פעמים</button>
+    <button class="opt-btn" onclick="pickMC(3,3,3)"><span class="opt-letter">ד</span>400 פעמים</button>
+  </div>
+  <div class="feedback" id="fb3"></div>
+</div>
+
+<div class="q-card" id="card4">
+  <div class="q-badge">שאלה 4</div>
+  <div class="q-text">מה קורה למוח בזמן צחוק לפי הטקסט?</div>
+  <div class="options" id="opts4">
+    <button class="opt-btn" onclick="pickMC(4,0,1)"><span class="opt-letter">א</span>הוא נרגע ונכנס לשינה</button>
+    <button class="opt-btn" onclick="pickMC(4,1,1)"><span class="opt-letter">ב</span>מגיע אליו יותר חמצן והוא מתעורר</button>
+    <button class="opt-btn" onclick="pickMC(4,2,1)"><span class="opt-letter">ג</span>הוא מפסיק לעבוד כמה שניות</button>
+    <button class="opt-btn" onclick="pickMC(4,3,1)"><span class="opt-letter">ד</span>הוא מתחמם ועלולים להיות כאבי ראש</button>
+  </div>
+  <div class="feedback" id="fb4"></div>
+</div>
+
+<div class="q-card" id="card5">
+  <div class="q-badge">שאלה 5</div>
+  <div class="q-text">מה הטקסט משווה לצחוק?</div>
+  <div class="options" id="opts5">
+    <button class="opt-btn" onclick="pickMC(5,0,2)"><span class="opt-letter">א</span>לשינה עמוקה</button>
+    <button class="opt-btn" onclick="pickMC(5,1,2)"><span class="opt-letter">ב</span>לאכילת ירקות</button>
+    <button class="opt-btn" onclick="pickMC(5,2,2)"><span class="opt-letter">ג</span>לאימון ספורט ולתרופה טבעית</button>
+    <button class="opt-btn" onclick="pickMC(5,3,2)"><span class="opt-letter">ד</span>לנשימות עמוקות בלבד</button>
+  </div>
+  <div class="feedback" id="fb5"></div>
+</div>
+
+<div class="section-label" style="margin-top:24px">חלק ב׳ – נכון או לא נכון</div>
+
+<div class="q-card" id="card6">
+  <div class="q-badge">שאלה 6</div>
+  <div class="q-text">אנדורפינים יכולים לעזור לנו להיות פחות חולות.</div>
+  <div class="tf-row">
+    <button class="tf-btn" id="tf6t" onclick="pickTF(6,true,true)">✅ נכון</button>
+    <button class="tf-btn" id="tf6f" onclick="pickTF(6,false,true)">❌ לא נכון</button>
+  </div>
+  <div class="feedback" id="fb6"></div>
+</div>
+
+<div class="q-card" id="card7">
+  <div class="q-badge">שאלה 7</div>
+  <div class="q-text">מבוגרים צוחקים יותר פעמים ביום מאשר ילדים.</div>
+  <div class="tf-row">
+    <button class="tf-btn" id="tf7t" onclick="pickTF(7,true,false)">✅ נכון</button>
+    <button class="tf-btn" id="tf7f" onclick="pickTF(7,false,false)">❌ לא נכון</button>
+  </div>
+  <div class="feedback" id="fb7"></div>
+</div>
+
+<div class="q-card" id="card8">
+  <div class="q-badge">שאלה 8</div>
+  <div class="q-text">בזמן צחוק הלב פועם מהר יותר והנשימה מואצת.</div>
+  <div class="tf-row">
+    <button class="tf-btn" id="tf8t" onclick="pickTF(8,true,true)">✅ נכון</button>
+    <button class="tf-btn" id="tf8f" onclick="pickTF(8,false,true)">❌ לא נכון</button>
+  </div>
+  <div class="feedback" id="fb8"></div>
+</div>
+
+<div class="q-card" id="card9">
+  <div class="q-badge">שאלה 9</div>
+  <div class="q-text">צחוק מחליש את מערכת החיסון של הגוף.</div>
+  <div class="tf-row">
+    <button class="tf-btn" id="tf9t" onclick="pickTF(9,true,false)">✅ נכון</button>
+    <button class="tf-btn" id="tf9f" onclick="pickTF(9,false,false)">❌ לא נכון</button>
+  </div>
+  <div class="feedback" id="fb9"></div>
+</div>
+
+<div class="q-card" id="card10">
+  <div class="q-badge">שאלה 10</div>
+  <div class="q-text">לפי הטקסט, ככל שגדלים – צוחקים פחות.</div>
+  <div class="tf-row">
+    <button class="tf-btn" id="tf10t" onclick="pickTF(10,true,true)">✅ נכון</button>
+    <button class="tf-btn" id="tf10f" onclick="pickTF(10,false,true)">❌ לא נכון</button>
+  </div>
+  <div class="feedback" id="fb10"></div>
+</div>
+
+<div class="submit-wrap">
+  <button class="submit-btn" id="submitBtn" disabled onclick="showResults()">📊 בדקי את הציון שלך</button>
+</div>
+
+<div class="results-card" id="resultsCard">
+  <div class="res-emoji" id="resEmoji"></div>
+  <div class="res-stars" id="resStars"></div>
+  <div class="res-score" id="resScore"></div>
+  <div class="res-msg" id="resMsg"></div>
+  <div style="margin-bottom:16px">
+    <input class="name-input" type="text" id="studentName" placeholder="כתבי את שמך כאן..." />
+    <button class="wa-btn" onclick="sendWhatsApp()">📲 שלחי ציון למורה בוואטסאפ</button>
+  </div>
+  <button class="retry-btn" onclick="location.reload()">🔄 נסי שוב</button>
+</div>
+
+<script>
+var answered = {};
+var score = 0;
+var TOTAL = 10;
+
+function updateProgress() {
+  var count = Object.keys(answered).length;
+  document.getElementById('progressText').textContent = count + ' / ' + TOTAL;
+  document.getElementById('barFill').style.width = (count / TOTAL * 100) + '%';
+  document.getElementById('submitBtn').disabled = (count < TOTAL);
+}
+
+function showFB(n, isCorrect, correctLabel) {
+  var fb = document.getElementById('fb' + n);
+  fb.className = 'feedback show ' + (isCorrect ? 'fb-correct' : 'fb-wrong');
+  fb.textContent = isCorrect
+    ? '✅ כל הכבוד! תשובה נכונה!'
+    : '❌ לא בדיוק. התשובה הנכונה: ' + correctLabel;
+}
+
+function pickMC(n, chosen, correct) {
+  if (answered[n]) return;
+  answered[n] = true;
+  var btns = document.getElementById('opts' + n).getElementsByTagName('button');
+  var letters = ['א','ב','ג','ד'];
+  var isCorrect = (chosen === correct);
+  if (isCorrect) score++;
+  for (var i = 0; i < btns.length; i++) {
+    btns[i].disabled = true;
+    if (i === chosen && isCorrect)   btns[i].classList.add('hl-correct');
+    if (i === chosen && !isCorrect)  btns[i].classList.add('hl-wrong');
+    if (i === correct && !isCorrect) btns[i].classList.add('hl-correct');
+  }
+  document.getElementById('card' + n).classList.add(isCorrect ? 'done-correct' : 'done-wrong');
+  showFB(n, isCorrect, letters[correct]);
+  updateProgress();
+}
+
+function pickTF(n, chosen, correct) {
+  if (answered[n]) return;
+  answered[n] = true;
+  var tBtn = document.getElementById('tf' + n + 't');
+  var fBtn = document.getElementById('tf' + n + 'f');
+  tBtn.disabled = true;
+  fBtn.disabled = true;
+  var isCorrect = (chosen === correct);
+  if (isCorrect) score++;
+  var chosenBtn = chosen ? tBtn : fBtn;
+  var correctBtn = correct ? tBtn : fBtn;
+  chosenBtn.classList.add(isCorrect ? 'hl-correct' : 'hl-wrong');
+  if (!isCorrect) correctBtn.classList.add('hl-correct');
+  document.getElementById('card' + n).classList.add(isCorrect ? 'done-correct' : 'done-wrong');
+  showFB(n, isCorrect, correct ? 'נכון' : 'לא נכון');
+  updateProgress();
+}
+
+function toggleRead() {
+  var txt = document.getElementById('readText');
+  var btn = document.getElementById('toggleBtn');
+  var open = txt.classList.toggle('open');
+  btn.textContent = open ? '▲ הסתרי' : '▼ קראי עוד';
+}
+
+function sendWhatsApp() {
+  var name = document.getElementById('studentName').value.trim();
+  if (!name) { alert('אנא כתבי את שמך לפני השליחה 😊'); return; }
+  var pct = Math.round((score / TOTAL) * 100);
+  var msg = 'שלום! אני ' + name + ' סיימתי את השאלון על צחוק והגוף.\nציון: ' + score + ' מתוך ' + TOTAL + ' (' + pct + '%) 😄';
+  window.open('https://wa.me/972529577005?text=' + encodeURIComponent(msg), '_blank');
+}
+
+function showResults() {
+  var card = document.getElementById('resultsCard');
+  card.classList.add('show');
+  document.getElementById('resScore').textContent = score + ' / ' + TOTAL;
+  var emoji, stars, msg;
+  if (score === 10)    { emoji='🏆'; stars='⭐⭐⭐⭐⭐'; msg='מושלם! את אלופה אמיתית!'; }
+  else if (score >= 8) { emoji='🌟'; stars='⭐⭐⭐⭐';   msg='עבודה מצוינת! כמעט מושלמת!'; }
+  else if (score >= 6) { emoji='😊'; stars='⭐⭐⭐';     msg='יפה מאוד! קראי שוב את הטקסט לשיפור.'; }
+  else if (score >= 4) { emoji='💪'; stars='⭐⭐';       msg='יש על מה לעבוד – נסי שוב!'; }
+  else                 { emoji='📖'; stars='⭐';         msg='כדאי לקרוא את הטקסט שוב בעיון.'; }
+  document.getElementById('resEmoji').textContent = emoji;
+  document.getElementById('resStars').textContent = stars;
+  document.getElementById('resMsg').textContent = msg;
+  card.scrollIntoView({ behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
