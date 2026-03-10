@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>עבודת הבנת הנקרא – האם משחקי מחשב חשובים מציוד רפואי?</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&family=Assistant:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --pink: #c026d3;
+    --purple: #7c3aed;
+    --violet: #5b21b6;
+    --lavender: #f5f3ff;
+    --mint: #059669;
+    --coral: #e11d48;
+    --gold: #d97706;
+    --bg: #faf5ff;
+    --card: #ffffff;
+    --card2: #fdf4ff;
+    --text: #1e0a3c;
+    --muted: #6d28d9;
+    --border: rgba(124,58,237,0.2);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Heebo', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 15% 15%, rgba(192,38,211,0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 85% 85%, rgba(124,58,237,0.06) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 5%, rgba(167,139,250,0.1) 0%, transparent 40%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .stars { display: none; }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  /* ===== HEADER ===== */
+  .header {
+    text-align: center;
+    padding: 40px 20px 20px;
+    animation: fadeDown 0.8s ease;
+  }
+  @keyframes fadeDown { from { opacity:0; transform:translateY(-30px);} to { opacity:1; transform:translateY(0);} }
+
+  .header-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--purple), var(--pink));
+    padding: 6px 20px;
+    border-radius: 50px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    margin-bottom: 16px;
+    box-shadow: 0 0 20px rgba(244,114,182,0.4);
+  }
+
+  .header h1 {
+    font-size: clamp(22px, 5vw, 38px);
+    font-weight: 900;
+    background: linear-gradient(135deg, #7c3aed, #c026d3, #db2777);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.3;
+    margin-bottom: 12px;
+  }
+
+  .header p {
+    color: var(--muted);
+    font-size: 15px;
+    font-weight: 400;
+  }
+
+  .progress-bar-wrap {
+    background: #ede9fe;
+    border-radius: 50px;
+    height: 8px;
+    margin: 24px 0 8px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--violet), var(--purple), var(--pink));
+    border-radius: 50px;
+    transition: width 0.5s ease;
+    box-shadow: 0 0 10px rgba(192,38,211,0.3);
+  }
+  .progress-text {
+    font-size: 12px;
+    color: var(--muted);
+    text-align: left;
+    font-weight: 500;
+  }
+
+  /* ===== TABS ===== */
+  .tabs {
+    display: flex;
+    gap: 8px;
+    margin: 24px 0 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .tab-btn {
+    background: white;
+    border: 1.5px solid var(--border);
+    color: var(--muted);
+    padding: 8px 16px;
+    border-radius: 50px;
+    font-family: 'Heebo', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 1px 4px rgba(124,58,237,0.1);
+  }
+  .tab-btn:hover { background: #ede9fe; color: var(--violet); border-color: var(--purple); }
+  .tab-btn.active {
+    background: linear-gradient(135deg, var(--violet), var(--purple));
+    border-color: var(--purple);
+    color: white;
+    box-shadow: 0 4px 15px rgba(124,58,237,0.35);
+  }
+  .tab-btn.done {
+    border-color: var(--mint);
+    color: var(--mint);
+    background: #f0fdf4;
+  }
+  .tab-btn.done::after { content: ' ✓'; }
+
+  /* ===== PANELS ===== */
+  .panel { display: none; animation: fadeIn 0.4s ease; }
+  .panel.active { display: block; }
+  @keyframes fadeIn { from {opacity:0; transform:translateY(10px);} to {opacity:1; transform:translateY(0);} }
+
+  /* ===== TEXT CARD ===== */
+  .text-card {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 20px;
+    padding: 24px 28px;
+    font-family: 'Assistant', sans-serif;
+    color: #2d1b4e;
+    box-shadow: 0 4px 30px rgba(124,58,237,0.1), 0 1px 8px rgba(0,0,0,0.06);
+    position: relative;
+    overflow-x: auto;
+  }
+  .text-card::before {
+    content: '""';
+    position: absolute;
+    top: 10px; right: 20px;
+    font-size: 80px;
+    color: rgba(124,58,237,0.06);
+    font-family: serif;
+    line-height: 1;
+  }
+  .text-card h2 {
+    font-size: 18px;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--purple), var(--pink));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 20px;
+  }
+
+  /* Numbered lines */
+  .text-lines { }
+  .text-line {
+    display: flex;
+    gap: 10px;
+    align-items: baseline;
+    line-height: 1.9;
+  }
+  .line-num {
+    flex-shrink: 0;
+    width: 22px;
+    text-align: left;
+    font-size: 10px;
+    color: #a78bfa;
+    font-weight: 700;
+    user-select: none;
+    font-family: monospace;
+    line-height: 1.9;
+  }
+  .line-text {
+    font-size: 14px;
+    line-height: 1.9;
+    white-space: nowrap;
+  }
+
+  /* ===== QUESTION CARD ===== */
+  .q-card {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 20px;
+    padding: 24px 28px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 20px rgba(124,58,237,0.08), 0 1px 4px rgba(0,0,0,0.05);
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  .q-card:hover { border-color: var(--purple); box-shadow: 0 6px 28px rgba(124,58,237,0.15); }
+
+  .q-label {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--violet), var(--purple));
+    color: white;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 3px 12px;
+    border-radius: 50px;
+    margin-bottom: 12px;
+  }
+
+  .q-text {
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.7;
+    margin-bottom: 16px;
+    color: #1e0a3c;
+  }
+
+  .q-quote {
+    background: #faf5ff;
+    border-right: 3px solid var(--purple);
+    padding: 10px 16px;
+    border-radius: 0 8px 8px 0;
+    font-size: 14px;
+    color: #4c1d95;
+    margin-bottom: 16px;
+    line-height: 1.8;
+  }
+
+  /* ===== CHOICES ===== */
+  .choices { display: flex; flex-direction: column; gap: 10px; }
+
+  .choice-btn {
+    background: #faf5ff;
+    border: 1.5px solid rgba(124,58,237,0.2);
+    border-radius: 12px;
+    padding: 12px 18px;
+    text-align: right;
+    font-family: 'Heebo', sans-serif;
+    font-size: 14.5px;
+    color: #3b0764;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .choice-btn:hover:not(:disabled) {
+    background: #ede9fe;
+    border-color: var(--purple);
+    color: var(--violet);
+    transform: translateX(-3px);
+    box-shadow: 0 2px 12px rgba(124,58,237,0.15);
+  }
+  .choice-btn.selected {
+    border-color: var(--purple);
+    background: #ede9fe;
+    color: var(--violet);
+  }
+  .choice-btn.correct {
+    border-color: var(--mint);
+    background: #f0fdf4;
+    color: var(--mint);
+  }
+  .choice-btn.wrong {
+    border-color: var(--coral);
+    background: #fff1f2;
+    color: var(--coral);
+  }
+  .choice-btn:disabled { cursor: default; }
+
+  .choice-dot {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    border: 2px solid currentColor;
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    transition: all 0.2s;
+  }
+  .choice-btn.selected .choice-dot,
+  .choice-btn.correct .choice-dot { background: currentColor; color: var(--bg); }
+
+  .feedback-msg {
+    margin-top: 10px;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    display: none;
+  }
+  .feedback-msg.show { display: block; }
+  .feedback-msg.ok { background: #f0fdf4; color: var(--mint); border: 1px solid #bbf7d0; }
+  .feedback-msg.bad { background: #fff1f2; color: var(--coral); border: 1px solid #fecdd3; }
+
+  /* ===== OPEN QUESTIONS ===== */
+  textarea {
+    width: 100%;
+    background: #faf5ff;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-family: 'Heebo', sans-serif;
+    font-size: 14px;
+    color: #1e0a3c;
+    resize: vertical;
+    min-height: 100px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    line-height: 1.8;
+    direction: rtl;
+  }
+  textarea:focus { outline: none; border-color: var(--purple); box-shadow: 0 0 0 3px rgba(124,58,237,0.1); }
+  textarea::placeholder { color: #a78bfa; }
+
+  /* ===== FILL BLANKS ===== */
+  .fill-row {
+    background: #faf5ff;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin-bottom: 12px;
+    line-height: 2;
+    font-size: 14.5px;
+    color: #2d1b4e;
+  }
+  .fill-row input {
+    background: #ede9fe;
+    border: none;
+    border-bottom: 2px solid var(--purple);
+    color: var(--violet);
+    font-family: 'Heebo', sans-serif;
+    font-size: 14px;
+    padding: 2px 8px;
+    min-width: 120px;
+    text-align: center;
+    direction: rtl;
+    transition: border-color 0.2s;
+    border-radius: 4px 4px 0 0;
+  }
+  .fill-row input:focus { outline: none; border-bottom-color: var(--pink); background: #f5f3ff; }
+
+  /* ===== BUTTONS ===== */
+  .btn-primary {
+    background: linear-gradient(135deg, var(--violet), var(--purple), var(--pink));
+    border: none;
+    color: white;
+    font-family: 'Heebo', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    padding: 13px 32px;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 20px rgba(168,85,247,0.4);
+    letter-spacing: 0.5px;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 30px rgba(168,85,247,0.6); }
+  .btn-primary:active { transform: translateY(0); }
+
+  .btn-secondary {
+    background: rgba(255,255,255,0.07);
+    border: 1.5px solid var(--border);
+    color: var(--muted);
+    font-family: 'Heebo', sans-serif;
+    font-size: 14px;
+    padding: 11px 24px;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-secondary:hover { background: rgba(255,255,255,0.12); color: white; }
+
+  .nav-btns {
+    display: flex;
+    gap: 12px;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 24px;
+    flex-wrap: wrap;
+  }
+
+  /* ===== SCORE PAGE ===== */
+  .score-page {
+    text-align: center;
+    padding: 40px 20px;
+    animation: popIn 0.6s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  @keyframes popIn { from { opacity:0; transform:scale(0.7); } to { opacity:1; transform:scale(1); } }
+
+  .score-circle {
+    width: 160px; height: 160px;
+    margin: 0 auto 28px;
+    border-radius: 50%;
+    background: conic-gradient(from 0deg, var(--purple) var(--pct), #ede9fe var(--pct));
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+    box-shadow: 0 0 40px rgba(124,58,237,0.25);
+  }
+  .score-circle::before {
+    content: '';
+    position: absolute;
+    inset: 10px;
+    background: white;
+    border-radius: 50%;
+  }
+  .score-inner {
+    position: relative;
+    z-index: 1;
+    font-size: 42px;
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--purple), var(--pink));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .score-grade {
+    font-size: 28px;
+    font-weight: 900;
+    margin-bottom: 8px;
+    color: #1e0a3c;
+  }
+  .score-msg {
+    color: var(--muted);
+    font-size: 15px;
+    margin-bottom: 28px;
+  }
+
+  .score-breakdown {
+    background: white;
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
+    padding: 20px 24px;
+    margin: 20px 0;
+    text-align: right;
+    box-shadow: 0 2px 12px rgba(124,58,237,0.08);
+  }
+  .score-breakdown h3 {
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 12px;
+    font-weight: 600;
+  }
+  .score-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #f3e8ff;
+    font-size: 14px;
+    color: #2d1b4e;
+  }
+  .score-item:last-child { border-bottom: none; }
+  .score-item span:last-child {
+    font-weight: 700;
+    color: var(--mint);
+  }
+
+  /* WHATSAPP SECTION */
+  .email-section {
+    background: white;
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    margin-top: 24px;
+    text-align: right;
+    box-shadow: 0 2px 12px rgba(124,58,237,0.08);
+  }
+  .email-section h3 {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: var(--purple);
+  }
+  .input-row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 14px;
+  }
+  .input-row label {
+    font-size: 13px;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .input-row input {
+    background: #faf5ff;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 14px;
+    color: #1e0a3c;
+    font-family: 'Heebo', sans-serif;
+    font-size: 14px;
+    direction: rtl;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .input-row input:focus { outline: none; border-color: var(--purple); box-shadow: 0 0 0 3px rgba(124,58,237,0.1); }
+
+  .wa-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #25d366, #128c7e);
+    border: none;
+    color: white;
+    font-family: 'Heebo', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    padding: 14px 32px;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 20px rgba(37,211,102,0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 8px;
+  }
+  .wa-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(37,211,102,0.5); }
+  .wa-btn:active { transform: translateY(0); }
+
+  .send-success {
+    background: #f0fdf4;
+    border: 1px solid var(--mint);
+    border-radius: 10px;
+    padding: 14px;
+    color: var(--mint);
+    font-size: 14px;
+    text-align: center;
+    display: none;
+    margin-top: 12px;
+  }
+  .send-success.show { display: block; animation: fadeIn 0.4s; }
+
+  /* ===== CONFETTI ===== */
+  .confetti-piece {
+    position: fixed;
+    width: 8px; height: 8px;
+    top: -10px;
+    pointer-events: none;
+    z-index: 999;
+    border-radius: 2px;
+    animation: fall var(--dur) ease-in forwards;
+  }
+  @keyframes fall {
+    to { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+  }
+
+  /* ===== EMOJI DECORATION ===== */
+  .deco { font-size: 18px; margin-left: 6px; }
+
+  .section-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #ddd6fe, transparent);
+    margin: 20px 0;
+  }
+
+  .btn-secondary {
+    background: white;
+    border: 1.5px solid var(--border);
+    color: var(--muted);
+    font-family: 'Heebo', sans-serif;
+    font-size: 14px;
+    padding: 11px 24px;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 1px 4px rgba(124,58,237,0.1);
+  }
+  .btn-secondary:hover { background: #ede9fe; color: var(--violet); border-color: var(--purple); }
+
+  /* Scroll to top */
+  @media (max-width: 600px) {
+    .text-card { padding: 18px 16px; font-size: 14px; }
+    .q-card { padding: 16px 18px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="stars" id="stars"></div>
+
+<div class="container">
+  <div class="header">
+    <div class="header-badge">✨ הבנת הנקרא</div>
+    <h1>האם משחקי מחשב חשובים<br>מציוד רפואי מתוחכם?</h1>
+    <p>קראי את הטקסט, ענִי על השאלות, וקבלי ציון בסוף 🎯</p>
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+    </div>
+    <div class="progress-text" id="progressText">0 מתוך 9 חלקים הושלמו</div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs" id="tabsContainer">
+    <button class="tab-btn active" onclick="goTo('text')">📖 הטקסט</button>
+    <button class="tab-btn" onclick="goTo('q1')">שאלה 1</button>
+    <button class="tab-btn" onclick="goTo('q2')">שאלה 2</button>
+    <button class="tab-btn" onclick="goTo('q3')">שאלה 3</button>
+    <button class="tab-btn" onclick="goTo('q4')">שאלה 4</button>
+    <button class="tab-btn" onclick="goTo('q5')">שאלה 5</button>
+    <button class="tab-btn" onclick="goTo('q6')">שאלה 6</button>
+    <button class="tab-btn" onclick="goTo('q7')">שאלה 7</button>
+    <button class="tab-btn" onclick="goTo('q8')">שאלה 8</button>
+    <button class="tab-btn" onclick="goTo('q9')">שאלה 9</button>
+    <button class="tab-btn" onclick="goTo('score')" id="scoreTab" style="display:none">🏆 ציון</button>
+  </div>
+
+  <!-- ===== PANEL: TEXT ===== -->
+  <div class="panel active" id="panel-text">
+    <div class="text-card">
+      <h2>האם משחקי מחשב חשובים מציוד רפואי מתוחכם?</h2>
+      <div class="text-lines" id="textLines"></div>
+    </div>
+    <div class="nav-btns">
+      <span></span>
+      <button class="btn-primary" onclick="goTo('q1')">לשאלה הראשונה ←</button>
+    </div>
+  </div>
+
+  <!-- ===== Q1 ===== -->
+  <div class="panel" id="panel-q1">
+    <div class="q-card">
+      <div class="q-label">שאלה 1</div>
+      <div class="q-text">(1) ציינו לפי הטקסט שני תחומים שמשקיעים בהם כספים.</div>
+      <textarea id="q1a" placeholder="כתבי כאן את שני התחומים..."></textarea>
+      <div class="section-divider"></div>
+      <div class="q-text">(2) ציינו לפי הטקסט תחום אחד שאין משקיעים בו מספיק כספים.</div>
+      <textarea id="q1b" placeholder="כתבי כאן את התחום..."></textarea>
+    </div>
+    <div class="nav-btns">
+      <button class="btn-secondary" onclick="goTo('text')">→ חזרה לטקסט</button>
+      <button class="btn-primary" onclick="saveOpen('q1');goTo('q2')">הבאה ←</button>
+    </div>
+  </div>
+
+  <!-- ===== Q2 ===== -->
+  <div class="panel" id="panel-q2">
+    <div class="q-card">
+      <div class="q-label">שאלה 2</div>
+      <div class="q-text">לפניכם ארבעה משפטים. איזה מהם מציג את יחסו של הכותב למשחקים?</div>
+      <div class="choices" id="choices-q2">
+        <button class="choice-btn" onclick="choose('q2',this,false)"><span class="choice-dot">א</span>הכותב חושב שמשחקים מזיקים לאנשים המשקיעים בהם הון.</button>
+        <button class="choice-btn" onclick="choose('q2',this,false)"><span class="choice-dot">ב</span>הכותב חושב שמשחקים הם הדבר החשוב ביותר לבני אדם.</button>
+        <button class="choice-btn" onclick="choose('q2',this,true)"><span class="choice-dot">ג</span>הכותב אינו מתלהב במיוחד ממשחקים, אך אינו מזלזל בערכם.</button>
+        <button class="choice-btn" onclick="choose('q2',this,false)"><span class="choice-dot">ד</span>הכותב מתלהב ממשחקים, אך אינו מרבה לשחק בהם בעצמו.</button>
+      </div>
+      <div class="feedback-msg" id="fb-q2"></div>
+    </div>
+    <div class="nav-btns">
+      <button class="btn-secondary" onclick="goTo('q1')">→ הקודמת</button>
+      <button class="btn-primary" onclick="goTo('q3')">הבאה ←</button>
+    </div>
+  </div>
+
+  <!-- ===== Q3 ===== -->
+  <div class="panel" id="panel-q3">
+    <div class="q-card">
+      <div class="q-label">שאלה 3א</div>
+      <div class="q-quote">שורות 7–10: "מפריע לי שאין שום קושי לגייס 100 מיליון דולר ליצירת סרט הרפתקאות מבַדֵר, אבל אי־אפשר לגייס סכום דומה כדי לבער את מחלת המלריה..."</div>
+      <div class="q-text">הכותב פותח במילים "מפריע לי". מה מפריע לכותב?</div>
+      <div class="choices" id="choices-q3a">
+        <button class="choice-btn" onclick="choose('q3a',this,false)"><span class="choice-dot">א</span>גיוס כספים מועטים ליצירת סרט הרפתקאות לצורכי בידור.</button>
+        <button class="choice-btn" onclick="choose('q3a',this,false)"><span class="choice-dot">ב</span>גיוס כספים מרובים לביעור מחלת המלריה בארצות עניות.</button>
+        <button class="choice-btn" onclick="choose('q3a',this,false)"><span class="choice-dot">ג</span>גיוס כספים מועטים גם כדי לסייע לארצות עניות וגם לצורכי בידור.</button>
+        <button class="choice-btn" onclick="choose('q3a',this,true)"><span class="choice-dot">ד</span>גיוס כספים מרובים ליצירת סרט הרפתקאות ולא לביעור המלריה.</button>
+      </div>
+      <div class="feedback-msg" id="fb-q3a"></div>
+    </div>
+    <div class="q-card" style="margin-top:16px">
+      <div class="q-label">שאלה 3ב</div>
+      <div class="q-quote">שורות 22–24: "אני משוכנע כי לו רק חלק קטן מן הכסף... היה מושקע באלקטרוניקה רפואית, היינו רואים התקדמות דרמטית..."</div>
+      <div class="q-text">באילו מילים אפשר להחליף את המילה "לו" במשפט זה?</div>
+      <div class="choices" id="choices-q3b">
+        <button class="choice-btn" onclick="choose('q3b',this,false)"><span class="choice-dot">א</span>מכיוון ש</button>
+        <button class="choice-btn" onclick="choose('q3b',this,false)"><span class="choice-dot">ב</span>בכל זאת</button>
+        <button class="choice-btn" onclick="choose('q3b',this,true)"><span class="choice-dot">ג</span>גם אם</button>
+        <button class="choice-btn" onclick="choose('q3b',this,false)"><span class="choice-dot">ד</span>למרות זאת</button>
+      </div>
+      <div class="feedback-msg" id="fb-q3b"></div>
+    </div>
+    <div class="nav-btns">
+      <button class="btn-secondary" onclick="goTo('q2')">→ הקודמת</button>
+      <button class="btn-primary" onclick="goTo('q4')">הבאה ←</button>
+    </div>
+  </div>
+
+  <!-- ===== Q4 ===== -->
+  <div class="panel" id="panel-q4">
+    <div class="q-card">
+      <div class="q-label">שאלה 4</div>
+      <div class="q-text">המילה "משאבים" מופיעה פעמים אחדות בטקסט. מה פירוש המילה "משאבים" בטקסט?</div>
+      <div class="choices" id="choices-q4">
+        <button class="choice-btn" onclick="choose('q4',this,false)"><span class="choice-dot">א</span>משחקים</button>
+        <button class="choice-btn" onclick="choose('q4',this,true)"><span class="choice-dot">ב</span>כספים</button>
+        <button class="choice-btn" onclick="choose('q4',this,false)"><span class="choice-dot">ג</span>פתרונות</button>
+        <button class="choice-btn" onclick="choose('q4',this,false)"><span class="choice-dot">ד</span>מכשירים</button>
+      </div>
+      <div class="feedback-msg" id="fb-q4"></div>
+    </div>
+    <div class="nav-btns">
+      <button class="btn-secondary" onclick="goTo('q3')">→ הקודמת</button>
+      <button class="btn-primary" onclick="goTo('q5')">הבאה ←</button>
+    </div>
+  </div>
+
+  <!-- ===== Q5 ===== -->
+  <div class="panel" id="panel-q5">
+    <div class="q-card">
+      <div class="q-label">שאלה 5</div>
+      <div class="q-text">מהי הבעיה המוצגת בשורות 22–27?</div>
+      <div class="choices" id="choices-q5">
+        <button class="choice-btn" onclick="choose('q5',this,true)"><span class="choice-dot">א</span>אין משקיעים מספיק כספים בפיתוח ציוד רפואי לנכים.</button>
+        <button class="choice-btn" onclick="choose('q5',this,false)"><span class="choice-dot">ב</span>משקיעים כספים רבים מדי בתחום ההנדסה הרפואית.</button>
+        <button class="choice-btn" onclick="choose('q5',this,false)"><span class="choice-dot">ג</span>אין משקיעים מספיק כספים בפיתוח משחקי מחשב.</button>
+        <button class="choice-btn" onclick="choose('q5',this,false)"><span class="choice-dot">ד</span>משקיעים כספים רבים מדי בתחום האלקטרוניקה הרפואית.</button>
+      </div>
+      <div class="feedback-msg" id="fb-q5"></div>
+    </div>
+    <div class="nav-btns">
+      <button class="btn-secondary" onclick="goTo('q4')">→ הקודמת</button>
+      <button class="btn-primary" onclick="goTo('q6')">הבאה ←</button>
+    </div>
+  </div>
+
+  <!-- ===== Q6 ===== -->
+  <div class="panel" id="panel-q6">
+    <div class="q-card">
+      <div class="q-label">שאלה 6</div>
+      <div class="q-quote">"...אבל אסור לשכוח שמשחקים הם החמאה שעל הלחם"</div>
+      <div class="q-text">מהי המשמעות של הביטוי "החמאה שעל הלחם" בקטע הזה?</div>
+      <div class="choices" id="choices-q6">
+        <button class="choice-btn" onclick="choose('q6',this,false)"><span class="choice-dot">א</span>תוספת חשובה</button>
+        <button class="choice-btn" onclick="choose('q6',this,false)"><span class="choice-dot">ב</span>מִצרך חיוני מאוד</button>
+        <button class="choice-btn" onclick="choose('q6',this,false)"><span class="choice-dot">ג</span>מִצרך יקר ונדיר</button>
+        <button class="choice-btn" onclick="choose('q6',this,true)"><span class="choice-dot">ד</span>תוספת לא הכרחית</button>
+      </div>
+      <div class="feedback-msg" id="fb-q6"></div>
+    </div>
+    <div class="nav-btns">
+      <button class="btn-secondary" onclick="goTo('q5')">→ הקודמת</button>
+      <button class="btn-primary" onclick="goTo('q7')">הבאה ←</button>
+    </div>
+  </div>
+
+  <!-- ===== Q7 ===== -->
+  <div class="panel" id="panel-q7">
+    <div class="q-card">
+      <div class="q-label">שאלה 7 – שאלת חשיבה</div>
+      <div class="q-text">חברת מחשבים החליטה להשקיע כספים בפיתוח תוכנה למשחקים חדשים. מה לדעתכם היה חושב על כך מחבר הטקסט? נמקי את תשובתך. תוכלי להיעזר בטקסט. (3-4 שורות)</div>
+      <textarea id="q7" placeholder="כתבי את תשובתך כאן..." style="min-height:120px"></textarea>
+    </div>
+    <div class="nav-btns">
+      <button class="btn-secondary" onclick="goTo('q6')">→ הקודמת</button>
+      <button class="btn-primary" onclick="saveOpen('q7');goTo('q8')">הבאה ←</button>
+    </div>
+  </div>
+
+  <!-- ===== Q8 ===== -->
+  <div class="panel" id="panel-q8">
+    <div class="q-card">
+      <div class="q-label">שאלה 8 – פעיל וסביל</div>
+      <div class="q-text">הפכי את הפועל המודגש מפעיל לסביל או מסביל לפעיל:</div>
+      <div class="fill-row">
+        <strong>א.</strong> מחבר הקטע פרסם מאמרים מעניינים ← <input type="text" id="q8a" placeholder="פורסמו / פירסמו"> מאמרים מעניינים בתחום המחשבים על ידי מחבר הקטע.
+      </div>
+      <div class="fill-row">
+        <strong>ב.</strong> מדענים עדיין לא פיתחו ציוד רפואי משוכלל ← ציוד רפואי משוכלל עדיין לא <input type="text" id="q8b" placeholder="פותח / פיתחו">.
+      </div>
+      <div class="fill-row">
+        <strong>ג.</strong> כותב המאמר נשאל על עמדתו ← קוראים <input type="text" id="q8c" placeholder="שאלו / נשאלו"> את כותב המאמר על עמדתו.
+      </div>
+      <div class="fill-row">
+        <strong>ד.</strong> מערכות הקול נבדקות בתאטרון ← טכנאי קול <input type="text" id="q8d" placeholder="בודקים / נבדקים"> את מערכות הקול בתאטרון.
+      </div>
+    </div>
+    <div class="nav-btns">
+      <button class="btn-secondary" onclick="goTo('q7')">→ הקודמת</button>
+      <button class="btn-primary" onclick="saveOpen('q8');goTo('q9')">הבאה ←</button>
+    </div>
+  </div>
+
+  <!-- ===== Q9 ===== -->
+  <div class="panel" id="panel-q9">
+    <div class="q-card">
+      <div class="q-label">שאלה 9 – סיכום</div>
+      <div class="q-text">כתבי סיכום קצר של הטקסט. הציגי את הבעיה שמעלה הכותב ואת ההצעה שלו להתמודד עם הבעיה (7-8 שורות).</div>
+      <textarea id="q9" placeholder="כתבי את הסיכום שלך כאן..." style="min-height:160px"></textarea>
+    </div>
+    <div class="nav-btns">
+      <button class="btn-secondary" onclick="goTo('q8')">→ הקודמת</button>
+      <button class="btn-primary" onclick="finishQuiz()">סיימתי! קבלי ציון 🎉</button>
+    </div>
+  </div>
+
+  <!-- ===== SCORE ===== -->
+  <div class="panel" id="panel-score">
+    <div class="score-page">
+      <div class="score-circle" id="scoreCircle" style="--pct:0%">
+        <div class="score-inner" id="scoreNum">0</div>
+      </div>
+      <div class="score-grade" id="scoreGrade"></div>
+      <div class="score-msg" id="scoreMsg"></div>
+
+      <div class="score-breakdown">
+        <h3>פירוט הניקוד לפי שאלות</h3>
+        <div class="score-item"><span>שאלה 2 – יחס הכותב למשחקים</span><span id="s2">—</span></div>
+        <div class="score-item"><span>שאלה 3א – מה מפריע לכותב</span><span id="s3a">—</span></div>
+        <div class="score-item"><span>שאלה 3ב – משמעות "לו"</span><span id="s3b">—</span></div>
+        <div class="score-item"><span>שאלה 4 – משמעות "משאבים"</span><span id="s4">—</span></div>
+        <div class="score-item"><span>שאלה 5 – הבעיה המוצגת</span><span id="s5">—</span></div>
+        <div class="score-item"><span>שאלה 6 – ביטוי "החמאה שעל הלחם"</span><span id="s6">—</span></div>
+        <div class="score-item"><span>שאלות פתוחות (1,7,8,9)</span><span style="color:var(--gold)">✓ נשמרו</span></div>
+      </div>
+
+      <div class="email-section">
+        <h3>💬 שלחי את הציון למורה בוואטסאפ</h3>
+        <div class="input-row">
+          <label>השם שלך</label>
+          <input type="text" id="studentName" placeholder="שם מלא">
+        </div>
+        <div class="input-row">
+          <label>מספר הטלפון של המורה (עם קידומת, לדוגמה: 0521234567)</label>
+          <input type="tel" id="teacherPhone" placeholder="052..." dir="ltr">
+        </div>
+        <button class="wa-btn" onclick="sendToTeacher()">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          שלחי ציון למורה בוואטסאפ
+        </button>
+        <div class="send-success" id="sendSuccess">
+          ✅ פותח וואטסאפ עם הודעה מוכנה! שלחי אותה למורה שלך.
+        </div>
+      </div>
+
+      <div style="margin-top:20px; display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+        <button class="btn-secondary" onclick="goTo('text')">→ חזרה לתחילת המבחן</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<script>
+// ===== RENDER NUMBERED TEXT - fixed lines =====
+const textLines = [
+  /* 1  */ "קוראים רבים שאלו אותי מדוע במדור שלי אני מביע זלזול במשחקים,",
+  /* 2  */ "ומדוע איני מאמין באנשים המשקיעים הון, זמן וכישרון בבניית",
+  /* 3  */ "מחשבי-על במטרה בלעדית לשחק ולנצח. נכון, אני בעצמי איני מתלהב",
+  /* 4  */ "במיוחד ממשחקים, אך לא זאת הסיבה.",
+  /* 5  */ "ככלל, אינני מזלזל בערכם של משחקים, ולא באנשים המוצאים במשחק",
+  /* 6  */ "מפלט בלתי מזיק ממציאות קשה. מה שמפריע לי הוא שבאופן יחסי",
+  /* 7  */ "משקיעים משאבים בבידור יותר מאשר במטרות חשובות אחרות. מפריע",
+  /* 8  */ "לי שאין שום קושי לגייס 100 מיליון דולר ליצירת סרט הרפתקאות",
+  /* 9  */ "מבַדֵר, אבל אי־אפשר לגייס סכום דומה כדי לבער את מחלת המלריה",
+  /* 10 */ "בארץ טרופית ענייה, או כדי לעצור את האַרבה בשולי המדבר.",
+  /* 11 */ "אם נחזור למחשבים ולמשחקים, מציק לי שהתפתחה תעשייה פורחת",
+  /* 12 */ "של חומרה ושל תוכנה למשחקים, אבל חֶברות מחשבים המנסות ליישם",
+  /* 13 */ "טכנולוגיה מתקדמת ברפואה, עדיין נתקלות בבעיות מימון.",
+  /* 14 */ "מדי שלושה חודשים אנו רואים דור חדש של משחקי מחשב עם תוכנות",
+  /* 15 */ "גרפיקה מדהימות, אבל עדיין לא ראיתי פתרון טכנולוגי שיבטיח",
+  /* 16 */ "\"ראייה מלאכותית\" לעיוורים. קיימים אלפי סוגים של מוטות משחק",
+  /* 17 */ "(ג'ויסטיקס), הֲגָאים, דוושות, מרבדים ומקלדות למשחקים, אבל",
+  /* 18 */ "אין פרוטזות חכמות לקטועי ידיים או רגליים. שחקנים יכולים לבחור",
+  /* 19 */ "בין מאות מערכות קול יוצאות מן הכלל, עם שישה, שבעה, או שמונה",
+  /* 20 */ "ערוצי קול \"שלא מן העולם הזה\", אבל חירשים עדיין צריכים לקרוא",
+  /* 21 */ "שפתיים או תנועות ידיים.",
+  /* 22 */ "אני משוכנע כי לו רק חלק קטן מן הכסף, מן הזמן ומן הכישרון",
+  /* 23 */ "המושקעים בפיתוח חומרה ותוכנה למשחקים היה מושקע באלקטרוניקה",
+  /* 24 */ "רפואית, היינו רואים התקדמות דרמטית באחד התחומים החשובים ביותר",
+  /* 25 */ "לאנושות, בתחום הרפואה. נכון להיום מושקעים משאבים בתחום הרפואה",
+  /* 26 */ "בעיקר לצורך אבחון, אבל לא לפיתוח של ציוד רפואי משוכלל",
+  /* 27 */ "שיסייע לנכים בחיי היומיום.",
+  /* 28 */ "משחקים הם פעילות חשובה לאנשים בכל גיל. משחקים הם גם",
+  /* 29 */ "אחת התעשיות הגדולות בעולם, אם לא הגדולה ביותר. אם נחבר את",
+  /* 30 */ "המשאבים הרבים המושקעים בכל סוגי הבידור, החל בהצגות תאטרון",
+  /* 31 */ "וכלה בכדורגל, נגיע למאות מיליארדי דולרים בשנה. אינני מזלזל",
+  /* 32 */ "חלילה בתחום מרכזי כל־כך בפעילות האנושית, אבל אסור לשכוח",
+  /* 33 */ "שמשחקים הם החמאה שעל הלחם. קודם כול צריך לדאוג שלכולם יהיה",
+  /* 34 */ "לחם, ורק אחר־כך להתחיל לחשוב אם הגיע הזמן להוסיף את החמאה.",
+  /* 35 */ "גם בספורט, שהוא סוג של משחק, נעשה שימוש נרחב בטכנולוגיות",
+  /* 36 */ "מתקדמות כדי להשיג שבריר יתרון לספורטאי והרבה מתח ועניין לצופים.",
+  /* 37 */ "חומרי גלם חדשניים ויקרים מוצאים את דרכם לשלד של אופני מרוץ,",
+  /* 38 */ "למחבטי גולף, למכוניות ספורט ולסירות המשמשות לתחרויות. כל זה",
+  /* 39 */ "בסדר גמור משום שאם הטכנולוגיה כבר קיימת, מדוע לא להשתמש בה",
+  /* 40 */ "גם לדברים \"לא רציניים\"? אני לא רוצה שישקיעו פחות במשחקים",
+  /* 41 */ "אני רק מקווה שיגדילו את ההשקעות בכמה נושאים הנראים לי חשובים",
+  /* 42 */ "יותר, בעיקר בתחום של הנדסה רפואית. לדעתי, ההשקעה המועטה",
+  /* 43 */ "בתחום הזה היא עלבון למין האנושי, מחדל מוסרי שאף פעם לא",
+  /* 44 */ "מיותר להתריע עליו ולזעוק."
+];
+
+function buildNumberedText() {
+  const container = document.getElementById('textLines');
+  textLines.forEach((line, i) => {
+    const row = document.createElement('div');
+    row.className = 'text-line';
+    row.innerHTML = `<span class="line-num">${i + 1}</span><span class="line-text">${line}</span>`;
+    container.appendChild(row);
+  });
+}
+buildNumberedText();
+
+// ===== STATE =====
+const answers = {};
+const completed = new Set();
+const panels = ['text','q1','q2','q3','q4','q5','q6','q7','q8','q9','score'];
+
+function goTo(id) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  // update tabs
+  const tabs = document.querySelectorAll('.tab-btn');
+  tabs.forEach((t, i) => {
+    t.classList.remove('active');
+    const name = panels[i];
+    if (name === id) t.classList.add('active');
+  });
+  window.scrollTo({top: 0, behavior: 'smooth'});
+  updateProgress();
+}
+
+function choose(qid, btn, isCorrect) {
+  const container = document.getElementById('choices-' + qid);
+  if (container.querySelector('.correct') || container.querySelector('.wrong')) return;
+  const fb = document.getElementById('fb-' + qid);
+
+  container.querySelectorAll('.choice-btn').forEach(b => b.disabled = true);
+  btn.classList.add(isCorrect ? 'correct' : 'wrong');
+
+  if (!isCorrect) {
+    container.querySelectorAll('.choice-btn').forEach(b => {
+      if (b.getAttribute('onclick').includes('true')) b.classList.add('correct');
+    });
+  }
+
+  answers[qid] = isCorrect;
+  completed.add(qid);
+
+  fb.textContent = isCorrect ? '✨ נכון מאוד! כל הכבוד!' : '❌ לא מדויק. התשובה הנכונה מסומנת בירוק.';
+  fb.className = 'feedback-msg show ' + (isCorrect ? 'ok' : 'bad');
+
+  markTabDone(qid);
+  updateProgress();
+}
+
+function saveOpen(qid) {
+  // For open questions, only mark done if the user actually wrote something
+  let hasContent = false;
+  if (qid === 'q1') {
+    const a = document.getElementById('q1a').value.trim();
+    const b = document.getElementById('q1b').value.trim();
+    hasContent = a.length > 0 || b.length > 0;
+  } else if (qid === 'q7') {
+    hasContent = document.getElementById('q7').value.trim().length > 0;
+  } else if (qid === 'q8') {
+    const vals = ['q8a','q8b','q8c','q8d'].map(id => document.getElementById(id).value.trim());
+    hasContent = vals.some(v => v.length > 0);
+  } else if (qid === 'q9') {
+    hasContent = document.getElementById('q9').value.trim().length > 0;
+  } else {
+    hasContent = true;
+  }
+  if (hasContent) {
+    completed.add(qid);
+    markTabDone(qid);
+  }
+  updateProgress();
+}
+
+function markTabDone(qid) {
+  const tabMap = {text:0,q1:1,q2:2,q3:3,q4:4,q5:5,q6:6,q7:7,q8:8,q9:9,score:10};
+  // handle sub-questions
+  if (qid === 'q3a' || qid === 'q3b') {
+    if (answers['q3a'] !== undefined && answers['q3b'] !== undefined) {
+      completed.add('q3');
+      const tab = document.querySelectorAll('.tab-btn')[3];
+      if (tab) tab.classList.add('done');
+    }
+    return;
+  }
+  const idx = tabMap[qid];
+  if (idx !== undefined) {
+    const tab = document.querySelectorAll('.tab-btn')[idx];
+    if (tab) tab.classList.add('done');
+  }
+}
+
+function updateProgress() {
+  const mainQ = ['q1','q2','q3a','q3b','q4','q5','q6','q7','q8','q9'];
+  const done = mainQ.filter(q => completed.has(q) || answers[q] !== undefined).length;
+  const pct = Math.round(done / mainQ.length * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressText').textContent = `${done} מתוך ${mainQ.length} חלקים הושלמו`;
+}
+
+function calcScore() {
+  const mcq = {q2:10, q3a:10, q3b:10, q4:10, q5:10, q6:10};
+  let score = 0;
+  for (const [q, pts] of Object.entries(mcq)) {
+    if (answers[q] === true) score += pts;
+    document.getElementById('s' + q.replace('q',''))
+      && (document.getElementById('s' + q.replace('q','').replace('a','').replace('b','')+'a') || document.getElementById('s' + q.replace('q','')))
+    ;
+  }
+  // update breakdown
+  document.getElementById('s2').textContent = answers['q2'] ? '10/10 ✓' : (answers['q2'] === false ? '0/10' : '—');
+  document.getElementById('s3a').textContent = answers['q3a'] ? '10/10 ✓' : (answers['q3a'] === false ? '0/10' : '—');
+  document.getElementById('s3b').textContent = answers['q3b'] ? '10/10 ✓' : (answers['q3b'] === false ? '0/10' : '—');
+  document.getElementById('s4').textContent = answers['q4'] ? '10/10 ✓' : (answers['q4'] === false ? '0/10' : '—');
+  document.getElementById('s5').textContent = answers['q5'] ? '10/10 ✓' : (answers['q5'] === false ? '0/10' : '—');
+  document.getElementById('s6').textContent = answers['q6'] ? '10/10 ✓' : (answers['q6'] === false ? '0/10' : '—');
+  return score;
+}
+
+function finishQuiz() {
+  saveOpen('q9');
+  const score = calcScore();
+  const pct = score;
+
+  // animate circle
+  setTimeout(() => {
+    document.getElementById('scoreCircle').style.setProperty('--pct', pct + '%');
+    document.getElementById('scoreNum').textContent = score;
+  }, 200);
+
+  let grade, msg;
+  if (score >= 90) { grade = '🌟 מצוין!'; msg = 'עבודה מדהימה! את שולטת בחומר ברמה גבוהה מאוד'; }
+  else if (score >= 75) { grade = '👏 טוב מאוד!'; msg = 'תוצאה מרשימה! המשיכי כך'; }
+  else if (score >= 60) { grade = '😊 טוב'; msg = 'תוצאה יפה, עם עוד קצת תרגול תשתפרי אף יותר'; }
+  else { grade = '💪 נסי שוב'; msg = 'חזרי לטקסט, קראי שוב בעיון ונסי שוב – את יכולה!'; }
+
+  document.getElementById('scoreGrade').textContent = grade;
+  document.getElementById('scoreMsg').textContent = msg;
+
+  document.getElementById('scoreTab').style.display = 'inline-block';
+  goTo('score');
+
+  if (score >= 70) launchConfetti();
+}
+
+function launchConfetti() {
+  const colors = ['#f472b6','#a855f7','#818cf8','#34d399','#fbbf24','#fb7185'];
+  for (let i = 0; i < 60; i++) {
+    setTimeout(() => {
+      const c = document.createElement('div');
+      c.className = 'confetti-piece';
+      c.style.cssText = `left:${Math.random()*100}vw;background:${colors[Math.floor(Math.random()*colors.length)]};--dur:${1.5+Math.random()*2}s;animation-delay:0s;transform:rotate(${Math.random()*360}deg)`;
+      document.body.appendChild(c);
+      setTimeout(() => c.remove(), 3500);
+    }, i * 40);
+  }
+}
+
+function sendToTeacher() {
+  const name = document.getElementById('studentName').value.trim();
+  const phone = document.getElementById('teacherPhone').value.trim().replace(/\D/g,'');
+  if (!name || !phone) { alert('נא למלא שם ומספר טלפון של המורה'); return; }
+
+  const score = calcScore();
+  const q1a = document.getElementById('q1a').value || '—';
+  const q1b = document.getElementById('q1b').value || '—';
+  const q7 = document.getElementById('q7').value || '—';
+  const q8a = document.getElementById('q8a').value || '—';
+  const q8b = document.getElementById('q8b').value || '—';
+  const q8c = document.getElementById('q8c').value || '—';
+  const q8d = document.getElementById('q8d').value || '—';
+  const q9 = document.getElementById('q9').value || '—';
+
+  // Build international number (Israel prefix)
+  let intlPhone = phone;
+  if (phone.startsWith('0')) intlPhone = '972' + phone.slice(1);
+
+  const msg = `📚 *עבודת הבנת הנקרא*
+👤 תלמידה: ${name}
+
+🏆 ציון שאלות אמריקאיות: *${score}/60*
+
+━━━━━━━━━━━━━━━
+*שאלות פתוחות:*
+
+*ש1א* – תחומים שמשקיעים בהם:
+${q1a}
+
+*ש1ב* – תחום שאין משקיעים:
+${q1b}
+
+*ש7* – חברה שמשקיעה במשחקים:
+${q7}
+
+*ש8א:* ${q8a}
+*ש8ב:* ${q8b}
+*ש8ג:* ${q8c}
+*ש8ד:* ${q8d}
+
+*ש9* – סיכום:
+${q9}`;
+
+  const url = `https://wa.me/${intlPhone}?text=${encodeURIComponent(msg)}`;
+  window.open(url, '_blank');
+  document.getElementById('sendSuccess').classList.add('show');
+}
+</script>
+</body>
+</html>
