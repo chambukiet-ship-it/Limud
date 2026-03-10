@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>הסוד שמאחורי הזיכרון שלנו</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Heebo', sans-serif;
+    background: #fdf8f2;
+    color: #1a1a1a;
+    min-height: 100vh;
+    padding: 0 0 60px;
+  }
+
+  header {
+    background: #ff8c42;
+    padding: 22px 20px 18px;
+    text-align: center;
+    box-shadow: 0 3px 12px rgba(255,140,66,0.25);
+  }
+  header h1 {
+    font-size: 22px;
+    font-weight: 900;
+    color: white;
+    line-height: 1.35;
+  }
+  header .emoji { font-size: 38px; display: block; margin-bottom: 6px; }
+
+  .section {
+    margin: 20px 16px 0;
+    background: white;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+  }
+
+  .section-header {
+    padding: 14px 18px;
+    font-size: 15px;
+    font-weight: 900;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .text-section .section-header { background: #4a90d9; }
+  .q-section .section-header { background: #e06c3a; }
+
+  .section-body {
+    padding: 18px 18px 20px;
+  }
+
+  /* TEXT PARAGRAPHS */
+  .para {
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #f0ece6;
+  }
+  .para:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+
+  .para p {
+    font-size: 17px;
+    line-height: 1.85;
+    color: #222;
+  }
+
+  .para .sub-item {
+    background: #f7f3ee;
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-top: 10px;
+    font-size: 16px;
+    line-height: 1.75;
+    color: #333;
+    border-right: 4px solid #4a90d9;
+  }
+  .para .sub-item + .sub-item { margin-top: 8px; }
+  .sub-item strong { color: #4a90d9; }
+
+  .tip-item {
+    background: #f7f3ee;
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-top: 10px;
+    font-size: 16px;
+    line-height: 1.75;
+    color: #333;
+    border-right: 4px solid #e06c3a;
+  }
+  .tip-item + .tip-item { margin-top: 8px; }
+  .tip-item strong { color: #cc5500; }
+
+  /* QUESTIONS */
+  .question-block {
+    margin-bottom: 28px;
+    padding-bottom: 28px;
+    border-bottom: 1px solid #f0ece6;
+  }
+  .question-block:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+
+  .q-num {
+    display: inline-block;
+    background: #e06c3a;
+    color: white;
+    font-size: 13px;
+    font-weight: 700;
+    border-radius: 8px;
+    padding: 3px 10px;
+    margin-bottom: 10px;
+  }
+  .q-text {
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1.6;
+    margin-bottom: 14px;
+    color: #1a1a1a;
+  }
+
+  .options { display: flex; flex-direction: column; gap: 10px; }
+
+  .opt-btn {
+    background: #fdf8f2;
+    border: 2px solid #e0d8cc;
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-family: 'Heebo', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: #222;
+    text-align: right;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    width: 100%;
+    line-height: 1.4;
+  }
+  .opt-btn:active { transform: scale(0.98); }
+  .opt-btn.correct {
+    background: #e8f8ef;
+    border-color: #3caa6b;
+    color: #1e7a47;
+  }
+  .opt-btn.wrong {
+    background: #fdecea;
+    border-color: #e05c4a;
+    color: #c0392b;
+  }
+  .opt-btn.disabled { pointer-events: none; }
+
+  .feedback {
+    display: none;
+    margin-top: 12px;
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.5;
+  }
+  .feedback.show { display: block; }
+  .feedback.correct { background: #e8f8ef; color: #1e7a47; }
+  .feedback.wrong { background: #fdecea; color: #c0392b; }
+
+  /* SCORE SECTION */
+  .score-section {
+    margin: 20px 16px 0;
+    background: white;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+    display: none;
+  }
+  .score-section.show { display: block; }
+  .score-section .section-header { background: #5b4fcf; }
+
+  .score-body { padding: 22px 18px 24px; }
+
+  .score-big {
+    text-align: center;
+    font-size: 52px;
+    font-weight: 900;
+    color: #5b4fcf;
+    line-height: 1;
+    margin: 10px 0 4px;
+  }
+  .score-label {
+    text-align: center;
+    font-size: 16px;
+    color: #888;
+    margin-bottom: 20px;
+  }
+  .score-msg {
+    text-align: center;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 24px;
+    line-height: 1.5;
+  }
+
+  .name-row {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+  .name-label {
+    font-size: 15px;
+    font-weight: 700;
+    color: #444;
+  }
+  .name-input {
+    font-family: 'Heebo', sans-serif;
+    font-size: 16px;
+    padding: 13px 14px;
+    border: 2px solid #ddd;
+    border-radius: 12px;
+    width: 100%;
+    color: #1a1a1a;
+    background: #fdf8f2;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .name-input:focus { border-color: #5b4fcf; }
+
+  .share-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 14px;
+    font-family: 'Heebo', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-bottom: 12px;
+    transition: opacity 0.15s, transform 0.1s;
+  }
+  .share-btn:active { transform: scale(0.97); opacity: 0.9; }
+  .btn-whatsapp { background: #25d366; color: white; }
+  .btn-email { background: #4a90d9; color: white; }
+  .btn-copy { background: #f0ece6; color: #444; }
+  .share-note {
+    font-size: 13px;
+    color: #aaa;
+    text-align: center;
+    margin-top: 6px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <span class="emoji">🧠</span>
+  <h1>הסוד שמאחורי הזיכרון שלנו</h1>
+</header>
+
+<!-- TEXT SECTION -->
+<div class="section text-section">
+  <div class="section-header">📖 קראו בעיון</div>
+  <div class="section-body">
+
+    <div class="para">
+      <p>חשבתן פעם איך אתן זוכרות את המילים של השיר האהוב עליכן, אבל שוכחות איפה שמתן את המפתחות? המוח שלנו הוא כמו מחסן ענק ומתוחכם. יש לו שני "חדרים" עיקריים:</p>
+    </div>
+
+    <div class="para">
+      <div class="sub-item"><strong>זיכרון לטווח קצר:</strong> זהו ה"שולחן" של המוח. כאן נכנס מידע שאנחנו צריכות רק לרגע, כמו מספר טלפון שמישהו הרגע אמר לנו. אם לא נחזור עליו שוב ושוב, הוא ייעלם תוך כמה שניות.</div>
+      <div class="sub-item"><strong>זיכרון לטווח ארוך:</strong> זהו ה"מחסן" האמיתי. כאן נשמרים דברים חשובים: שמות של חברות, איך לרכוב על אופניים או זיכרונות מיום ההולדת.</div>
+    </div>
+
+    <div class="para">
+      <p>איך עוזרים למידע לעבור למחסן?</p>
+      <div class="tip-item"><strong>חזרתיות:</strong> ככל שמתרגלים יותר, המוח מבין שזה חשוב.</div>
+      <div class="tip-item"><strong>שינה:</strong> בזמן שאנחנו ישנות, המוח "מסדר" את המדפים ומעביר מידע מהשולחן למחסן.</div>
+      <div class="tip-item"><strong>עניין:</strong> הרבה יותר קל לזכור משהו שאנחנו אוהבות או שמרגש אותנו!</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- QUESTIONS SECTION -->
+<div class="section q-section">
+  <div class="section-header">✏️ שאלות הבנה</div>
+  <div class="section-body">
+
+    <!-- Q1 -->
+    <div class="question-block">
+      <span class="q-num">שאלה 1</span>
+      <div class="q-text">למה מספר טלפון שמישהו אמר לנו עלול להיעלם מהר?</div>
+      <div class="options">
+        <button class="opt-btn" onclick="answer(this, false, 1)">כי המוח שלנו קטן מדי</button>
+        <button class="opt-btn" onclick="answer(this, true, 1)">כי הוא נכנס לזיכרון לטווח קצר ואם לא חוזרים עליו הוא נעלם</button>
+        <button class="opt-btn" onclick="answer(this, false, 1)">כי מספרי טלפון לא חשובים</button>
+      </div>
+      <div class="feedback" id="fb1"></div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="question-block">
+      <span class="q-num">שאלה 2</span>
+      <div class="q-text">מה מאוחסן בזיכרון לטווח ארוך?</div>
+      <div class="options">
+        <button class="opt-btn" onclick="answer(this, false, 2)">רק מספרי טלפון</button>
+        <button class="opt-btn" onclick="answer(this, false, 2)">מידע שנשמע ברדיו</button>
+        <button class="opt-btn" onclick="answer(this, true, 2)">שמות של חברות, איך לרכוב על אופניים וזיכרונות מיום הולדת</button>
+      </div>
+      <div class="feedback" id="fb2"></div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="question-block">
+      <span class="q-num">שאלה 3</span>
+      <div class="q-text">מה קורה במוח בזמן שינה?</div>
+      <div class="options">
+        <button class="opt-btn" onclick="answer(this, false, 3)">המוח שוכח הכל</button>
+        <button class="opt-btn" onclick="answer(this, true, 3)">המוח מסדר את המדפים ומעביר מידע מהשולחן למחסן</button>
+        <button class="opt-btn" onclick="answer(this, false, 3)">המוח לא עובד בכלל</button>
+      </div>
+      <div class="feedback" id="fb3"></div>
+    </div>
+
+    <!-- Q4 -->
+    <div class="question-block">
+      <span class="q-num">שאלה 4</span>
+      <div class="q-text">למה קל יותר לזכור שיר שאנחנו אוהבות?</div>
+      <div class="options">
+        <button class="opt-btn" onclick="answer(this, false, 4)">כי הוא קצר</button>
+        <button class="opt-btn" onclick="answer(this, true, 4)">כי כשמשהו מרגש אותנו, הרבה יותר קל לזכור אותו</button>
+        <button class="opt-btn" onclick="answer(this, false, 4)">כי שירים תמיד קלים לזכירה</button>
+      </div>
+      <div class="feedback" id="fb4"></div>
+    </div>
+
+    <!-- Q5 -->
+    <div class="question-block">
+      <span class="q-num">שאלה 5</span>
+      <div class="q-text">איזה מהבאים עוזר למידע לעבור לזיכרון לטווח ארוך?</div>
+      <div class="options">
+        <button class="opt-btn" onclick="answer(this, false, 5)">לשמוע מידע פעם אחת ולשכוח אותו</button>
+        <button class="opt-btn" onclick="answer(this, false, 5)">לא לישון בלילה</button>
+        <button class="opt-btn" onclick="answer(this, true, 5)">חזרתיות, שינה ועניין במה שלומדים</button>
+      </div>
+      <div class="feedback" id="fb5"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- SCORE SECTION -->
+<div class="score-section" id="score-section">
+  <div class="section-header">🏆 הציון שלך</div>
+  <div class="score-body">
+    <div class="score-big" id="score-display"></div>
+    <div class="score-label">מתוך 5 שאלות</div>
+    <div class="score-msg" id="score-msg"></div>
+
+    <div class="name-row">
+      <div class="name-label">✍️ הכניסי את שמך לפני השליחה:</div>
+      <input class="name-input" type="text" id="student-name" placeholder="שם פרטי ושם משפחה" />
+    </div>
+
+    <button class="share-btn btn-whatsapp" onclick="shareWhatsApp()">
+      <span>📲</span> שלחי למורה בוואטסאפ
+    </button>
+    <button class="share-btn btn-email" onclick="shareEmail()">
+      <span>📧</span> שלחי למורה במייל
+    </button>
+    <button class="share-btn btn-copy" onclick="copyResult()">
+      <span>📋</span> העתיקי את הציון
+    </button>
+    <div class="share-note" id="copy-confirm"></div>
+  </div>
+</div>
+
+<script>
+const TOTAL = 5;
+let answered = {};
+let score = 0;
+
+function answer(btn, isCorrect, qNum) {
+  if (answered[qNum]) return;
+  answered[qNum] = true;
+
+  const block = btn.closest('.question-block');
+  block.querySelectorAll('.opt-btn').forEach(b => b.classList.add('disabled'));
+  const fb = document.getElementById('fb' + qNum);
+
+  if (isCorrect) {
+    btn.classList.add('correct');
+    score++;
+    fb.textContent = '✅ כל הכבוד! תשובה נכונה.';
+    fb.className = 'feedback correct show';
+  } else {
+    btn.classList.add('wrong');
+    block.querySelectorAll('.opt-btn').forEach(b => {
+      if (b.getAttribute('onclick') && b.getAttribute('onclick').includes('true')) b.classList.add('correct');
+    });
+    fb.textContent = '❌ לא בדיוק. קראי שוב את הטקסט וחפשי את התשובה הנכונה.';
+    fb.className = 'feedback wrong show';
+  }
+
+  if (Object.keys(answered).length === TOTAL) {
+    showScore();
+  }
+}
+
+function showScore() {
+  const section = document.getElementById('score-section');
+  section.classList.add('show');
+  document.getElementById('score-display').textContent = score + '/5';
+
+  let msg = '';
+  if (score === 5) msg = '🌟 מושלם! ענית נכון על כל השאלות!';
+  else if (score === 4) msg = '😊 יפה מאוד! כמעט מושלם!';
+  else if (score === 3) msg = '👍 עבודה טובה! אפשר לשפר עוד קצת.';
+  else msg = '💪 כדאי לקרוא שוב את הטקסט ולנסות שוב!';
+
+  document.getElementById('score-msg').textContent = msg;
+  setTimeout(() => section.scrollIntoView({ behavior: 'smooth', block: 'start' }), 200);
+}
+
+function buildMessage() {
+  const name = document.getElementById('student-name').value.trim() || 'תלמידה';
+  return 'שלום,\nהתלמידה ' + name + ' סיימה את פעילות "הסוד שמאחורי הזיכרון שלנו"\nציון: ' + score + '/5\nתאריך: ' + new Date().toLocaleDateString('he-IL');
+}
+
+function shareWhatsApp() {
+  const msg = encodeURIComponent(buildMessage());
+  window.open('https://wa.me/?text=' + msg, '_blank');
+}
+
+function shareEmail() {
+  const body = encodeURIComponent(buildMessage());
+  window.open('mailto:?subject=' + encodeURIComponent('ציון פעילות – הזיכרון שלנו') + '&body=' + body, '_blank');
+}
+
+function copyResult() {
+  const msg = buildMessage();
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(msg).then(() => {
+      document.getElementById('copy-confirm').textContent = '✅ הטקסט הועתק! אפשר להדביק בכל מקום.';
+    });
+  } else {
+    document.getElementById('copy-confirm').textContent = msg;
+  }
+}
+</script>
+</body>
+</html>
