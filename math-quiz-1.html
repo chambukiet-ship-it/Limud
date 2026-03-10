@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>חידון היקף צורות 🌟</title>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;900&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0c29;
+    --card: #1a1740;
+    --accent1: #ff6fd8;
+    --accent2: #6ef7c4;
+    --accent3: #ffe36e;
+    --accent4: #7b9fff;
+    --text: #f0eeff;
+    --muted: #8a84b3;
+    --correct: #6ef7c4;
+    --wrong: #ff6b6b;
+    --radius: 20px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Rubik', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* Animated background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse at 20% 20%, rgba(123,159,255,0.15) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 80%, rgba(255,111,216,0.15) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 50%, rgba(110,247,196,0.08) 0%, transparent 60%);
+    animation: bgPulse 8s ease-in-out infinite alternate;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  @keyframes bgPulse {
+    0% { opacity: 0.6; }
+    100% { opacity: 1; }
+  }
+
+  .container {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 20px 16px 40px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    margin-bottom: 24px;
+    animation: slideDown 0.6s ease;
+  }
+
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .header-emoji { font-size: 3rem; display: block; margin-bottom: 6px; }
+
+  .header h1 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 2rem;
+    background: linear-gradient(135deg, var(--accent1), var(--accent4));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.1;
+  }
+
+  .header p {
+    color: var(--muted);
+    font-size: 0.95rem;
+    margin-top: 6px;
+  }
+
+  /* Progress bar */
+  .progress-wrap {
+    background: rgba(255,255,255,0.08);
+    border-radius: 50px;
+    height: 10px;
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+
+  .progress-bar {
+    height: 100%;
+    border-radius: 50px;
+    background: linear-gradient(90deg, var(--accent1), var(--accent4));
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 0 12px rgba(123,159,255,0.6);
+  }
+
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  /* Stars/score display */
+  .score-strip {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .star {
+    font-size: 1.4rem;
+    transition: transform 0.3s;
+    filter: grayscale(1) brightness(0.4);
+  }
+
+  .star.earned {
+    filter: none;
+    animation: starPop 0.4s ease;
+  }
+
+  @keyframes starPop {
+    0% { transform: scale(0); }
+    70% { transform: scale(1.4); }
+    100% { transform: scale(1); }
+  }
+
+  /* Question card */
+  .card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 24px 20px;
+    margin-bottom: 16px;
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    animation: cardIn 0.4s ease;
+  }
+
+  @keyframes cardIn {
+    from { opacity: 0; transform: translateY(16px) scale(0.97); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .q-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(123,159,255,0.15);
+    border: 1px solid rgba(123,159,255,0.3);
+    color: var(--accent4);
+    border-radius: 50px;
+    padding: 4px 12px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    margin-bottom: 14px;
+    letter-spacing: 0.5px;
+  }
+
+  .q-text {
+    font-size: 1.08rem;
+    line-height: 1.7;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  .q-text .formula {
+    display: inline-block;
+    background: rgba(255,227,110,0.12);
+    border: 1px solid rgba(255,227,110,0.25);
+    color: var(--accent3);
+    border-radius: 8px;
+    padding: 2px 8px;
+    font-weight: 700;
+    font-family: 'Courier New', monospace;
+    font-size: 1rem;
+  }
+
+  /* Shape illustration */
+  .shape-box {
+    background: rgba(255,255,255,0.04);
+    border-radius: 12px;
+    padding: 16px;
+    margin: 14px 0;
+    text-align: center;
+  }
+
+  .shape-box svg { max-width: 180px; height: auto; }
+
+  /* Answer options */
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .option-btn {
+    background: rgba(255,255,255,0.05);
+    border: 2px solid rgba(255,255,255,0.1);
+    border-radius: 14px;
+    padding: 14px 18px;
+    color: var(--text);
+    font-family: 'Rubik', sans-serif;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: right;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .option-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--accent1), var(--accent4));
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .option-btn:hover:not(:disabled) {
+    border-color: rgba(123,159,255,0.5);
+    transform: translateX(-3px);
+    background: rgba(123,159,255,0.1);
+  }
+
+  .option-btn:active:not(:disabled) { transform: scale(0.97); }
+
+  .option-btn .opt-letter {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+
+  .option-btn.correct {
+    background: rgba(110,247,196,0.12);
+    border-color: var(--correct);
+    animation: correctPulse 0.5s ease;
+  }
+
+  .option-btn.correct .opt-letter {
+    background: var(--correct);
+    color: #0f0c29;
+  }
+
+  .option-btn.wrong {
+    background: rgba(255,107,107,0.1);
+    border-color: var(--wrong);
+    animation: shake 0.4s ease;
+  }
+
+  .option-btn.wrong .opt-letter {
+    background: var(--wrong);
+    color: white;
+  }
+
+  .option-btn:disabled { cursor: not-allowed; }
+
+  @keyframes correctPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+    100% { transform: scale(1); }
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+  }
+
+  /* Feedback */
+  .feedback {
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-top: 12px;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    animation: feedIn 0.3s ease;
+    display: none;
+  }
+
+  .feedback.show { display: block; }
+
+  @keyframes feedIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .feedback.correct-fb {
+    background: rgba(110,247,196,0.1);
+    border: 1px solid rgba(110,247,196,0.3);
+    color: var(--correct);
+  }
+
+  .feedback.wrong-fb {
+    background: rgba(255,107,107,0.1);
+    border: 1px solid rgba(255,107,107,0.3);
+    color: #ff9a9a;
+  }
+
+  /* Next button */
+  .next-btn {
+    width: 100%;
+    padding: 16px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--accent1), var(--accent4));
+    border: none;
+    color: white;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.15rem;
+    cursor: pointer;
+    margin-top: 10px;
+    display: none;
+    box-shadow: 0 4px 20px rgba(123,159,255,0.35);
+    transition: all 0.2s;
+    letter-spacing: 0.5px;
+  }
+
+  .next-btn.show { display: block; animation: fadeUp 0.3s ease; }
+  .next-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(123,159,255,0.5); }
+  .next-btn:active { transform: scale(0.98); }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Results screen */
+  .results {
+    display: none;
+    animation: cardIn 0.5s ease;
+  }
+
+  .results.show { display: block; }
+
+  .results-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 30px 24px;
+    text-align: center;
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+  }
+
+  .trophy { font-size: 4rem; display: block; margin-bottom: 10px; animation: bounce 1s ease; }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    25% { transform: translateY(-12px) rotate(-5deg); }
+    75% { transform: translateY(-6px) rotate(5deg); }
+  }
+
+  .results-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.8rem;
+    background: linear-gradient(135deg, var(--accent3), var(--accent1));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 8px;
+  }
+
+  .score-big {
+    font-size: 3.5rem;
+    font-weight: 900;
+    color: white;
+    line-height: 1;
+    margin: 14px 0 4px;
+  }
+
+  .score-big span {
+    font-size: 1.4rem;
+    color: var(--muted);
+    font-weight: 400;
+  }
+
+  .score-grade {
+    font-size: 1rem;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+
+  .results-stars {
+    font-size: 2rem;
+    letter-spacing: 4px;
+    margin-bottom: 20px;
+    display: block;
+  }
+
+  /* Send to teacher form */
+  .send-form {
+    background: rgba(255,255,255,0.04);
+    border-radius: 16px;
+    padding: 20px;
+    margin-top: 20px;
+    border: 1px solid rgba(255,255,255,0.08);
+    text-align: right;
+  }
+
+  .send-form h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 14px;
+    color: var(--accent3);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .input-group {
+    margin-bottom: 12px;
+  }
+
+  .input-group label {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+
+  .input-group input, .input-group textarea {
+    width: 100%;
+    background: rgba(255,255,255,0.07);
+    border: 1.5px solid rgba(255,255,255,0.12);
+    border-radius: 10px;
+    padding: 12px 14px;
+    color: var(--text);
+    font-family: 'Rubik', sans-serif;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s;
+    direction: rtl;
+  }
+
+  .input-group input:focus, .input-group textarea:focus {
+    border-color: var(--accent4);
+  }
+
+  .input-group textarea { resize: none; height: 70px; }
+
+  .send-btn {
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--accent3), var(--accent1));
+    border: none;
+    color: #1a1740;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.1rem;
+    cursor: pointer;
+    font-weight: 700;
+    transition: all 0.2s;
+    box-shadow: 0 4px 16px rgba(255,227,110,0.25);
+  }
+
+  .send-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(255,227,110,0.4); }
+
+  .sent-msg {
+    display: none;
+    text-align: center;
+    padding: 14px;
+    border-radius: 12px;
+    background: rgba(110,247,196,0.12);
+    border: 1px solid rgba(110,247,196,0.3);
+    color: var(--correct);
+    font-weight: 600;
+    animation: feedIn 0.3s ease;
+  }
+
+  .sent-msg.show { display: block; }
+
+  /* Send buttons row */
+  .send-btns-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .whatsapp-btn {
+    flex: 1;
+    padding: 14px 10px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #25d366, #128c7e);
+    border: none;
+    color: white;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s;
+    box-shadow: 0 4px 16px rgba(37,211,102,0.3);
+    letter-spacing: 0.3px;
+  }
+
+  .whatsapp-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(37,211,102,0.5); }
+
+  .email-btn {
+    flex: 1;
+    padding: 14px 10px;
+    border-radius: 12px;
+    background: rgba(123,159,255,0.15);
+    border: 1.5px solid rgba(123,159,255,0.35);
+    color: var(--accent4);
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s;
+  }
+
+  .email-btn:hover { background: rgba(123,159,255,0.25); transform: translateY(-2px); }
+
+  /* Personalized Feedback Card */
+  .feedback-card {
+    background: rgba(255,255,255,0.04);
+    border-radius: 18px;
+    padding: 20px;
+    margin: 16px 0;
+    border: 1px solid rgba(255,255,255,0.1);
+    text-align: right;
+    animation: cardIn 0.5s ease 0.3s both;
+  }
+
+  .feedback-level-badge {
+    display: inline-block;
+    border-radius: 50px;
+    padding: 5px 14px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+    letter-spacing: 0.5px;
+  }
+
+  .level-beginner { background: rgba(255,107,107,0.18); border: 1px solid rgba(255,107,107,0.4); color: #ff9a9a; }
+  .level-developing { background: rgba(255,227,110,0.15); border: 1px solid rgba(255,227,110,0.4); color: var(--accent3); }
+  .level-good { background: rgba(123,159,255,0.15); border: 1px solid rgba(123,159,255,0.4); color: var(--accent4); }
+  .level-excellent { background: rgba(110,247,196,0.15); border: 1px solid rgba(110,247,196,0.4); color: var(--correct); }
+
+  .feedback-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+    color: var(--text);
+    line-height: 1.3;
+  }
+
+  .feedback-body {
+    font-size: 0.92rem;
+    line-height: 1.75;
+    color: #c8c3e8;
+    margin-bottom: 14px;
+  }
+
+  .feedback-tips {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .tip-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 0.88rem;
+    color: #c8c3e8;
+    line-height: 1.5;
+    border-right: 3px solid;
+  }
+
+  .tip-item.tip-green { border-color: var(--correct); }
+  .tip-item.tip-yellow { border-color: var(--accent3); }
+  .tip-item.tip-pink { border-color: var(--accent1); }
+
+  .retry-btn {
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.06);
+    border: 1.5px solid rgba(255,255,255,0.15);
+    color: var(--text);
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-top: 12px;
+    transition: all 0.2s;
+  }
+
+  .retry-btn:hover { background: rgba(255,255,255,0.1); }
+
+  /* Name screen */
+  .name-screen {
+    animation: cardIn 0.5s ease;
+  }
+
+  .name-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 32px 24px;
+    text-align: center;
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+  }
+
+  .name-card h2 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.6rem;
+    background: linear-gradient(135deg, var(--accent2), var(--accent4));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 8px;
+  }
+
+  .name-card p {
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin-bottom: 24px;
+    line-height: 1.6;
+  }
+
+  .name-input-wrap { position: relative; margin-bottom: 16px; }
+
+  .name-input-wrap input {
+    width: 100%;
+    background: rgba(255,255,255,0.07);
+    border: 2px solid rgba(123,159,255,0.3);
+    border-radius: 12px;
+    padding: 14px 48px 14px 14px;
+    color: var(--text);
+    font-family: 'Rubik', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 500;
+    outline: none;
+    text-align: right;
+    transition: border-color 0.2s;
+    direction: rtl;
+  }
+
+  .name-input-wrap input:focus { border-color: var(--accent4); }
+  .name-input-wrap .name-icon { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); font-size: 1.3rem; }
+
+  .start-btn {
+    width: 100%;
+    padding: 16px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--accent2), var(--accent4));
+    border: none;
+    color: #0f0c29;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.2rem;
+    cursor: pointer;
+    font-weight: 700;
+    transition: all 0.2s;
+    box-shadow: 0 4px 20px rgba(110,247,196,0.3);
+  }
+
+  .start-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(110,247,196,0.5); }
+
+  /* floating confetti particles on correct */
+  .confetti-wrap {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 999;
+    overflow: hidden;
+  }
+
+  .confetti-piece {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    animation: confettiFall linear forwards;
+  }
+
+  @keyframes confettiFall {
+    0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+  }
+
+  /* Hint */
+  .hint-btn {
+    background: none;
+    border: 1px dashed rgba(255,227,110,0.4);
+    color: var(--accent3);
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-family: 'Rubik', sans-serif;
+    font-size: 0.82rem;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: all 0.2s;
+  }
+
+  .hint-btn:hover { background: rgba(255,227,110,0.08); }
+  .hint-text {
+    display: none;
+    background: rgba(255,227,110,0.08);
+    border: 1px solid rgba(255,227,110,0.2);
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 0.88rem;
+    color: #ffe36e;
+    margin-top: 8px;
+    line-height: 1.6;
+    animation: feedIn 0.3s ease;
+  }
+  .hint-text.show { display: block; }
+</style>
+</head>
+<body>
+<div class="confetti-wrap" id="confettiWrap"></div>
+
+<div class="container">
+
+  <!-- Name Screen -->
+  <div class="name-screen" id="nameScreen">
+    <div class="header">
+      <span class="header-emoji">📐</span>
+      <h1>חידון היקף צורות</h1>
+      <p>עם נעלמים · כיתה ז'</p>
+    </div>
+    <div class="name-card">
+      <h2>שלום! 👋</h2>
+      <p>לפני שמתחילים את החידון,<br>מה השם שלך?</p>
+      <div class="name-input-wrap">
+        <span class="name-icon">✏️</span>
+        <input type="text" id="nameInput" placeholder="הכנסי את שמך כאן..." />
+      </div>
+      <button class="start-btn" onclick="startQuiz()">בואי נתחיל! 🚀</button>
+    </div>
+  </div>
+
+  <!-- Quiz Screen -->
+  <div id="quizScreen" style="display:none">
+    <div class="header">
+      <span class="header-emoji">📐</span>
+      <h1>חידון היקף צורות</h1>
+      <p id="studentGreet" style="color: var(--accent2); font-weight:600"></p>
+    </div>
+
+    <div class="progress-label">
+      <span id="qNum">שאלה 1 מתוך 8</span>
+      <span id="scoreLabel">✨ 0 נקודות</span>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-bar" id="progressBar" style="width:0%"></div>
+    </div>
+
+    <div class="score-strip" id="scoreStrip"></div>
+
+    <div class="card" id="questionCard">
+      <div class="q-badge" id="qBadge">📏 שאלה 1</div>
+      <div class="q-text" id="qText"></div>
+      <div class="shape-box" id="shapeBox" style="display:none"></div>
+      <button class="hint-btn" id="hintBtn" onclick="toggleHint()">💡 רמז</button>
+      <div class="hint-text" id="hintText"></div>
+    </div>
+
+    <div class="options" id="optionsContainer"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn" id="nextBtn" onclick="nextQuestion()">הבאה ← </button>
+  </div>
+
+  <!-- Results Screen -->
+  <div class="results" id="resultsScreen">
+    <div class="results-card">
+      <span class="trophy" id="trophyEmoji">🏆</span>
+      <div class="results-title" id="resultsTitle">כל הכבוד!</div>
+      <p style="color:var(--muted); font-size:0.9rem" id="studentName2"></p>
+      <div class="score-big" id="finalScore">0 <span>/ 8</span></div>
+      <div class="score-grade" id="gradeText"></div>
+      <span class="results-stars" id="resultsStars"></span>
+
+      <!-- Personalized Feedback Card -->
+      <div class="feedback-card" id="feedbackCard">
+        <div class="feedback-level-badge" id="feedbackBadge"></div>
+        <div class="feedback-title" id="feedbackTitle"></div>
+        <div class="feedback-body" id="feedbackBody"></div>
+        <div class="feedback-tips" id="feedbackTips"></div>
+      </div>
+
+      <!-- Send to Teacher -->
+      <div class="send-form" id="sendForm">
+        <h3>📲 שלחי ציון למורה</h3>
+
+        <div class="input-group">
+          <label>שם המורה</label>
+          <input type="text" id="teacherName" placeholder="למשל: מורה רחל" />
+        </div>
+        <div class="input-group">
+          <label>הערה אישית (אופציונלי)</label>
+          <textarea id="personalNote" placeholder="למשל: השתדלתי מאוד! 😊"></textarea>
+        </div>
+
+        <div class="send-btns-row">
+          <button class="whatsapp-btn" onclick="sendWhatsApp()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.112 1.523 5.836L.057 23.215a.75.75 0 00.921.921l5.379-1.466A11.943 11.943 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.75a9.718 9.718 0 01-4.953-1.355l-.355-.211-3.684 1.004 1.004-3.684-.211-.355A9.718 9.718 0 012.25 12C2.25 6.615 6.615 2.25 12 2.25S21.75 6.615 21.75 12 17.385 21.75 12 21.75z"/></svg>
+            וואטסאפ למורה
+          </button>
+          <button class="email-btn" onclick="sendEmail()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 7 10-7"/></svg>
+            מייל למורה
+          </button>
+        </div>
+        <div class="sent-msg" id="sentMsg">✅ הודעה נשלחה בהצלחה! כל הכבוד! 🌟</div>
+      </div>
+
+      <button class="retry-btn" onclick="retryQuiz()">🔄 שחקי שוב</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let studentName = '';
+let currentQ = 0;
+let score = 0;
+let answered = false;
+
+const questions = [
+  {
+    badge: "📏 מלבן",
+    text: `מלבן שאורכו <span class="formula">x</span> ורוחבו <span class="formula">3</span>.<br>
+           אם <span class="formula">x = 5</span>, מה ההיקף?`,
+    shape: `<svg viewBox="0 0 200 110" xmlns="http://www.w3.org/2000/svg">
+      <rect x="20" y="20" width="160" height="70" rx="4" fill="none" stroke="#7b9fff" stroke-width="2.5"/>
+      <text x="100" y="14" text-anchor="middle" fill="#ffe36e" font-size="13" font-family="Rubik">x = 5</text>
+      <text x="100" y="106" text-anchor="middle" fill="#ffe36e" font-size="13" font-family="Rubik">x = 5</text>
+      <text x="10" y="60" text-anchor="middle" fill="#6ef7c4" font-size="13" font-family="Rubik">3</text>
+      <text x="193" y="60" text-anchor="middle" fill="#6ef7c4" font-size="13" font-family="Rubik">3</text>
+    </svg>`,
+    options: ["16", "15", "20", "13"],
+    correct: 0,
+    hint: "היקף מלבן = 2 × (אורך + רוחב). כאן: 2 × (5 + 3) = ?",
+    explain: "היקף = 2 × (x + 3) = 2 × (5 + 3) = 2 × 8 = 16 ✓"
+  },
+  {
+    badge: "🔷 ריבוע",
+    text: `לריבוע צלע באורך <span class="formula">a</span>.<br>
+           כתבי נוסחה להיקף הריבוע.`,
+    shape: `<svg viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+      <rect x="20" y="20" width="120" height="120" rx="4" fill="none" stroke="#ff6fd8" stroke-width="2.5"/>
+      <text x="80" y="14" text-anchor="middle" fill="#ffe36e" font-size="14" font-family="Rubik">a</text>
+      <text x="80" y="154" text-anchor="middle" fill="#ffe36e" font-size="14" font-family="Rubik">a</text>
+      <text x="11" y="84" text-anchor="middle" fill="#ffe36e" font-size="14" font-family="Rubik">a</text>
+      <text x="152" y="84" text-anchor="middle" fill="#ffe36e" font-size="14" font-family="Rubik">a</text>
+    </svg>`,
+    options: ["4a", "a²", "2a", "a + 4"],
+    correct: 0,
+    hint: "לריבוע יש 4 צלעות שוות. כל צלע = a.",
+    explain: "היקף ריבוע = 4 × a = 4a ✓ (כי יש 4 צלעות שוות)"
+  },
+  {
+    badge: "📐 משולש",
+    text: `משולש שווה שוקיים עם בסיס <span class="formula">6</span><br>
+           וכל שוק שווה <span class="formula">b</span>.<br>
+           מה ההיקף אם <span class="formula">b = 7</span>?`,
+    shape: `<svg viewBox="0 0 200 150" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="100,15 25,135 175,135" fill="none" stroke="#6ef7c4" stroke-width="2.5"/>
+      <text x="100" y="150" text-anchor="middle" fill="#ffe36e" font-size="13" font-family="Rubik">6</text>
+      <text x="50" y="80" text-anchor="middle" fill="#ff6fd8" font-size="13" font-family="Rubik">b=7</text>
+      <text x="152" y="80" text-anchor="middle" fill="#ff6fd8" font-size="13" font-family="Rubik">b=7</text>
+    </svg>`,
+    options: ["20", "19", "18", "21"],
+    correct: 0,
+    hint: "היקף = שתי השוקיים + הבסיס = b + b + 6 = 2b + 6",
+    explain: "היקף = 2b + 6 = 2×7 + 6 = 14 + 6 = 20 ✓"
+  },
+  {
+    badge: "🔵 מצולע",
+    text: `מחומש שווה צלעות (5 צלעות שוות) עם כל צלע באורך <span class="formula">n</span>.<br>
+           אם ההיקף הוא <span class="formula">35</span>, מה ערך <span class="formula">n</span>?`,
+    shape: `<svg viewBox="0 0 180 180" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="90,15 170,65 140,155 40,155 10,65" fill="none" stroke="#7b9fff" stroke-width="2.5"/>
+      <text x="90" y="10" text-anchor="middle" fill="#ffe36e" font-size="11" font-family="Rubik">n</text>
+      <text x="165" y="110" text-anchor="middle" fill="#ffe36e" font-size="11" font-family="Rubik">n</text>
+      <text x="107" y="170" text-anchor="middle" fill="#ffe36e" font-size="11" font-family="Rubik">n</text>
+      <text x="65" y="170" text-anchor="middle" fill="#ffe36e" font-size="11" font-family="Rubik">n</text>
+      <text x="13" y="110" text-anchor="middle" fill="#ffe36e" font-size="11" font-family="Rubik">n</text>
+    </svg>`,
+    options: ["n = 7", "n = 8", "n = 5", "n = 9"],
+    correct: 0,
+    hint: "היקף מחומש = 5 × n. אם 5n = 35, אז n = ?",
+    explain: "5n = 35 → n = 35 ÷ 5 = 7 ✓"
+  },
+  {
+    badge: "📏 מלבן עם נעלם",
+    text: `מלבן שהיקפו <span class="formula">24</span> ס"מ.<br>
+           אורכו <span class="formula">8</span> ס"מ.<br>
+           מה רוחבו?`,
+    shape: `<svg viewBox="0 0 200 110" xmlns="http://www.w3.org/2000/svg">
+      <rect x="20" y="20" width="160" height="70" rx="4" fill="none" stroke="#ff6fd8" stroke-width="2.5"/>
+      <text x="100" y="14" text-anchor="middle" fill="#ffe36e" font-size="13" font-family="Rubik">8</text>
+      <text x="100" y="106" text-anchor="middle" fill="#ffe36e" font-size="13" font-family="Rubik">8</text>
+      <text x="10" y="60" text-anchor="middle" fill="#ff6fd8" font-size="13" font-family="Rubik">?</text>
+      <text x="193" y="60" text-anchor="middle" fill="#ff6fd8" font-size="13" font-family="Rubik">?</text>
+    </svg>`,
+    options: ["4", "6", "5", "3"],
+    correct: 0,
+    hint: "היקף = 2(אורך + רוחב). 24 = 2(8 + ?) → 12 = 8 + ?",
+    explain: "24 = 2(8 + x) → 12 = 8 + x → x = 4 ✓"
+  },
+  {
+    badge: "✏️ ביטוי אלגברי",
+    text: `לצורה יש 3 צלעות:<br>
+           <span class="formula">2x</span>, <span class="formula">x+1</span>, <span class="formula">5</span><br>
+           כתבי ביטוי פשוט להיקפה.`,
+    shape: null,
+    options: ["3x + 6", "3x + 1", "2x + 6", "x + 6"],
+    correct: 0,
+    hint: "חברי את כל הצלעות: 2x + (x+1) + 5 = ? קיבצי איברים דומים.",
+    explain: "2x + x + 1 + 5 = 3x + 6 ✓ (קיבוץ: 2x+x=3x, 1+5=6)"
+  },
+  {
+    badge: "🔷 ריבוע – מצא צלע",
+    text: `היקף ריבוע הוא <span class="formula">4x = 28</span>.<br>
+           מה אורך כל צלע?`,
+    shape: `<svg viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+      <rect x="20" y="20" width="120" height="120" rx="4" fill="none" stroke="#6ef7c4" stroke-width="2.5"/>
+      <text x="80" y="14" text-anchor="middle" fill="#ffe36e" font-size="13" font-family="Rubik">x = ?</text>
+      <text x="80" y="154" text-anchor="middle" fill="#ffe36e" font-size="13" font-family="Rubik">x = ?</text>
+      <text x="10" y="84" text-anchor="middle" fill="#ffe36e" font-size="13" font-family="Rubik">x</text>
+      <text x="153" y="84" text-anchor="middle" fill="#ffe36e" font-size="13" font-family="Rubik">x</text>
+      <text x="80" y="84" text-anchor="middle" fill="#8a84b3" font-size="11" font-family="Rubik">היקף=28</text>
+    </svg>`,
+    options: ["x = 7", "x = 4", "x = 8", "x = 6"],
+    correct: 0,
+    hint: "4x = 28. חלקי שני האגפים ב-4.",
+    explain: "4x = 28 → x = 28 ÷ 4 = 7 ✓"
+  },
+  {
+    badge: "🌟 אתגר",
+    text: `לצורה 4 צלעות:<br>
+           <span class="formula">x+2</span>, <span class="formula">2x</span>, <span class="formula">x−1</span>, <span class="formula">3</span>.<br>
+           אם ההיקף הוא <span class="formula">20</span>, מצאי את <span class="formula">x</span>.`,
+    shape: null,
+    options: ["x = 4", "x = 3", "x = 5", "x = 6"],
+    correct: 0,
+    hint: "קודם חברי את כל הצלעות ופשטי. קבלי משוואה: 4x + 4 = 20.",
+    explain: "(x+2) + 2x + (x−1) + 3 = 4x + 4 = 20 → 4x = 16 → x = 4 ✓"
+  }
+];
+
+function startQuiz() {
+  const name = document.getElementById('nameInput').value.trim();
+  if (!name) {
+    document.getElementById('nameInput').style.borderColor = 'var(--wrong)';
+    document.getElementById('nameInput').placeholder = '⚠️ נא להכניס שם!';
+    return;
+  }
+  studentName = name;
+  document.getElementById('nameScreen').style.display = 'none';
+  document.getElementById('quizScreen').style.display = 'block';
+  document.getElementById('studentGreet').textContent = `היי ${studentName}! 🌸`;
+  buildStars();
+  loadQuestion();
+}
+
+function buildStars() {
+  const strip = document.getElementById('scoreStrip');
+  strip.innerHTML = '';
+  for (let i = 0; i < questions.length; i++) {
+    const s = document.createElement('span');
+    s.className = 'star';
+    s.textContent = '⭐';
+    s.id = `star${i}`;
+    strip.appendChild(s);
+  }
+}
+
+function loadQuestion() {
+  answered = false;
+  const q = questions[currentQ];
+
+  document.getElementById('qBadge').innerHTML = q.badge;
+  document.getElementById('qText').innerHTML = q.text;
+  document.getElementById('qNum').textContent = `שאלה ${currentQ + 1} מתוך ${questions.length}`;
+  document.getElementById('scoreLabel').textContent = `✨ ${score} נקודות`;
+  document.getElementById('progressBar').style.width = `${(currentQ / questions.length) * 100}%`;
+
+  const shapeBox = document.getElementById('shapeBox');
+  if (q.shape) {
+    shapeBox.style.display = 'block';
+    shapeBox.innerHTML = q.shape;
+  } else {
+    shapeBox.style.display = 'none';
+  }
+
+  document.getElementById('hintText').classList.remove('show');
+  document.getElementById('hintText').textContent = q.hint;
+  document.getElementById('hintBtn').style.display = 'inline-block';
+
+  const opts = document.getElementById('optionsContainer');
+  opts.innerHTML = '';
+  const letters = ['א', 'ב', 'ג', 'ד'];
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.innerHTML = `<span class="opt-letter">${letters[i]}</span> ${opt}`;
+    btn.onclick = () => selectAnswer(i);
+    opts.appendChild(btn);
+  });
+
+  document.getElementById('feedback').classList.remove('show', 'correct-fb', 'wrong-fb');
+  document.getElementById('feedback').textContent = '';
+  document.getElementById('nextBtn').classList.remove('show');
+}
+
+function toggleHint() {
+  const h = document.getElementById('hintText');
+  h.classList.toggle('show');
+}
+
+function selectAnswer(idx) {
+  if (answered) return;
+  answered = true;
+
+  const q = questions[currentQ];
+  const btns = document.querySelectorAll('.option-btn');
+  btns.forEach(b => b.disabled = true);
+
+  const fb = document.getElementById('feedback');
+
+  if (idx === q.correct) {
+    score++;
+    btns[idx].classList.add('correct');
+    fb.className = 'feedback show correct-fb';
+    fb.innerHTML = `✅ מצוין! ${q.explain}`;
+    document.getElementById(`star${currentQ}`).classList.add('earned');
+    spawnConfetti();
+  } else {
+    btns[idx].classList.add('wrong');
+    btns[q.correct].classList.add('correct');
+    fb.className = 'feedback show wrong-fb';
+    fb.innerHTML = `❌ לא נכון. ${q.explain}`;
+  }
+
+  document.getElementById('scoreLabel').textContent = `✨ ${score} נקודות`;
+  document.getElementById('hintBtn').style.display = 'none';
+
+  const nextBtn = document.getElementById('nextBtn');
+  nextBtn.textContent = currentQ === questions.length - 1 ? '📊 לתוצאות' : 'הבאה ←';
+  nextBtn.classList.add('show');
+}
+
+function nextQuestion() {
+  currentQ++;
+  if (currentQ >= questions.length) {
+    showResults();
+  } else {
+    document.getElementById('questionCard').style.animation = 'none';
+    requestAnimationFrame(() => {
+      document.getElementById('questionCard').style.animation = 'cardIn 0.4s ease';
+      loadQuestion();
+    });
+  }
+}
+
+function showResults() {
+  document.getElementById('progressBar').style.width = '100%';
+  document.getElementById('quizScreen').style.display = 'none';
+  document.getElementById('resultsScreen').classList.add('show');
+
+  const pct = score / questions.length;
+  let trophy, title, grade;
+
+  if (pct === 1)        { trophy = '🏆'; title = 'מושלם לחלוטין!';    grade = 'ציון: 100 — מדהים!'; }
+  else if (pct >= 0.75) { trophy = '🥇'; title = 'כל הכבוד!';          grade = 'ציון: מעולה'; }
+  else if (pct >= 0.5)  { trophy = '🥈'; title = 'יופי, כמעט!';        grade = 'ציון: טוב — אפשר לשפר'; }
+  else                  { trophy = '💪'; title = 'שווה לנסות שוב!';    grade = 'ציון: נמשיך להתאמן!'; }
+
+  document.getElementById('trophyEmoji').textContent = trophy;
+  document.getElementById('resultsTitle').textContent = title;
+  document.getElementById('studentName2').textContent = `${studentName} — כל הכבוד על ניסיונך! 🌸`;
+  document.getElementById('finalScore').innerHTML = `${score} <span>/ ${questions.length}</span>`;
+  document.getElementById('gradeText').textContent = grade;
+  document.getElementById('resultsStars').textContent = '⭐'.repeat(score) + '☆'.repeat(questions.length - score);
+
+  buildPersonalFeedback(pct);
+  spawnConfetti(true);
+}
+
+function buildPersonalFeedback(pct) {
+  const badge = document.getElementById('feedbackBadge');
+  const title = document.getElementById('feedbackTitle');
+  const body = document.getElementById('feedbackBody');
+  const tips = document.getElementById('feedbackTips');
+
+  let levelClass, levelText, feedTitle, feedBody, feedTips;
+
+  if (pct === 1) {
+    levelClass = 'level-excellent';
+    levelText = '🌟 רמה: מצוינת';
+    feedTitle = `${studentName}, את פשוט מדהימה! 🎉`;
+    feedBody = `השגת ציון מושלם! הוכחת שאת שולטת בחומר על היקף עם נעלמים ברמה גבוהה מאוד. 
+                את מבינה איך לפשט ביטויים אלגבריים, לפתור משוואות ולמצוא נעלמים — זה לא פשוט ואת עשית את זה על הצד הטוב ביותר!`;
+    feedTips = [
+      { icon: '🚀', text: 'את מוכנה לאתגרים גבוהים יותר — שאלי את המורה על שאלות עם שני נעלמים!', cls: 'tip-green' },
+      { icon: '💡', text: 'נסי להסביר לחברה כיצד מחשבים היקף עם נעלמים — ללמד אחרים זה הדרך הטובה ביותר ללמוד!', cls: 'tip-green' },
+      { icon: '📐', text: 'אפשר להמשיך לנושא שטח הצורות עם נעלמים — הבא האתגר!', cls: 'tip-green' }
+    ];
+  } else if (pct >= 0.75) {
+    levelClass = 'level-good';
+    levelText = '👍 רמה: טובה מאוד';
+    feedTitle = `${studentName}, עבודה ממש יפה! 💙`;
+    feedBody = `את מבינה את הרעיון הבסיסי של היקף עם נעלמים ומצליחה לפתור רוב השאלות בצורה נכונה. 
+                עוד קצת תרגול ואת תגיעי לשלמות! שגיאות קטנות הן חלק מהלמידה.`;
+    feedTips = [
+      { icon: '🔍', text: 'עברי על השאלות שטעית בהן — בדקי איפה בדיוק נפלה הטעות (חישוב? קיבוץ איברים?)', cls: 'tip-yellow' },
+      { icon: '✏️', text: 'כשמפשטים ביטוי אלגברי — תמיד קיבצי קודם את האיברים עם נעלם, ואז את המספרים.', cls: 'tip-yellow' },
+      { icon: '💪', text: 'נסי שוב את החידון — עם עוד סיבוב אחד את בטח תקבלי 100!', cls: 'tip-pink' }
+    ];
+  } else if (pct >= 0.5) {
+    levelClass = 'level-developing';
+    levelText = '📈 רמה: מתפתחת';
+    feedTitle = `${studentName}, את בדרך הנכונה! 🌱`;
+    feedBody = `יש לך הבנה חלקית טובה של הנושא. את מצליחה עם שאלות ישירות יותר, 
+                אבל שאלות עם נעלמים ומשוואות עדיין דורשות תרגול נוסף. זה לגמרי נורמלי — כולם עוברים את זה!`;
+    feedTips = [
+      { icon: '📌', text: 'חזרי על הנוסחה: היקף = סכום כל הצלעות. רשמי אותה בפינת הדף לפני כל תרגיל.', cls: 'tip-yellow' },
+      { icon: '🔢', text: 'כשיש נעלם (כמו x), קודם החליפי את הערך שנתון בשאלה, ואז חשבי.', cls: 'tip-yellow' },
+      { icon: '💬', text: 'שאלי את המורה להסביר שוב את נושא קיבוץ איברים דומים — זה הבסיס לכל השאלות האלה.', cls: 'tip-pink' }
+    ];
+  } else {
+    levelClass = 'level-beginner';
+    levelText = '🌱 רמה: מתחילה';
+    feedTitle = `${studentName}, אל תוותרי — את יכולה! 💖`;
+    feedBody = `הנושא הזה דורש קצת יותר זמן להבנה, וזה בסדר גמור! 
+                המטרה שלנו היא להתקדם צעד אחר צעד. הכי חשוב שניסית — וזה כבר הישג!`;
+    feedTips = [
+      { icon: '📖', text: 'חזרי לחומר מהשיעור על היקף — קראי שוב את ההגדרה וההסברים לפני שתתרגלי.', cls: 'tip-pink' },
+      { icon: '🤝', text: 'בקשי עזרה מהמורה בשיעור הבא — הכיני 2-3 שאלות שלא הבנת ותביאי למורה.', cls: 'tip-pink' },
+      { icon: '🎯', text: 'תרגלי קודם שאלות פשוטות בלי נעלמים, ואז עברי בהדרגה לשאלות עם x.', cls: 'tip-yellow' }
+    ];
+  }
+
+  badge.className = `feedback-level-badge ${levelClass}`;
+  badge.textContent = levelText;
+  title.textContent = feedTitle;
+  body.textContent = feedBody;
+  tips.innerHTML = feedTips.map(t =>
+    `<div class="tip-item ${t.cls}"><span>${t.icon}</span><span>${t.text}</span></div>`
+  ).join('');
+}
+
+function buildMessage() {
+  const teacher = document.getElementById('teacherName').value.trim();
+  const note = document.getElementById('personalNote').value.trim();
+  const pct = score / questions.length;
+  let levelLabel = pct === 1 ? 'מצוינת 🌟' : pct >= 0.75 ? 'טובה מאוד 👍' : pct >= 0.5 ? 'מתפתחת 📈' : 'מתחילה 🌱';
+  return (teacher ? `שלום ${teacher},\n\n` : '') +
+    `📐 *חידון היקף צורות עם נעלמים*\n` +
+    `👩‍🎓 תלמידה: *${studentName}*\n` +
+    `✅ ציון: *${score} מתוך ${questions.length}*\n` +
+    `📊 רמה: ${levelLabel}\n` +
+    (note ? `\n💬 הערה מהתלמידה: "${note}"\n` : '') +
+    `\nנשלח מחידון מתמטיקה דיגיטלי 📱`;
+}
+
+function sendWhatsApp() {
+  const teacher = document.getElementById('teacherName').value.trim();
+  if (!teacher) {
+    document.getElementById('teacherName').style.borderColor = 'var(--wrong)';
+    document.getElementById('teacherName').placeholder = '⚠️ נא להכניס שם מורה';
+    return;
+  }
+  const msg = encodeURIComponent(buildMessage());
+  window.open(`https://wa.me/?text=${msg}`, '_blank');
+  document.getElementById('sentMsg').classList.add('show');
+}
+
+function sendEmail() {
+  const teacher = document.getElementById('teacherName').value.trim();
+  const note = document.getElementById('personalNote').value.trim();
+  const subject = encodeURIComponent(`ציון חידון היקף צורות – ${studentName}`);
+  const body = encodeURIComponent(buildMessage());
+  window.location.href = `mailto:?subject=${subject}&body=${body}`;
+  document.getElementById('sentMsg').classList.add('show');
+}
+
+function retryQuiz() {
+  currentQ = 0;
+  score = 0;
+  answered = false;
+  document.getElementById('resultsScreen').classList.remove('show');
+  document.getElementById('sentMsg').classList.remove('show');
+  document.getElementById('nameScreen').style.display = 'block';
+}
+
+function spawnConfetti(many = false) {
+  const wrap = document.getElementById('confettiWrap');
+  const colors = ['#ff6fd8','#6ef7c4','#ffe36e','#7b9fff','#ff9a9a','#b2f7ef'];
+  const count = many ? 60 : 20;
+  for (let i = 0; i < count; i++) {
+    const el = document.createElement('div');
+    el.className = 'confetti-piece';
+    el.style.left = Math.random() * 100 + 'vw';
+    el.style.top = '-20px';
+    el.style.background = colors[Math.floor(Math.random() * colors.length)];
+    el.style.width = (6 + Math.random() * 8) + 'px';
+    el.style.height = (6 + Math.random() * 8) + 'px';
+    el.style.animationDuration = (1.2 + Math.random() * 2) + 's';
+    el.style.animationDelay = Math.random() * 0.6 + 's';
+    wrap.appendChild(el);
+    setTimeout(() => el.remove(), 4000);
+  }
+}
+
+document.getElementById('nameInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') startQuiz();
+});
+</script>
+</body>
+</html>
