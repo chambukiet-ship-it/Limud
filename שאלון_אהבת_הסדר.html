@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>שאלון – למה אנחנו אוהבים לסדר?</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #fefce8;
+    color: #1e293b;
+    padding-bottom: 50px;
+    direction: rtl;
+  }
+
+  .header {
+    background: linear-gradient(135deg, #854d0e, #d97706);
+    color: white;
+    padding: 28px 20px;
+    text-align: center;
+  }
+  .header h1 { font-size: 21px; font-weight: 900; margin-top: 8px; line-height: 1.4; }
+  .header p  { font-size: 14px; opacity: 0.85; margin-top: 4px; }
+
+  .reading-box {
+    margin: 16px;
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  }
+  .reading-title {
+    background: linear-gradient(90deg, #854d0e, #d97706);
+    color: white;
+    padding: 12px 16px;
+    font-weight: 700;
+    font-size: 15px;
+  }
+  .reading-text {
+    padding: 16px;
+    font-size: 15px;
+    line-height: 1.9;
+    color: #334155;
+    max-height: 160px;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+  }
+  .reading-text.open { max-height: 2000px; }
+  .reading-text p { margin-bottom: 12px; }
+  .reading-text strong { color: #854d0e; }
+  .toggle-btn {
+    width: 100%;
+    padding: 11px;
+    background: #fef9c3;
+    color: #854d0e;
+    border: none;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+  }
+
+  .progress-box {
+    margin: 0 16px 4px;
+    background: white;
+    border-radius: 14px;
+    padding: 12px 16px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+  }
+  .progress-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    font-weight: 600;
+    color: #64748b;
+    margin-bottom: 8px;
+  }
+  .bar-bg { height: 9px; background: #e2e8f0; border-radius: 99px; overflow: hidden; }
+  .bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #d97706, #fbbf24);
+    border-radius: 99px;
+    width: 0%;
+    transition: width 0.4s;
+  }
+
+  .section-label {
+    margin: 20px 16px 2px;
+    font-size: 13px;
+    font-weight: 800;
+    color: #d97706;
+  }
+
+  .q-card {
+    margin: 10px 16px 0;
+    background: white;
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    border: 2px solid transparent;
+    transition: border-color 0.3s;
+  }
+  .q-card.done-correct { border-color: #22c55e; background: #f0fdf4; }
+  .q-card.done-wrong   { border-color: #ef4444; background: #fef2f2; }
+
+  .q-badge {
+    display: inline-block;
+    background: #fef9c3;
+    color: #854d0e;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 2px 10px;
+    border-radius: 99px;
+    margin-bottom: 8px;
+  }
+  .q-text {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.5;
+    margin-bottom: 14px;
+  }
+
+  .options { display: flex; flex-direction: column; gap: 9px; }
+  .opt-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    text-align: right;
+    padding: 12px 14px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    background: #f8fafc;
+    font-size: 15px;
+    font-weight: 500;
+    color: #1e293b;
+    cursor: pointer;
+    font-family: inherit;
+    direction: rtl;
+    line-height: 1.4;
+  }
+  .opt-btn:active { opacity: 0.8; }
+  .opt-letter {
+    min-width: 28px; height: 28px;
+    border: 2px solid #cbd5e1;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 800;
+    flex-shrink: 0;
+    color: #64748b;
+  }
+  .opt-btn.hl-correct { border-color: #22c55e !important; background: #dcfce7 !important; color: #15803d; font-weight: 700; }
+  .opt-btn.hl-wrong   { border-color: #ef4444 !important; background: #fee2e2 !important; color: #b91c1c; font-weight: 700; }
+  .opt-btn:disabled { cursor: default; }
+
+  .tf-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .tf-btn {
+    padding: 14px 10px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    background: #f8fafc;
+    font-size: 16px;
+    font-weight: 700;
+    color: #1e293b;
+    cursor: pointer;
+    text-align: center;
+    font-family: inherit;
+  }
+  .tf-btn:active { opacity: 0.8; }
+  .tf-btn.hl-correct { border-color: #22c55e !important; background: #dcfce7 !important; color: #15803d; }
+  .tf-btn.hl-wrong   { border-color: #ef4444 !important; background: #fee2e2 !important; color: #b91c1c; }
+  .tf-btn:disabled { cursor: default; }
+
+  .feedback {
+    margin-top: 10px;
+    padding: 9px 13px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    display: none;
+  }
+  .feedback.show { display: block; }
+  .fb-correct { background: #dcfce7; color: #15803d; }
+  .fb-wrong   { background: #fee2e2; color: #b91c1c; }
+
+  .submit-wrap { padding: 22px 16px 0; }
+  .submit-btn {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, #854d0e, #d97706);
+    color: white;
+    border: none;
+    border-radius: 16px;
+    font-size: 18px;
+    font-weight: 800;
+    cursor: pointer;
+    font-family: inherit;
+    box-shadow: 0 4px 14px rgba(217,119,6,0.35);
+  }
+  .submit-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .results-card {
+    margin: 20px 16px 0;
+    background: white;
+    border-radius: 20px;
+    padding: 30px 20px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    display: none;
+  }
+  .results-card.show { display: block; }
+  .res-emoji { font-size: 54px; }
+  .res-score { font-size: 50px; font-weight: 900; color: #854d0e; margin: 10px 0 4px; }
+  .res-stars { font-size: 26px; letter-spacing: 4px; margin-bottom: 10px; }
+  .res-msg { font-size: 15px; color: #475569; line-height: 1.6; margin-bottom: 20px; }
+
+  .name-input {
+    width: 100%;
+    padding: 13px 16px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 16px;
+    font-family: inherit;
+    direction: rtl;
+    text-align: right;
+    margin-bottom: 12px;
+    color: #1e293b;
+  }
+  .name-input:focus { outline: none; border-color: #d97706; }
+
+  .wa-btn {
+    width: 100%;
+    padding: 15px;
+    background: #25D366;
+    color: white;
+    border: none;
+    border-radius: 14px;
+    font-size: 17px;
+    font-weight: 800;
+    cursor: pointer;
+    font-family: inherit;
+    margin-bottom: 10px;
+  }
+  .retry-btn {
+    padding: 13px 28px;
+    background: #fef9c3;
+    color: #854d0e;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div style="font-size:40px">🔢</div>
+  <h1>למה אנחנו אוהבים לסדר?</h1>
+  <p>קראו את הטקסט וענו על השאלות</p>
+</div>
+
+<div class="reading-box" style="margin-top:16px">
+  <div class="reading-title">📖 קראו בעיון</div>
+  <div class="reading-text" id="readText">
+    <p>יש אנשים שמסדרים את הספרים לפי גובה, מקפלים בגדים בדיוק מֻפְלָא, ומרגישים אי-נוחות כשדבר-מה אינו במקומו. האם זה סתם הרגל – או שיש כאן מדע שלם?</p>
+    <p>מחקרים בתחום הַנּוֹירוֹלוֹגְיָה (חקר המוח) מגלים שסדר ו<strong>סִימֶּטְרְיָה</strong> מפעילים במוחנו את מרכז ה<strong>תְּגוּמָה</strong> (Reward Center) – כלומר, אותו אזור שמופעל כשאנו אוכלים משהו טעים או משיגים הצלחה. במילים פשוטות: כשרואים משהו מסודר, המוח משחרר דוֹפָּמִין – הורמון העונג – ואנחנו מרגישים טוב!</p>
+    <p>מבחינה אֶבּוֹלוּציוֹנִית (כלומר, מבחינת התפתחות המין האנושי לאורך אלפי שנים), הנטייה לסדר עזרה לאבותינו לשרוד: סביבה מסודרת אפשרה למצוא מזון במהירות, לזהות סכנות ולפעול ביעילות. לכן, המוח למד לתגמל סדר בתחושת שביעות רצון.</p>
+    <p>אולם לא כולם אוהבים סדר באותה מידה. מחקרים מראים שאנשים הנמצאים במצבי <strong>חֲרָדָה</strong> או לחץ נוטים לחפש סדר יותר מאחרים – כי סדר חיצוני יוצר תחושת שליטה ומפחית חרדה. לכן, לפעמים כשאנחנו מסדרים את החדר, אנחנו בעצם מנסים להרגיע את עצמנו מבפנים.</p>
+    <p>מצד שני, יש הבדל בין אהבת סדר בריאה לבין הפרעה שנקראת <strong>אוֹ.סִי.דִי</strong> (OCD) – כלומר, מחשבות כְּפִיָּתִיּוֹת וטקסים חוזרים שגורמים לסבל ממשי. רוב האנשים שאוהבים סדר אינם סובלים מהפרעה זו – אלא פשוט נהנים מהתחושה הנעימה שסדר מעניק.</p>
+    <p>מסקנה: אהבת הסדר היא חלק עמוק מהטבע האנושי. בפעם הבאה שתסדרו את השולחן לפני לימוד – דעו שאתם לא רק מנקים, אתם ממש עוזרים למוחכם להתרכז! 🧠</p>
+  </div>
+  <button class="toggle-btn" id="toggleBtn" onclick="toggleRead()">▼ קראו עוד</button>
+</div>
+
+<div class="progress-box">
+  <div class="progress-row">
+    <span>התקדמות</span>
+    <span id="progressText">0 / 10</span>
+  </div>
+  <div class="bar-bg"><div class="bar-fill" id="barFill"></div></div>
+</div>
+
+<div class="section-label">חלק א׳ – רב-ברירה</div>
+
+<div class="q-card" id="card1">
+  <div class="q-badge">שאלה 1</div>
+  <div class="q-text">מה קורה במוח כשרואים משהו מסודר?</div>
+  <div class="options" id="opts1">
+    <button class="opt-btn" onclick="pickMC(1,0,2)"><span class="opt-letter">א</span>המוח נכנס למצב של עירנות מוגברת</button>
+    <button class="opt-btn" onclick="pickMC(1,1,2)"><span class="opt-letter">ב</span>המוח משחרר אַדְרֶנָלִין</button>
+    <button class="opt-btn" onclick="pickMC(1,2,2)"><span class="opt-letter">ג</span>המוח משחרר דוֹפָּמִין ומרכז התגמול מופעל</button>
+    <button class="opt-btn" onclick="pickMC(1,3,2)"><span class="opt-letter">ד</span>המוח עובר למצב של שעמום</button>
+  </div>
+  <div class="feedback" id="fb1"></div>
+</div>
+
+<div class="q-card" id="card2">
+  <div class="q-badge">שאלה 2</div>
+  <div class="q-text">מדוע, מבחינה אֶבּוֹלוּציוֹנִית, המוח תִּגְמֵל סדר בתחושת עונג?</div>
+  <div class="options" id="opts2">
+    <button class="opt-btn" onclick="pickMC(2,0,1)"><span class="opt-letter">א</span>כי סדר גרם לאנשים לישון טוב יותר</button>
+    <button class="opt-btn" onclick="pickMC(2,1,1)"><span class="opt-letter">ב</span>כי סביבה מסודרת עזרה לאבותינו למצוא מזון, לזהות סכנות ולפעול ביעילות</button>
+    <button class="opt-btn" onclick="pickMC(2,2,1)"><span class="opt-letter">ג</span>כי אנשים מסודרים היו פופולריים יותר בשבט</button>
+    <button class="opt-btn" onclick="pickMC(2,3,1)"><span class="opt-letter">ד</span>כי סדר עזר לזכור מידע טוב יותר</button>
+  </div>
+  <div class="feedback" id="fb2"></div>
+</div>
+
+<div class="q-card" id="card3">
+  <div class="q-badge">שאלה 3</div>
+  <div class="q-text">מדוע אנשים בלחץ נוטים לחפש סדר יותר מאחרים?</div>
+  <div class="options" id="opts3">
+    <button class="opt-btn" onclick="pickMC(3,0,2)"><span class="opt-letter">א</span>כי הם אוהבים לנקות כשהם עצבניים</button>
+    <button class="opt-btn" onclick="pickMC(3,1,2)"><span class="opt-letter">ב</span>כי סדר גורם לעייפות ועוזר להירדם</button>
+    <button class="opt-btn" onclick="pickMC(3,2,2)"><span class="opt-letter">ג</span>כי סדר חיצוני יוצר תחושת שליטה ומפחית חרדה</button>
+    <button class="opt-btn" onclick="pickMC(3,3,2)"><span class="opt-letter">ד</span>כי הם רוצים לרצות את הסביבה</button>
+  </div>
+  <div class="feedback" id="fb3"></div>
+</div>
+
+<div class="q-card" id="card4">
+  <div class="q-badge">שאלה 4</div>
+  <div class="q-text">מה היא הַנּוֹירוֹלוֹגְיָה לפי הטקסט?</div>
+  <div class="options" id="opts4">
+    <button class="opt-btn" onclick="pickMC(4,0,1)"><span class="opt-letter">א</span>תחום שחוקר את ההתנהגות האנושית בחברה</button>
+    <button class="opt-btn" onclick="pickMC(4,1,1)"><span class="opt-letter">ב</span>תחום שחוקר את המוח</button>
+    <button class="opt-btn" onclick="pickMC(4,2,1)"><span class="opt-letter">ג</span>תחום שחוקר את הרגשות</button>
+    <button class="opt-btn" onclick="pickMC(4,3,1)"><span class="opt-letter">ד</span>תחום שחוקר את ההתפתחות הגופנית</button>
+  </div>
+  <div class="feedback" id="fb4"></div>
+</div>
+
+<div class="q-card" id="card5">
+  <div class="q-badge">שאלה 5</div>
+  <div class="q-text">מה ההבדל בין אהבת סדר רגילה ל-OCD לפי הטקסט?</div>
+  <div class="options" id="opts5">
+    <button class="opt-btn" onclick="pickMC(5,0,1)"><span class="opt-letter">א</span>OCD היא כשאוהבים לסדר כל יום</button>
+    <button class="opt-btn" onclick="pickMC(5,1,1)"><span class="opt-letter">ב</span>OCD כוללת מחשבות כְּפִיָּתִיּוֹת וטקסים חוזרים שגורמים לסבל ממשי</button>
+    <button class="opt-btn" onclick="pickMC(5,2,1)"><span class="opt-letter">ג</span>OCD היא כשאוהבים סדר רק בבית</button>
+    <button class="opt-btn" onclick="pickMC(5,3,1)"><span class="opt-letter">ד</span>אין הבדל – כל אהבת סדר היא OCD</button>
+  </div>
+  <div class="feedback" id="fb5"></div>
+</div>
+
+<div class="section-label" style="margin-top:24px">חלק ב׳ – נכון או לא נכון</div>
+
+<div class="q-card" id="card6">
+  <div class="q-badge">שאלה 6</div>
+  <div class="q-text">סדר וסִימֶּטְרְיָה מפעילים את אותו אזור מוחי כמו אכילת משהו טעים.</div>
+  <div class="tf-row">
+    <button class="tf-btn" id="tf6t" onclick="pickTF(6,true,true)">✅ נכון</button>
+    <button class="tf-btn" id="tf6f" onclick="pickTF(6,false,true)">❌ לא נכון</button>
+  </div>
+  <div class="feedback" id="fb6"></div>
+</div>
+
+<div class="q-card" id="card7">
+  <div class="q-badge">שאלה 7</div>
+  <div class="q-text">כולם אוהבים סדר באותה מידה בדיוק.</div>
+  <div class="tf-row">
+    <button class="tf-btn" id="tf7t" onclick="pickTF(7,true,false)">✅ נכון</button>
+    <button class="tf-btn" id="tf7f" onclick="pickTF(7,false,false)">❌ לא נכון</button>
+  </div>
+  <div class="feedback" id="fb7"></div>
+</div>
+
+<div class="q-card" id="card8">
+  <div class="q-badge">שאלה 8</div>
+  <div class="q-text">סידור השולחן לפני לימוד יכול לעזור למוח להתרכז.</div>
+  <div class="tf-row">
+    <button class="tf-btn" id="tf8t" onclick="pickTF(8,true,true)">✅ נכון</button>
+    <button class="tf-btn" id="tf8f" onclick="pickTF(8,false,true)">❌ לא נכון</button>
+  </div>
+  <div class="feedback" id="fb8"></div>
+</div>
+
+<div class="q-card" id="card9">
+  <div class="q-badge">שאלה 9</div>
+  <div class="q-text">רוב האנשים שאוהבים סדר סובלים מהפרעת OCD.</div>
+  <div class="tf-row">
+    <button class="tf-btn" id="tf9t" onclick="pickTF(9,true,false)">✅ נכון</button>
+    <button class="tf-btn" id="tf9f" onclick="pickTF(9,false,false)">❌ לא נכון</button>
+  </div>
+  <div class="feedback" id="fb9"></div>
+</div>
+
+<div class="q-card" id="card10">
+  <div class="q-badge">שאלה 10</div>
+  <div class="q-text">הנטייה לסדר קשורה לתהליכים שהתפתחו אצל בני האדם לאורך אלפי שנים.</div>
+  <div class="tf-row">
+    <button class="tf-btn" id="tf10t" onclick="pickTF(10,true,true)">✅ נכון</button>
+    <button class="tf-btn" id="tf10f" onclick="pickTF(10,false,true)">❌ לא נכון</button>
+  </div>
+  <div class="feedback" id="fb10"></div>
+</div>
+
+<div class="submit-wrap">
+  <button class="submit-btn" id="submitBtn" disabled onclick="showResults()">📊 בדקו את הציון שלכם</button>
+</div>
+
+<div class="results-card" id="resultsCard">
+  <div class="res-emoji" id="resEmoji"></div>
+  <div class="res-stars" id="resStars"></div>
+  <div class="res-score" id="resScore"></div>
+  <div class="res-msg" id="resMsg"></div>
+  <div style="margin-bottom:16px">
+    <input class="name-input" type="text" id="studentName" placeholder="כתבו את שמכם כאן..." />
+    <button class="wa-btn" onclick="sendWhatsApp()">📲 שלחו ציון למורה בוואטסאפ</button>
+  </div>
+  <button class="retry-btn" onclick="location.reload()">🔄 נסו שוב</button>
+</div>
+
+<script>
+var answered = {};
+var score = 0;
+var TOTAL = 10;
+
+function updateProgress() {
+  var count = Object.keys(answered).length;
+  document.getElementById('progressText').textContent = count + ' / ' + TOTAL;
+  document.getElementById('barFill').style.width = (count / TOTAL * 100) + '%';
+  document.getElementById('submitBtn').disabled = (count < TOTAL);
+}
+
+function showFB(n, isCorrect, correctLabel) {
+  var fb = document.getElementById('fb' + n);
+  fb.className = 'feedback show ' + (isCorrect ? 'fb-correct' : 'fb-wrong');
+  fb.textContent = isCorrect
+    ? '✅ כל הכבוד! תשובה נכונה!'
+    : '❌ לא בדיוק. התשובה הנכונה: ' + correctLabel;
+}
+
+function pickMC(n, chosen, correct) {
+  if (answered[n]) return;
+  answered[n] = true;
+  var btns = document.getElementById('opts' + n).getElementsByTagName('button');
+  var letters = ['א','ב','ג','ד'];
+  var isCorrect = (chosen === correct);
+  if (isCorrect) score++;
+  for (var i = 0; i < btns.length; i++) {
+    btns[i].disabled = true;
+    if (i === chosen && isCorrect)   btns[i].classList.add('hl-correct');
+    if (i === chosen && !isCorrect)  btns[i].classList.add('hl-wrong');
+    if (i === correct && !isCorrect) btns[i].classList.add('hl-correct');
+  }
+  document.getElementById('card' + n).classList.add(isCorrect ? 'done-correct' : 'done-wrong');
+  showFB(n, isCorrect, letters[correct]);
+  updateProgress();
+}
+
+function pickTF(n, chosen, correct) {
+  if (answered[n]) return;
+  answered[n] = true;
+  var tBtn = document.getElementById('tf' + n + 't');
+  var fBtn = document.getElementById('tf' + n + 'f');
+  tBtn.disabled = true;
+  fBtn.disabled = true;
+  var isCorrect = (chosen === correct);
+  if (isCorrect) score++;
+  var chosenBtn = chosen ? tBtn : fBtn;
+  var correctBtn = correct ? tBtn : fBtn;
+  chosenBtn.classList.add(isCorrect ? 'hl-correct' : 'hl-wrong');
+  if (!isCorrect) correctBtn.classList.add('hl-correct');
+  document.getElementById('card' + n).classList.add(isCorrect ? 'done-correct' : 'done-wrong');
+  showFB(n, isCorrect, correct ? 'נכון' : 'לא נכון');
+  updateProgress();
+}
+
+function toggleRead() {
+  var txt = document.getElementById('readText');
+  var btn = document.getElementById('toggleBtn');
+  var open = txt.classList.toggle('open');
+  btn.textContent = open ? '▲ הסתירו' : '▼ קראו עוד';
+}
+
+function sendWhatsApp() {
+  var name = document.getElementById('studentName').value.trim();
+  if (!name) { alert('אנא כתבו את שמכם לפני השליחה 😊'); return; }
+  var pct = Math.round((score / TOTAL) * 100);
+  var msg = 'שלום! אני ' + name + ' סיימתי את השאלון על אהבת הסדר.\nציון: ' + score + ' מתוך ' + TOTAL + ' (' + pct + '%) 🔢';
+  window.open('https://wa.me/972529577005?text=' + encodeURIComponent(msg), '_blank');
+}
+
+function showResults() {
+  var card = document.getElementById('resultsCard');
+  card.classList.add('show');
+  document.getElementById('resScore').textContent = score + ' / ' + TOTAL;
+  var emoji, stars, msg;
+  if (score === 10)    { emoji='🏆'; stars='⭐⭐⭐⭐⭐'; msg='מושלם! הבנת הכל לעומק!'; }
+  else if (score >= 8) { emoji='🌟'; stars='⭐⭐⭐⭐';   msg='עבודה מצוינת! כמעט מושלם!'; }
+  else if (score >= 6) { emoji='😊'; stars='⭐⭐⭐';     msg='יפה מאוד! כדאי לקרוא שוב.'; }
+  else if (score >= 4) { emoji='💪'; stars='⭐⭐';       msg='יש על מה לעבוד – נסו שוב!'; }
+  else                 { emoji='📖'; stars='⭐';         msg='כדאי לקרוא את הטקסט שוב בעיון.'; }
+  document.getElementById('resEmoji').textContent = emoji;
+  document.getElementById('resStars').textContent = stars;
+  document.getElementById('resMsg').textContent = msg;
+  card.scrollIntoView({ behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
