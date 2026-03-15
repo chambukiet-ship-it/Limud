@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>🎲 הסתברות — חידון</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Heebo:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --pk:   #FF2D78;
+  --pur:  #A855F7;
+  --teal: #06B6D4;
+  --mint: #10B981;
+  --yel:  #F59E0B;
+  --bg:   #F8F4FF;
+  --card: #FFFFFF;
+  --text: #1E1040;
+  --mut:  #8B6FAB;
+  --bord: #E5D8F8;
+  --ok:   #10B981;
+  --err:  #EF4444;
+  --shad: 0 4px 24px rgba(168,85,247,0.13);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+
+body{
+  font-family:'Heebo',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+  user-select:none;
+}
+
+/* subtle dot pattern bg */
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:radial-gradient(circle, rgba(168,85,247,0.07) 1px, transparent 1px);
+  background-size:28px 28px;
+}
+
+.wrap{max-width:440px;margin:0 auto;padding:0 15px 50px;position:relative;z-index:1;}
+
+/* ── screens ── */
+.scr{display:none;} .scr.on{display:block;}
+
+/* ══════════════
+   INTRO
+══════════════ */
+.intro{padding-top:28px;animation:slideUp .45s ease both;}
+@keyframes slideUp{from{opacity:0;transform:translateY(22px);}to{opacity:1;transform:none;}}
+
+.page-header{text-align:center;margin-bottom:22px;}
+.page-title{
+  font-family:'Fredoka One',cursive;font-size:2.2rem;
+  color:var(--text);margin-bottom:4px;
+}
+.page-title span{color:var(--pk);}
+.page-sub{color:var(--mut);font-size:.88rem;font-weight:700;}
+
+/* formula card */
+.formula-card{
+  background:var(--card);border-radius:20px;
+  padding:18px 16px;margin-bottom:14px;
+  box-shadow:var(--shad);border:1.5px solid var(--bord);
+}
+.fc-head{
+  font-family:'Fredoka One',cursive;font-size:.95rem;
+  color:var(--pur);margin-bottom:12px;
+  display:flex;align-items:center;gap:7px;
+}
+.big-formula{
+  background:linear-gradient(135deg,#FAF5FF,#FFF1F7);
+  border-radius:14px;padding:14px;text-align:center;
+  margin-bottom:12px;border:1.5px solid var(--bord);
+}
+.bf-top{font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--mut);margin-bottom:6px;}
+.bf-main{font-family:'Fredoka One',cursive;font-size:1.5rem;color:var(--text);line-height:1.4;}
+.bf-main .hi{color:var(--pk);}
+
+.examples-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}
+.ex-chip{
+  background:#FAF5FF;border-radius:12px;padding:10px 8px;
+  border:1.5px solid var(--bord);text-align:center;
+}
+.ex-chip .ec-icon{font-size:1.4rem;display:block;margin-bottom:4px;}
+.ex-chip .ec-text{font-size:.78rem;font-weight:700;color:var(--text);line-height:1.6;}
+.ex-chip .ec-text b{color:var(--pk);}
+
+.rule-list{display:flex;flex-direction:column;gap:6px;}
+.rule-item{
+  display:flex;align-items:center;gap:10px;
+  background:#F0FDF4;border-radius:11px;padding:9px 12px;
+  border:1.5px solid #BBF7D0;font-size:.82rem;font-weight:700;color:#065F46;
+}
+.rule-item.red{background:#FFF1F2;border-color:#FECDD3;color:#9F1239;}
+.rule-item.yel{background:#FFFBEB;border-color:#FDE68A;color:#92400E;}
+
+/* level selector */
+.level-card{
+  background:var(--card);border-radius:20px;
+  padding:16px 15px;margin-bottom:18px;
+  box-shadow:var(--shad);border:1.5px solid var(--bord);
+}
+.lc-head{font-family:'Fredoka One',cursive;font-size:.95rem;color:var(--pur);margin-bottom:12px;display:flex;align-items:center;gap:7px;}
+.level-tabs{display:flex;gap:8px;}
+.lv-tab{
+  flex:1;padding:12px 6px;border-radius:14px;
+  border:2px solid var(--bord);background:var(--bg);
+  font-family:'Heebo',sans-serif;font-size:.8rem;font-weight:700;
+  color:var(--mut);cursor:pointer;text-align:center;transition:all .2s;
+}
+.lv-tab.active{
+  border-color:var(--pur);
+  background:linear-gradient(135deg,#FAF5FF,#FFF1F7);
+  color:var(--pur);
+}
+.lv-tab .lv-icon{font-size:1.3rem;display:block;margin-bottom:3px;}
+
+.start-btn{
+  width:100%;
+  background:linear-gradient(135deg,var(--pk),var(--pur));
+  border:none;border-radius:18px;padding:17px;
+  font-family:'Fredoka One',cursive;font-size:1.25rem;color:#fff;
+  cursor:pointer;box-shadow:0 5px 22px rgba(168,85,247,.38);
+  transition:transform .15s, box-shadow .15s;
+}
+.start-btn:active{transform:scale(.97);}
+
+/* ══════════════
+   GAME
+══════════════ */
+.game-scr{padding-top:14px;}
+
+/* progress strip */
+.prog-strip{
+  background:var(--card);border-radius:16px;
+  padding:12px 14px;margin-bottom:12px;
+  box-shadow:var(--shad);border:1.5px solid var(--bord);
+  display:flex;align-items:center;gap:12px;
+}
+.q-counter{
+  font-family:'Fredoka One',cursive;font-size:1rem;
+  color:var(--pur);flex-shrink:0;
+}
+.prog-bar-wrap{flex:1;}
+.prog-bar{height:10px;border-radius:10px;background:rgba(168,85,247,.12);overflow:hidden;}
+.prog-fill{height:100%;border-radius:10px;background:linear-gradient(90deg,var(--pk),var(--pur));transition:width .5s ease;}
+.score-chip{
+  background:linear-gradient(135deg,var(--yel),#F97316);
+  border-radius:12px;padding:5px 11px;
+  font-family:'Fredoka One',cursive;font-size:.9rem;color:#fff;
+  flex-shrink:0;box-shadow:0 2px 8px rgba(245,158,11,.35);
+}
+
+/* dot trail */
+.dot-trail{display:flex;justify-content:center;gap:5px;margin-bottom:12px;}
+.dot{
+  width:10px;height:10px;border-radius:50%;
+  background:rgba(168,85,247,.15);border:1.5px solid var(--bord);
+  transition:all .3s;
+}
+.dot.curr{background:var(--pur);transform:scale(1.4);border-color:var(--pur);}
+.dot.pass{background:var(--ok);border-color:var(--ok);}
+.dot.fail{background:var(--err);border-color:var(--err);}
+
+/* question card */
+.q-card{
+  background:var(--card);border-radius:22px;
+  padding:18px 16px 16px;
+  box-shadow:var(--shad);border:1.5px solid var(--bord);
+  position:relative;overflow:hidden;
+  animation:cardIn .3s ease both;
+}
+@keyframes cardIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:none;}}
+
+.q-card::before{
+  content:'';position:absolute;top:-35px;left:-35px;
+  width:110px;height:110px;
+  background:radial-gradient(circle,rgba(168,85,247,.08) 0%,transparent 70%);
+  pointer-events:none;
+}
+
+.topic-badge{
+  display:inline-flex;align-items:center;gap:5px;
+  border-radius:10px;padding:4px 12px;margin-bottom:12px;
+  font-size:.68rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;
+  color:#fff;
+}
+.tb-pink  {background:linear-gradient(135deg,var(--pk),#FF6FA3);}
+.tb-purple{background:linear-gradient(135deg,var(--pur),#7C3AED);}
+.tb-teal  {background:linear-gradient(135deg,var(--teal),#0891B2);}
+.tb-yel   {background:linear-gradient(135deg,var(--yel),#D97706);}
+
+/* story */
+.story-box{
+  background:linear-gradient(135deg,#FAF5FF,#FFF5F8);
+  border-radius:14px;padding:13px 12px;margin-bottom:12px;
+  border:1.5px solid var(--bord);
+}
+.story-emoji{font-size:2rem;display:block;margin-bottom:5px;}
+.story-text{font-size:.93rem;line-height:1.75;font-weight:600;color:var(--text);}
+.story-text b{color:var(--pk);}
+.num-pill{
+  display:inline-block;
+  background:linear-gradient(135deg,var(--pk),var(--pur));
+  color:#fff;border-radius:7px;padding:1px 8px;
+  font-family:'Fredoka One',cursive;font-size:.9rem;
+}
+
+/* visual helper */
+.vis-box{
+  background:#FAFAFA;border:1.5px solid var(--bord);
+  border-radius:14px;padding:11px 12px;margin-bottom:12px;text-align:center;
+}
+.vis-lbl{font-size:.68rem;color:var(--mut);font-weight:800;letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px;}
+.sample-row{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;}
+.s-item{
+  width:38px;height:38px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;font-size:1.25rem;
+  border:2px solid var(--bord);background:#fff;transition:all .25s;
+}
+.s-item.fav{
+  background:linear-gradient(135deg,#FFE4F0,#F3E8FF);
+  border-color:var(--pk);
+  box-shadow:0 2px 10px rgba(255,45,120,.22);
+}
+.frac-display{
+  display:inline-flex;flex-direction:column;align-items:center;gap:2px;
+  font-family:'Fredoka One',cursive;
+}
+.frac-t{font-size:1.6rem;color:var(--pk);}
+.frac-l{width:44px;height:3px;background:var(--text);border-radius:2px;}
+.frac-b{font-size:1.6rem;color:var(--text);}
+.frac-side{font-family:'Fredoka One',cursive;font-size:1rem;color:var(--pur);margin-right:10px;align-self:center;}
+
+/* question text */
+.q-label{
+  font-family:'Fredoka One',cursive;font-size:1.05rem;
+  color:var(--text);text-align:center;margin-bottom:14px;
+  line-height:1.5;
+}
+
+/* choices */
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:8px;}
+.ch-btn{
+  background:linear-gradient(145deg,#FAF5FF,#FFF5F8);
+  border:2.5px solid var(--bord);border-radius:17px;
+  padding:17px 8px 13px;cursor:pointer;
+  transition:all .17s;text-align:center;
+  font-family:'Fredoka One',cursive;font-size:1.35rem;color:var(--text);
+  position:relative;
+}
+.ch-lbl{
+  display:block;font-size:.62rem;font-family:'Heebo',sans-serif;
+  color:var(--mut);margin-bottom:5px;font-weight:800;
+  letter-spacing:.07em;text-transform:uppercase;
+}
+.ch-btn:active{transform:scale(.93);}
+.ch-btn.ok{
+  background:linear-gradient(135deg,#DCFCE7,#BBF7D0)!important;
+  border-color:var(--ok)!important;color:#065F46!important;
+  animation:okPop .32s ease;
+  box-shadow:0 4px 18px rgba(16,185,129,.35)!important;
+}
+.ch-btn.ng{
+  background:linear-gradient(135deg,#FEE2E2,#FECACA)!important;
+  border-color:var(--err)!important;color:#7F1D1D!important;
+  animation:ngShake .36s ease;
+}
+.ch-btn.reveal{
+  background:linear-gradient(135deg,#DCFCE7,#BBF7D0)!important;
+  border-color:var(--ok)!important;color:#065F46!important;
+}
+.ch-btn.dim{opacity:.28;pointer-events:none;}
+
+@keyframes okPop{0%{transform:scale(1);}45%{transform:scale(1.07);}100%{transform:scale(1);}}
+@keyframes ngShake{0%,100%{transform:translateX(0);}28%{transform:translateX(-8px);}72%{transform:translateX(8px);}}
+
+/* hint */
+.hint-row{text-align:center;margin-top:8px;}
+.hint-btn{
+  background:none;border:1.5px dashed var(--pur);border-radius:10px;
+  padding:6px 18px;color:var(--pur);font-size:.8rem;cursor:pointer;
+  font-weight:700;font-family:'Heebo',sans-serif;
+}
+.hint-box{
+  background:#FAF5FF;border:1.5px solid rgba(168,85,247,.3);
+  border-radius:14px;padding:11px 13px;margin-top:9px;
+  font-size:.87rem;color:#6D28D9;display:none;
+  animation:fadeUp .25s ease both;line-height:1.75;font-weight:600;
+}
+.hint-box.on{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(7px);}to{opacity:1;transform:none;}}
+
+/* feedback */
+.fb{
+  border-radius:15px;padding:12px 14px;margin-top:12px;
+  font-weight:700;font-size:.91rem;display:none;
+  animation:fadeUp .3s ease both;line-height:1.6;
+}
+.fb.on{display:block;}
+.fb.ok-fb{background:#F0FDF4;border:2px solid rgba(16,185,129,.45);color:#064E3B;}
+.fb.ng-fb{background:#FFF1F2;border:2px solid rgba(239,68,68,.4);color:#7F1D1D;}
+
+/* next */
+.next-btn{
+  width:100%;
+  background:linear-gradient(135deg,var(--pk),var(--pur));
+  border:none;border-radius:17px;padding:15px;
+  font-family:'Fredoka One',cursive;font-size:1.1rem;color:#fff;
+  cursor:pointer;margin-top:12px;display:none;
+  box-shadow:0 4px 20px rgba(168,85,247,.35);
+  animation:fadeUp .3s ease both;
+}
+.next-btn:active{transform:scale(.97);}
+.next-btn.on{display:block;}
+
+/* ══════════════
+   END
+══════════════ */
+.end-scr{padding-top:26px;text-align:center;animation:slideUp .45s ease both;}
+
+.end-emoji{font-size:4.5rem;display:block;margin-bottom:12px;animation:float 3s ease-in-out infinite;}
+@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-9px);}}
+
+.end-title{
+  font-family:'Fredoka One',cursive;font-size:2rem;
+  color:var(--text);margin-bottom:6px;
+}
+.end-sub{color:var(--mut);font-size:.9rem;margin-bottom:22px;line-height:1.75;white-space:pre-line;}
+
+/* score ring */
+.score-ring-wrap{display:flex;justify-content:center;margin-bottom:22px;}
+.score-ring{
+  width:130px;height:130px;border-radius:50%;
+  background:conic-gradient(var(--pk) var(--pct,0%), var(--pur) var(--pct,0%) 100%);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 6px 28px rgba(168,85,247,.3);
+  position:relative;
+}
+.score-ring::before{
+  content:'';position:absolute;
+  width:96px;height:96px;border-radius:50%;background:var(--card);
+}
+.score-inner{position:relative;z-index:1;text-align:center;}
+.si-num{font-family:'Fredoka One',cursive;font-size:1.9rem;color:var(--pk);line-height:1;}
+.si-lbl{font-size:.7rem;color:var(--mut);font-weight:700;}
+
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;}
+.st-box{
+  background:var(--card);border-radius:18px;
+  padding:14px 10px;text-align:center;
+  box-shadow:var(--shad);border:1.5px solid var(--bord);
+}
+.st-box .sv{font-family:'Fredoka One',cursive;font-size:1.85rem;line-height:1;}
+.st-box .sl{font-size:.7rem;color:var(--mut);margin-top:3px;font-weight:700;}
+.st-box:nth-child(1) .sv{color:var(--ok);}
+.st-box:nth-child(2) .sv{color:var(--pk);}
+.st-box:nth-child(3) .sv{color:var(--pur);}
+.st-box:nth-child(4) .sv{color:var(--yel);}
+
+/* topic summary */
+.topic-summary{
+  background:var(--card);border-radius:20px;
+  padding:15px;margin-bottom:18px;
+  box-shadow:var(--shad);border:1.5px solid var(--bord);
+  text-align:right;
+}
+.ts-title{font-family:'Fredoka One',cursive;color:var(--pur);font-size:.95rem;margin-bottom:11px;}
+.ts-row{
+  display:flex;align-items:center;gap:10px;
+  padding:7px 0;border-bottom:1px solid var(--bord);
+  font-size:.83rem;font-weight:700;
+}
+.ts-row:last-child{border-bottom:none;}
+.ts-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.ts-lbl{flex:1;color:var(--text);}
+.ts-score{font-family:'Fredoka One',cursive;font-size:.95rem;}
+.ts-score.green{color:var(--ok);}
+.ts-score.red{color:var(--err);}
+
+.play-again{
+  width:100%;
+  background:linear-gradient(135deg,var(--pk),var(--pur));
+  border:none;border-radius:18px;padding:17px;
+  font-family:'Fredoka One',cursive;font-size:1.2rem;color:#fff;
+  cursor:pointer;box-shadow:0 5px 22px rgba(168,85,247,.38);
+}
+.play-again:active{transform:scale(.97);}
+
+/* particles */
+.ptcl{position:fixed;pointer-events:none;z-index:300;font-size:1.3rem;
+  animation:burst var(--dur,.9s) ease-out forwards;}
+@keyframes burst{0%{opacity:1;transform:translate(0,0) scale(1);}100%{opacity:0;transform:translate(var(--tx,0),var(--ty,-110px)) scale(.1);}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- ════ INTRO ════ -->
+<div class="scr on" id="S_intro">
+<div class="intro">
+
+  <div class="page-header">
+    <div class="page-title">🎲 <span>הסתברות</span></div>
+    <div class="page-sub">חידון תרגול · כיתה ט</div>
+  </div>
+
+  <div class="formula-card">
+    <div class="fc-head">📐 הנוסחה החשובה</div>
+    <div class="big-formula">
+      <div class="bf-top">סיכוי של אירוע A</div>
+      <div class="bf-main">
+        <span class="hi">P(A)</span> =
+        תוצאות רצויות
+        <span style="font-size:1rem;color:var(--mut)">÷</span>
+        סך כל התוצאות
+      </div>
+    </div>
+    <div class="examples-row">
+      <div class="ex-chip">
+        <span class="ec-icon">🎲</span>
+        <div class="ec-text">קוביה — 6 תוצאות<br><b>P(מספר 3) = 1/6</b></div>
+      </div>
+      <div class="ex-chip">
+        <span class="ec-icon">🪙</span>
+        <div class="ec-text">מטבע — 2 תוצאות<br><b>P(עץ) = 1/2</b></div>
+      </div>
+    </div>
+    <div class="rule-list">
+      <div class="rule-item">✅ P = 1 — אירוע <b>ודאי</b> (תמיד קורה)</div>
+      <div class="rule-item red">❌ P = 0 — אירוע <b>בלתי אפשרי</b></div>
+      <div class="rule-item yel">📊 הסתברות תמיד <b>בין 0 ל-1</b></div>
+    </div>
+  </div>
+
+  <div class="level-card">
+    <div class="lc-head">🎯 בחרי רמת קושי</div>
+    <div class="level-tabs">
+      <div class="lv-tab active" data-lv="0" onclick="pickLevel(0)">
+        <span class="lv-icon">🌱</span>בסיסי
+      </div>
+      <div class="lv-tab" data-lv="1" onclick="pickLevel(1)">
+        <span class="lv-icon">🔥</span>בינוני
+      </div>
+      <div class="lv-tab" data-lv="2" onclick="pickLevel(2)">
+        <span class="lv-icon">⭐</span>מאתגר
+      </div>
+    </div>
+  </div>
+
+  <button class="start-btn" onclick="startGame()">▶️ התחילי את החידון</button>
+</div>
+</div>
+
+<!-- ════ GAME ════ -->
+<div class="scr game-scr" id="S_game">
+
+  <div class="prog-strip">
+    <div class="q-counter" id="qCounter">1/10</div>
+    <div class="prog-bar-wrap">
+      <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+    </div>
+    <div class="score-chip" id="scoreChip">0 ✓</div>
+  </div>
+
+  <div class="dot-trail" id="dotTrail"></div>
+
+  <div class="q-card" id="qCard">
+    <div class="topic-badge tb-pink" id="topicBadge">🎲 הסתברות בסיסית</div>
+
+    <div class="story-box">
+      <span class="story-emoji" id="storyEmoji">🎲</span>
+      <div class="story-text" id="storyText"></div>
+    </div>
+
+    <div class="vis-box" id="visBox" style="display:none"></div>
+
+    <div class="q-label" id="qLabel"></div>
+
+    <div class="choices" id="choicesGrid"></div>
+
+    <div class="hint-row">
+      <button class="hint-btn" onclick="toggleHint()">💡 רמז</button>
+    </div>
+    <div class="hint-box" id="hintBox"></div>
+    <div class="fb" id="fbEl"></div>
+    <button class="next-btn" id="nextBtn" onclick="nextQ()">הלאה ←</button>
+  </div>
+
+</div>
+
+<!-- ════ END ════ -->
+<div class="scr end-scr" id="S_end">
+
+  <span class="end-emoji" id="endEmoji">🏆</span>
+  <div class="end-title" id="endTitle">כל הכבוד!</div>
+  <div class="end-sub" id="endSub"></div>
+
+  <div class="score-ring-wrap">
+    <div class="score-ring" id="scoreRing">
+      <div class="score-inner">
+        <div class="si-num" id="siNum">0/10</div>
+        <div class="si-lbl">נכון</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="st-box"><div class="sv" id="eCorrect">0</div><div class="sl">✓ תשובות נכונות</div></div>
+    <div class="st-box"><div class="sv" id="eWrong">0</div><div class="sl">✗ טעויות</div></div>
+    <div class="st-box"><div class="sv" id="eStreak">0</div><div class="sl">🔥 רצף מקסימלי</div></div>
+    <div class="st-box"><div class="sv" id="ePct">0%</div><div class="sl">📊 אחוז הצלחה</div></div>
+  </div>
+
+  <div class="topic-summary">
+    <div class="ts-title">📋 ביצועים לפי נושא</div>
+    <div id="topicSummary"></div>
+  </div>
+
+  <button class="play-again" onclick="restartGame()">🔄 שחקי שוב</button>
+</div>
+
+</div><!-- /wrap -->
+<script>
+// ══════════════════════════════════════════
+// QUESTIONS BANK
+// topic: badge label + color class
+// visual: {type:'sample'|'fraction', ...}
+// choices[], ans (0-based index)
+// ══════════════════════════════════════════
+const BANK = {
+
+  // ─── LEVEL 0: בסיסי ───
+  0: [
+    {
+      topic:'🎲 מה הסיכוי?', tc:'tb-pink',
+      emoji:'🎲', story:'גלגלנו קוביה רגילה עם המספרים <b>1, 2, 3, 4, 5, 6</b>.',
+      visual:{type:'sample', items:['1️⃣','2️⃣','3️⃣','4️⃣','5️⃣','6️⃣'], fav:[2]},
+      q:'מה הסיכוי לקבל את המספר <b>3</b>?',
+      choices:['1/6','1/2','1/3','2/6'], ans:0,
+      hint:'יש <b>תוצאה 1</b> רצויה (המספר 3) מתוך <b>6</b> אפשרויות. P = 1÷6 = <b>1/6</b>',
+      fbok:'✅ נכון! 1 תוצאה רצויה מתוך 6. לכן P = 1/6 🌟',
+      fbng:'❌ יש רק 1 תוצאה רצויה (המספר 3) מתוך 6. לכן P = 1/6',
+    },
+    {
+      topic:'🪙 מטבע', tc:'tb-purple',
+      emoji:'🪙', story:'זרקנו מטבע רגיל. שני הצדדים: <b>עץ</b> ו<b>פלי</b>.',
+      visual:{type:'sample', items:['🌳','🏅'], fav:[0]},
+      q:'מה הסיכוי לקבל <b>עץ</b>?',
+      choices:['1/4','1/3','2/3','1/2'], ans:3,
+      hint:'יש <b>2 תוצאות</b> אפשריות (עץ, פלי). <b>1</b> מהן רצויה (עץ). P = 1/2',
+      fbok:'✅ בדיוק! P = 1/2 = 50% 🌟',
+      fbng:'❌ מטבע = 2 תוצאות. רצויה: 1 (עץ). לכן P = 1/2',
+    },
+    {
+      topic:'🎲 מה הסיכוי?', tc:'tb-pink',
+      emoji:'🎲', story:'גלגלנו קוביה (מספרים 1–6).',
+      visual:{type:'sample', items:['1️⃣','2️⃣','3️⃣','4️⃣','5️⃣','6️⃣'], fav:[1,3,5]},
+      q:'מה הסיכוי לקבל מספר <b>זוגי</b>?',
+      choices:['1/6','1/3','1/2','2/3'], ans:2,
+      hint:'מספרים זוגיים בקוביה: <b>2, 4, 6</b> — שלוש תוצאות מתוך 6. P = 3/6 = <b>1/2</b>',
+      fbok:'✅ נכון! 2,4,6 = שלוש תוצאות מתוך 6 = P = 1/2 🌟',
+      fbng:'❌ המספרים הזוגיים הם 2, 4, 6 — שלושה מתוך 6. P = 3/6 = 1/2',
+    },
+    {
+      topic:'🔴 כדורים', tc:'tb-teal',
+      emoji:'🎨', story:'בקופסה יש <b>3 כדורים אדומים</b> ו-<b>1 כחול</b>. שולפים כדור אחד.',
+      visual:{type:'sample', items:['🔴','🔴','🔴','🔵'], fav:[0,1,2]},
+      q:'מה הסיכוי לשלוף כדור <b>אדום</b>?',
+      choices:['1/4','1/3','2/4','3/4'], ans:3,
+      hint:'יש <b>4 כדורים</b> סך הכל. <b>3</b> מהם אדומים. P = 3/4',
+      fbok:'✅ נכון! P = 3/4 🌟',
+      fbng:'❌ יש 4 כדורים, 3 אדומים. לכן P = 3/4',
+    },
+    {
+      topic:'🎲 ודאי/בלתי אפשרי', tc:'tb-yel',
+      emoji:'🎲', story:'גלגלנו קוביה רגילה (מספרים 1–6).',
+      visual:{type:'sample', items:['1️⃣','2️⃣','3️⃣','4️⃣','5️⃣','6️⃣'], fav:[0,1,2,3,4,5]},
+      q:'מה הסיכוי לקבל מספר <b>קטן מ-10</b>?',
+      choices:['1/6','1/2','0','1'], ans:3,
+      hint:'כל המספרים 1–6 הם קטנים מ-10. <b>כולם</b> רצויים! P = 6/6 = <b>1</b> (ודאי)',
+      fbok:'✅ נכון! כולם קטנים מ-10 → P = 1 (ודאי) 🌟',
+      fbng:'❌ כל 1–6 קטנים מ-10. P = 6/6 = 1 = ודאי',
+    },
+    {
+      topic:'🪙 מטבע', tc:'tb-purple',
+      emoji:'🪙', story:'זרקנו מטבע רגיל (עץ / פלי).',
+      visual:{type:'sample', items:['🌳','🏅'], fav:[]},
+      q:'מה הסיכוי לקבל <b>גובה</b> (צד שלישי)?',
+      choices:['1/2','1/3','0','1'], ans:2,
+      hint:'מטבע יש רק 2 צדדים: עץ ופלי. <b>אין</b> גובה. P = 0/2 = <b>0</b> (בלתי אפשרי)',
+      fbok:'✅ נכון! אין צד שלישי → P = 0 (בלתי אפשרי) 🌟',
+      fbng:'❌ מטבע = רק עץ ופלי, אין גובה. P = 0',
+    },
+    {
+      topic:'🔵 כדורים', tc:'tb-teal',
+      emoji:'🎨', story:'בקופסה <b>2 כדורים אדומים</b> ו-<b>2 כחולים</b>. שולפים כדור.',
+      visual:{type:'sample', items:['🔴','🔴','🔵','🔵'], fav:[2,3]},
+      q:'מה הסיכוי לשלוף כדור <b>כחול</b>?',
+      choices:['1/4','3/4','2/4','1/3'], ans:2,
+      hint:'יש 4 כדורים, <b>2 כחולים</b>. P = 2/4 = 1/2',
+      fbok:'✅ נכון! 2 כחולים מתוך 4. P = 2/4 🌟',
+      fbng:'❌ 2 כחולים מתוך 4 כדורים. P = 2/4',
+    },
+    {
+      topic:'🎲 מה הסיכוי?', tc:'tb-pink',
+      emoji:'🎲', story:'גלגלנו קוביה (1–6).',
+      visual:{type:'sample', items:['1️⃣','2️⃣','3️⃣','4️⃣','5️⃣','6️⃣'], fav:[4,5]},
+      q:'מה הסיכוי לקבל מספר <b>גדול מ-4</b>?',
+      choices:['1/6','4/6','2/6','3/6'], ans:2,
+      hint:'מספרים גדולים מ-4 בקוביה: <b>5 ו-6</b> בלבד. P = 2/6',
+      fbok:'✅ נכון! 5 ו-6 = שתי תוצאות. P = 2/6 🌟',
+      fbng:'❌ הגדולים מ-4 הם 5 ו-6 בלבד = 2 מתוך 6. P = 2/6',
+    },
+    {
+      topic:'🎁 פתקים', tc:'tb-yel',
+      emoji:'🎁', story:'בכובע פתקים עם שמות: <b>רינה, דנה, תמר, מיה, שיר</b>. שולפים פתק אחד.',
+      visual:{type:'sample', items:['📝','📝','📝','📝','📝'], fav:[1]},
+      q:'מה הסיכוי לשלוף את <b>דנה</b>?',
+      choices:['2/5','1/4','1/5','5/1'], ans:2,
+      hint:'יש <b>5 פתקים</b>. של דנה יש <b>1</b>. P = 1/5',
+      fbok:'✅ נכון! 1 פתק של דנה מתוך 5. P = 1/5 🌟',
+      fbng:'❌ יש 5 פתקים, של דנה יש 1. P = 1/5',
+    },
+    {
+      topic:'🟢 כדורים', tc:'tb-teal',
+      emoji:'🎨', story:'בקופסה 10 כדורים: <b>4 אדומים, 3 כחולים, 3 ירוקים</b>.',
+      visual:{type:'sample', items:['🔴','🔴','🔴','🔴','🔵','🔵','🔵','🟢','🟢','🟢'], fav:[4,5,6]},
+      q:'מה הסיכוי לשלוף כדור <b>כחול</b>?',
+      choices:['4/10','1/10','5/10','3/10'], ans:3,
+      hint:'יש <b>3 כחולים</b> מתוך <b>10</b>. P = 3/10',
+      fbok:'✅ נכון! 3 כחולים מתוך 10. P = 3/10 🌟',
+      fbng:'❌ 3 כדורים כחולים מתוך 10. P = 3/10',
+    },
+  ],
+
+  // ─── LEVEL 1: בינוני ───
+  1: [
+    {
+      topic:'🔢 כמה תוצאות?', tc:'tb-purple',
+      emoji:'🎲', story:'גלגלנו קוביה. <b>P(תוצאה) = 2/6</b>.',
+      visual:{type:'fraction', top:2, bot:6},
+      q:'כמה תוצאות <b>רצויות</b> יש?',
+      choices:['1','6','3','2'], ans:3,
+      hint:'בשבר <b>2/6</b>: המספר <b>למעלה (מונה = 2)</b> = מספר התוצאות הרצויות',
+      fbok:'✅ נכון! המונה בשבר = תוצאות רצויות = 2 🌟',
+      fbng:'❌ בשבר 2/6, המונה (המספר למעלה) = תוצאות רצויות = 2',
+    },
+    {
+      topic:'🔢 כמה תוצאות?', tc:'tb-purple',
+      emoji:'🎁', story:'בשקית <b>5 פתקים</b>. שולפים פתק. הסיכוי לזכות הוא <b>1/5</b>.',
+      visual:{type:'fraction', top:1, bot:5},
+      q:'כמה פתקי <b>זכייה</b> יש בשקית?',
+      choices:['5','2','3','1'], ans:3,
+      hint:'P = 1/5 פירושו: <b>1</b> פתק זכייה מתוך 5 פתקים',
+      fbok:'✅ נכון! P=1/5 → 1 פתק זכייה מתוך 5 🌟',
+      fbng:'❌ P=1/5 → המונה הוא 1 = פתק זכייה אחד',
+    },
+    {
+      topic:'🔴 כדורים', tc:'tb-teal',
+      emoji:'🎨', story:'בקופסה כדורים. <b>P(ירוק) = 2/8</b>.',
+      visual:{type:'fraction', top:2, bot:8},
+      q:'כמה כדורים <b>ירוקים</b> יש?',
+      choices:['8','6','2','4'], ans:2,
+      hint:'P = 2/8 — המונה (<b>2</b>) = מספר הכדורים הירוקים',
+      fbok:'✅ נכון! 2/8 → 2 כדורים ירוקים 🌟',
+      fbng:'❌ בשבר 2/8 — המספר למעלה (2) = כדורים ירוקים',
+    },
+    {
+      topic:'🎲 מה הסיכוי?', tc:'tb-pink',
+      emoji:'🎲', story:'גלגלנו קוביה (1–6).',
+      visual:{type:'sample', items:['1️⃣','2️⃣','3️⃣','4️⃣','5️⃣','6️⃣'], fav:[0,2,4]},
+      q:'מה הסיכוי לקבל מספר <b>אי-זוגי</b>?',
+      choices:['2/6','1/6','3/6','4/6'], ans:2,
+      hint:'מספרים אי-זוגיים: <b>1, 3, 5</b> = 3 תוצאות מתוך 6. P = 3/6',
+      fbok:'✅ נכון! 1,3,5 = שלוש תוצאות. P = 3/6 🌟',
+      fbng:'❌ האי-זוגיים הם 1,3,5 — שלושה מתוך 6. P = 3/6',
+    },
+    {
+      topic:'📊 השוואה', tc:'tb-yel',
+      emoji:'🎲', story:'גלגלנו קוביה (1–6).',
+      visual:{type:'sample', items:['1️⃣','2️⃣','3️⃣','4️⃣','5️⃣','6️⃣'], fav:[0,1,2]},
+      q:'מה הסיכוי לקבל מספר <b>קטן מ-4</b>?',
+      choices:['4/6','1/6','2/6','3/6'], ans:3,
+      hint:'קטנים מ-4: <b>1, 2, 3</b> = 3 תוצאות מתוך 6. P = 3/6',
+      fbok:'✅ נכון! 1,2,3 = שלוש תוצאות. P = 3/6 🌟',
+      fbng:'❌ הקטנים מ-4 הם 1,2,3 — שלושה מתוך 6. P = 3/6',
+    },
+    {
+      topic:'🎨 כדורים', tc:'tb-teal',
+      emoji:'🎨', story:'בתיק <b>5 כדורים כחולים</b> ו-<b>5 ירוקים</b>. שולפים כדור.',
+      visual:{type:'sample', items:['🔵','🔵','🔵','🔵','🔵','🟢','🟢','🟢','🟢','🟢'], fav:[0,1,2,3,4]},
+      q:'מה הסיכוי לשלוף <b>כחול</b>?',
+      choices:['1/10','3/10','1/2','2/5'], ans:2,
+      hint:'5 כחולים מתוך 10 כדורים. P = 5/10 = <b>1/2</b>',
+      fbok:'✅ נכון! 5 מתוך 10 = 1/2 🌟',
+      fbng:'❌ 5 כחולים מתוך 10. P = 5/10 = 1/2',
+    },
+    {
+      topic:'📊 השוואה', tc:'tb-yel',
+      emoji:'🎲', story:'קוביה (1–6). שני אירועים:<br>אירוע א: מספר <b>זוגי</b><br>אירוע ב: מספר <b>גדול מ-3</b>',
+      visual:{type:'sample', items:['1️⃣','2️⃣','3️⃣','4️⃣','5️⃣','6️⃣'], fav:[1,3,5]},
+      q:'מה הסיכוי של <b>אירוע א</b> (זוגי)?',
+      choices:['2/6','1/6','3/6','4/6'], ans:2,
+      hint:'זוגיים: <b>2, 4, 6</b> = 3 תוצאות מתוך 6. P = 3/6',
+      fbok:'✅ נכון! P(זוגי) = 3/6 🌟',
+      fbng:'❌ הזוגיים הם 2,4,6 = 3 מתוך 6. P = 3/6',
+    },
+    {
+      topic:'🎁 פתקים', tc:'tb-purple',
+      emoji:'🎁', story:'בכובע <b>8 פתקים</b>, <b>2</b> מהם זוכים. שולפים פתק אחד.',
+      visual:{type:'fraction', top:2, bot:8},
+      q:'מה הסיכוי <b>לא לזכות</b>?',
+      choices:['2/8','1/8','8/6','6/8'], ans:3,
+      hint:'הסיכוי לא לזכות: <b>8-2=6</b> פתקים לא זוכים מתוך 8. P = 6/8',
+      fbok:'✅ נכון! 8-2=6 פתקים לא זוכים. P = 6/8 🌟',
+      fbng:'❌ יש 8-2=6 פתקים שאינם זוכים מתוך 8. P = 6/8',
+    },
+    {
+      topic:'🪙 מטבעות', tc:'tb-pink',
+      emoji:'🪙', story:'זרקנו מטבע <b>פעמיים</b>. כל הזריקות הן עצמאיות.',
+      visual:{type:'sample', items:['🌳🌳','🌳🏅','🏅🌳','🏅🏅'], fav:[0]},
+      q:'מה הסיכוי לקבל <b>עץ-עץ</b>?',
+      choices:['1/2','2/4','1/4','3/4'], ans:2,
+      hint:'כל הצירופים: עץ-עץ, עץ-פלי, פלי-עץ, פלי-פלי = <b>4 תוצאות</b>. רצויה: <b>1</b>. P = 1/4',
+      fbok:'✅ נכון! 4 צירופים אפשריים, 1 רצוי. P = 1/4 🌟',
+      fbng:'❌ הצירופים האפשריים: עץ-עץ, עץ-פלי, פלי-עץ, פלי-פלי = 4 תוצאות. P = 1/4',
+    },
+    {
+      topic:'📊 השוואה', tc:'tb-yel',
+      emoji:'🎨', story:'בכד <b>12 כדורים</b>: 4 אדומים, 5 כחולים, 3 ירוקים.',
+      visual:{type:'sample', items:['🔴','🔴','🔴','🔴','🔵','🔵','🔵','🔵','🔵','🟢','🟢','🟢'], fav:[0,1,2,3]},
+      q:'מה הסיכוי לשלוף <b>אדום</b>?',
+      choices:['5/12','3/12','1/12','4/12'], ans:3,
+      hint:'יש <b>4 אדומים</b> מתוך <b>12</b>. P = 4/12',
+      fbok:'✅ נכון! 4 אדומים מתוך 12. P = 4/12 🌟',
+      fbng:'❌ יש 4 כדורים אדומים מתוך 12. P = 4/12',
+    },
+  ],
+
+  // ─── LEVEL 2: מאתגר ───
+  2: [
+    {
+      topic:'🧮 חישוב הפוך', tc:'tb-purple',
+      emoji:'🎲', story:'גלגלנו קוביה. P(אירוע) = 1/2.',
+      visual:{type:'fraction', top:3, bot:6},
+      q:'כמה תוצאות <b>רצויות</b> יש?',
+      choices:['6','2','1','3'], ans:3,
+      hint:'P = רצויות ÷ 6. אם P = 1/2 = 3/6, אז <b>3 תוצאות</b> רצויות.',
+      fbok:'✅ נכון! 1/2 = 3/6 → 3 תוצאות רצויות 🌟',
+      fbng:'❌ 1/2 = 3/6 → יש 3 תוצאות רצויות',
+    },
+    {
+      topic:'🎨 השלמה ל-1', tc:'tb-pink',
+      emoji:'🎨', story:'P(אדום) = 1/4.',
+      visual:{type:'fraction', top:1, bot:4},
+      q:'מה הסיכוי <b>לא לשלוף אדום</b>?',
+      choices:['1/4','2/4','4/4','3/4'], ans:3,
+      hint:'הסיכוי של ה"לא" = 1 פחות הסיכוי של "כן". 1 - 1/4 = <b>3/4</b>',
+      fbok:'✅ נכון! 1 - 1/4 = 3/4 🌟',
+      fbng:'❌ הסיכוי של "לא אדום" = 1 - P(אדום) = 1 - 1/4 = 3/4',
+    },
+    {
+      topic:'🪙 שתי זריקות', tc:'tb-teal',
+      emoji:'🪙', story:'זרקנו מטבע פעמיים. 4 צירופים אפשריים: עץ-עץ, עץ-פלי, פלי-עץ, פלי-פלי.',
+      visual:{type:'sample', items:['🌳🌳','🌳🏅','🏅🌳','🏅🏅'], fav:[1,2]},
+      q:'מה הסיכוי לקבל <b>בדיוק פלי אחד</b>?',
+      choices:['1/4','3/4','1/2','2/2'], ans:2,
+      hint:'עץ-<b>פלי</b>, <b>פלי</b>-עץ = <b>2 צירופים</b> מתוך 4. P = 2/4 = 1/2',
+      fbok:'✅ נכון! עץ-פלי ופלי-עץ = 2 מתוך 4. P = 2/4 = 1/2 🌟',
+      fbng:'❌ הצירופים עם פלי אחד: עץ-פלי, פלי-עץ = 2 מתוך 4. P = 1/2',
+    },
+    {
+      topic:'🧮 חישוב הפוך', tc:'tb-purple',
+      emoji:'🎨', story:'בקופסה כדורים. P(כחול) = 3/9. יש <b>9 כדורים סה"כ</b>.',
+      visual:{type:'fraction', top:3, bot:9},
+      q:'כמה כדורים <b>אינם כחולים</b>?',
+      choices:['3','9','7','6'], ans:3,
+      hint:'יש 3 כחולים מתוך 9. לכן: 9 - 3 = <b>6</b> כדורים אינם כחולים.',
+      fbok:'✅ נכון! 9 - 3 = 6 כדורים שאינם כחולים 🌟',
+      fbng:'❌ 3 כחולים מתוך 9 → שאר: 9-3 = 6',
+    },
+    {
+      topic:'📊 השוואה', tc:'tb-yel',
+      emoji:'🎲', story:'גלגלנו קוביה (1–6). רוצים מספר <b>ראשוני</b>.',
+      visual:{type:'sample', items:['1️⃣','2️⃣','3️⃣','4️⃣','5️⃣','6️⃣'], fav:[1,2,4]},
+      q:'מה הסיכוי לקבל מספר <b>ראשוני</b>?',
+      choices:['2/6','4/6','1/6','3/6'], ans:3,
+      hint:'מספרים ראשוניים עד 6: <b>2, 3, 5</b> = 3 תוצאות. P = 3/6',
+      fbok:'✅ נכון! 2, 3, 5 ראשוניים = 3 מתוך 6. P = 3/6 🌟',
+      fbng:'❌ הראשוניים עד 6 הם: 2, 3, 5 = שלושה מתוך 6. P = 3/6',
+    },
+    {
+      topic:'🎨 השלמה ל-1', tc:'tb-pink',
+      emoji:'🎨', story:'P(לא ירוק) = 7/10.',
+      visual:{type:'fraction', top:7, bot:10},
+      q:'מה P(<b>ירוק</b>)?',
+      choices:['7/10','4/10','2/10','3/10'], ans:3,
+      hint:'P(ירוק) = 1 - P(לא ירוק) = 1 - 7/10 = <b>3/10</b>',
+      fbok:'✅ נכון! 1 - 7/10 = 3/10 🌟',
+      fbng:'❌ P(ירוק) = 1 - 7/10 = 3/10',
+    },
+    {
+      topic:'🎲 שתי קוביות', tc:'tb-teal',
+      emoji:'🎲', story:'גלגלנו <b>2 קוביות</b>. סה"כ <b>36 צירופים</b> אפשריים.',
+      visual:{type:'fraction', top:'?', bot:36},
+      q:'מה הסיכוי לקבל סכום של <b>12</b>?',
+      choices:['6/36','2/36','3/36','1/36'], ans:3,
+      hint:'הסכום 12 מתקבל רק מ: 6+6. צירוף <b>אחד</b> בלבד מתוך 36. P = 1/36',
+      fbok:'✅ נכון! 6+6=12, צירוף אחד בלבד. P = 1/36 🌟',
+      fbng:'❌ הסכום 12 = רק 6+6 = צירוף אחד מתוך 36. P = 1/36',
+    },
+    {
+      topic:'🧮 חישוב הפוך', tc:'tb-purple',
+      emoji:'🎁', story:'בכובע פתקים. P(זכייה) = 2/10. שולפים פתק.',
+      visual:{type:'fraction', top:2, bot:10},
+      q:'כמה פתקים יש <b>סה"כ</b> בכובע?',
+      choices:['2','8','20','10'], ans:3,
+      hint:'בשבר 2/10: המכנה (<b>10</b>) = סך כל הפתקים',
+      fbok:'✅ נכון! המכנה בשבר = סך הכל = 10 🌟',
+      fbng:'❌ בשבר 2/10, המכנה (10) = סך כל הפתקים',
+    },
+    {
+      topic:'📊 השוואה', tc:'tb-yel',
+      emoji:'🎨', story:'שתי קופסאות:<br>א: 3 אדומים מתוך 6 כדורים<br>ב: 4 אדומים מתוך 10 כדורים',
+      visual:{type:'fraction', top:'3/6 לעומת 4/10', bot:''},
+      q:'באיזו קופסה <b>גדול יותר</b> הסיכוי לשלוף אדום?',
+      choices:['שווה','קופסה ב','קופסה א','אי אפשר לדעת'], ans:2,
+      hint:'קופסה א: 3/6 = <b>1/2 = 0.5</b>. קופסה ב: 4/10 = <b>2/5 = 0.4</b>. 0.5 > 0.4',
+      fbok:'✅ נכון! א: 3/6=0.5, ב: 4/10=0.4. קופסה א גדולה יותר 🌟',
+      fbng:'❌ קופסה א: 3/6=0.5, קופסה ב: 4/10=0.4. קופסה א גדולה יותר',
+    },
+    {
+      topic:'🎲 שתי קוביות', tc:'tb-teal',
+      emoji:'🎲', story:'גלגלנו 2 קוביות. סה"כ 36 צירופים.',
+      visual:{type:'fraction', top:'?', bot:36},
+      q:'מה הסיכוי לקבל סכום של <b>7</b>?',
+      choices:['5/36','8/36','6/36','4/36'], ans:2,
+      hint:'סכום 7: (1,6),(2,5),(3,4),(4,3),(5,2),(6,1) = <b>6 צירופים</b>. P = 6/36',
+      fbok:'✅ נכון! 6 צירופים נותנים סכום 7. P = 6/36 🌟',
+      fbng:'❌ הצירופים לסכום 7: (1,6)(2,5)(3,4)(4,3)(5,2)(6,1) = 6 מתוך 36',
+    },
+  ],
+};
+
+// ══════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════
+let level=0, qList=[], cur=0, correct=0, streak=0, maxStreak=0;
+let answered=false, dotStates=[], topicStats={};
+
+function pickLevel(l){
+  level=l;
+  document.querySelectorAll('.lv-tab').forEach((t,i)=>t.classList.toggle('active',i===l));
+}
+
+// ══════════════════════════════════════════
+// START
+// ══════════════════════════════════════════
+function startGame(){
+  qList=shuffle([...BANK[level]]).slice(0,10);
+  cur=0;correct=0;streak=0;maxStreak=0;answered=false;dotStates=[];topicStats={};
+  showScr('S_game');
+  renderDots(); renderHUD(); renderQ();
+}
+function restartGame(){ showScr('S_intro'); }
+function showScr(id){
+  document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+}
+
+// ══════════════════════════════════════════
+// RENDER HUD
+// ══════════════════════════════════════════
+function renderHUD(){
+  document.getElementById('qCounter').textContent = `${cur+1}/${qList.length}`;
+  document.getElementById('progFill').style.width  = ((cur/qList.length)*100)+'%';
+  document.getElementById('scoreChip').textContent = `${correct} ✓`;
+}
+
+// ══════════════════════════════════════════
+// DOTS
+// ══════════════════════════════════════════
+function renderDots(){
+  const t=document.getElementById('dotTrail'); t.innerHTML='';
+  for(let i=0;i<qList.length;i++){
+    const d=document.createElement('div');
+    d.className='dot';
+    if(i<cur) d.className+=' '+(dotStates[i]==='ok'?'pass':'fail');
+    else if(i===cur) d.className+=' curr';
+    t.appendChild(d);
+  }
+}
+
+// ══════════════════════════════════════════
+// VISUAL HELPER
+// ══════════════════════════════════════════
+function buildVis(v){
+  const el=document.getElementById('visBox');
+  if(!v){el.style.display='none';return;}
+  el.style.display='block';
+
+  if(v.type==='sample'){
+    const fav=v.fav||[];
+    const items=v.items.map((it,i)=>
+      `<div class="s-item${fav.includes(i)?' fav':''}">${it}</div>`
+    ).join('');
+    const total=v.items.length;
+    el.innerHTML=`
+      <div class="vis-lbl">מרחב המדגם — ${total} תוצאות · <span style="color:var(--pk)">${fav.length} רצויות</span></div>
+      <div class="sample-row">${items}</div>`;
+  } else if(v.type==='fraction'){
+    const hasBot = v.bot !== '';
+    el.innerHTML=`
+      <div class="vis-lbl">הנוסחה לשאלה זו</div>
+      <div style="display:flex;align-items:center;justify-content:center;gap:6px;">
+        <div class="frac-side">P =</div>
+        <div class="frac-display">
+          <div class="frac-t">${v.top}</div>
+          ${hasBot?`<div class="frac-l"></div><div class="frac-b">${v.bot}</div>`:''}
+        </div>
+      </div>`;
+  }
+}
+
+// ══════════════════════════════════════════
+// RENDER QUESTION
+// ══════════════════════════════════════════
+function renderQ(){
+  const q=qList[cur];
+  document.getElementById('topicBadge').textContent  = q.topic;
+  document.getElementById('topicBadge').className    = `topic-badge ${q.tc}`;
+  document.getElementById('storyEmoji').textContent  = q.emoji;
+  document.getElementById('storyText').innerHTML     = q.story;
+  document.getElementById('qLabel').innerHTML        = q.q;
+  buildVis(q.visual);
+
+  document.getElementById('hintBox').classList.remove('on');
+  document.getElementById('hintBox').innerHTML = q.hint;
+  document.getElementById('fbEl').className = 'fb';
+  document.getElementById('nextBtn').className = 'next-btn';
+  document.getElementById('nextBtn').style.display = 'none';
+
+  // rebuild choices
+  const grid=document.getElementById('choicesGrid'); grid.innerHTML='';
+  const labels=['א','ב','ג','ד'];
+  q.choices.forEach((c,i)=>{
+    const btn=document.createElement('button');
+    btn.className='ch-btn'; btn.dataset.idx=i;
+    btn.innerHTML=`<span class="ch-lbl">${labels[i]}</span>${c}`;
+    btn.addEventListener('click',()=>pick(btn,i,q));
+    grid.appendChild(btn);
+  });
+
+  answered=false;
+  renderHUD(); renderDots();
+  // track topic
+  if(!topicStats[q.topic]) topicStats[q.topic]={ok:0,total:0};
+  topicStats[q.topic].total++;
+}
+
+// ══════════════════════════════════════════
+// PICK
+// ══════════════════════════════════════════
+function pick(btn,idx,q){
+  if(answered) return;
+  answered=true;
+  const isOk=(idx===q.ans);
+  document.querySelectorAll('.ch-btn').forEach(b=>b.style.pointerEvents='none');
+  const fb=document.getElementById('fbEl');
+
+  if(isOk){
+    btn.classList.add('ok');
+    document.querySelectorAll('.ch-btn').forEach(b=>{if(b!==btn)b.classList.add('dim');});
+    streak++; if(streak>maxStreak) maxStreak=streak;
+    correct++;
+    dotStates[cur]='ok';
+    topicStats[q.topic].ok++;
+    fb.className='fb ok-fb on';
+    fb.innerHTML=q.fbok;
+    spawnP(true);
+  } else {
+    btn.classList.add('ng');
+    document.querySelectorAll('.ch-btn').forEach(b=>{
+      if(parseInt(b.dataset.idx)===q.ans) b.classList.add('reveal');
+      else if(b!==btn) b.classList.add('dim');
+    });
+    streak=0;
+    dotStates[cur]='fail';
+    fb.className='fb ng-fb on';
+    fb.innerHTML=q.fbng;
+    spawnP(false);
+  }
+
+  renderDots();
+  document.getElementById('nextBtn').style.display='block';
+  document.getElementById('nextBtn').className='next-btn on';
+}
+
+// ══════════════════════════════════════════
+// PARTICLES
+// ══════════════════════════════════════════
+function spawnP(win){
+  const em=win?['⭐','✨','🎉','💫','✅']:['💨','😅'];
+  const n=win?7:2;
+  for(let i=0;i<n;i++){
+    const p=document.createElement('div'); p.className='ptcl';
+    p.textContent=em[Math.floor(Math.random()*em.length)];
+    const a=Math.random()*Math.PI*2, d=65+Math.random()*85;
+    p.style.cssText=`left:${35+Math.random()*30}%;top:54%;--tx:${Math.cos(a)*d}px;--ty:${Math.sin(a)*d-100}px;--dur:${.65+Math.random()*.45}s;animation-delay:${Math.random()*.1}s`;
+    document.body.appendChild(p); setTimeout(()=>p.remove(),1400);
+  }
+}
+
+// ══════════════════════════════════════════
+// HINT / NEXT
+// ══════════════════════════════════════════
+function toggleHint(){document.getElementById('hintBox').classList.toggle('on');}
+
+function nextQ(){
+  cur++;
+  if(cur>=qList.length){showEnd();return;}
+  // re-animate card
+  const card=document.getElementById('qCard');
+  card.style.animation='none'; card.offsetHeight;
+  card.style.animation='cardIn .3s ease both';
+  renderQ();
+}
+
+// ══════════════════════════════════════════
+// END
+// ══════════════════════════════════════════
+function showEnd(){
+  showScr('S_end');
+  const total=qList.length;
+  const pct=Math.round((correct/total)*100);
+
+  let emoji='🏆', title='', sub='';
+  if(pct===100){emoji='💎';title='מושלמת!';sub=`ענית נכון על כל ${total} השאלות!\nעבודה מדהימה! 🌟`;}
+  else if(pct>=80){emoji='🌟';title='מצוין!';sub=`${correct}/${total} נכון.\nיש לך שליטה טובה בהסתברות!`;}
+  else if(pct>=60){emoji='💪';title='טוב!';sub=`${correct}/${total} נכון.\nעוד תרגול ותגיעי ל-100%!`;}
+  else{emoji='📚';title='ממשיכים!';sub=`${correct}/${total} נכון.\nחזרי על הנוסחה ונסי שוב!`;}
+
+  document.getElementById('endEmoji').textContent=emoji;
+  document.getElementById('endTitle').textContent=title;
+  document.getElementById('endSub').textContent=sub;
+
+  // score ring
+  const ring=document.getElementById('scoreRing');
+  ring.style.setProperty('--pct', `${pct}%`);
+  document.getElementById('siNum').textContent=`${correct}/${total}`;
+
+  // stats
+  document.getElementById('eCorrect').textContent=correct;
+  document.getElementById('eWrong').textContent=total-correct;
+  document.getElementById('eStreak').textContent=maxStreak;
+  document.getElementById('ePct').textContent=pct+'%';
+
+  // topic summary
+  const ts=document.getElementById('topicSummary'); ts.innerHTML='';
+  Object.entries(topicStats).forEach(([topic,{ok,total:t}])=>{
+    const allOk=ok===t, none=ok===0;
+    const row=document.createElement('div'); row.className='ts-row';
+    row.innerHTML=`
+      <div class="ts-dot" style="background:${allOk?'var(--ok)':none?'var(--err)':'var(--yel)'}"></div>
+      <div class="ts-lbl">${topic}</div>
+      <div class="ts-score ${allOk?'green':none?'red':''}">${ok}/${t}</div>`;
+    ts.appendChild(row);
+  });
+}
+
+// ══════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════
+function shuffle(arr){
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  return a;
+}
+</script>
+</body>
+</html>
