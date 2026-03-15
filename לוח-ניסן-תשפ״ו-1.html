@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ניסן תשפ"ו</title>
+<link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@700;900&family=Heebo:wght@300;400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--g:#b8860b;--g2:#c9961c;--gl:#f5e9c8;--cr:#8b1a1a;--tl:#1a6b5a;--bl:#1e3a6e;--mu:#806840;--br:rgba(184,134,11,.2)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#fdf8ef;font-family:'Heebo',sans-serif;padding:18px 10px 36px;
+  background-image:radial-gradient(ellipse 100% 30% at 50% 0%,rgba(184,134,11,.08) 0%,transparent 70%)}
+.hdr{text-align:center;margin-bottom:20px}
+.hdr .sub{font-size:11px;letter-spacing:4px;color:var(--g2);font-weight:600;opacity:.85}
+.hdr h1{font-family:'Frank Ruhl Libre',serif;font-size:clamp(40px,8vw,76px);font-weight:900;color:var(--g);line-height:1}
+.hdr .yr{font-size:14px;color:var(--mu);letter-spacing:3px;margin-top:4px;font-weight:300}
+.divl{width:110px;height:1.5px;background:linear-gradient(90deg,transparent,var(--g2),transparent);margin:8px auto}
+.wds{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:4px}
+.wd{text-align:center;font-size:9.5px;font-weight:800;letter-spacing:1px;color:var(--g);
+  padding:6px 2px;background:var(--gl);border-radius:6px}
+.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.cl{background:#fff;border:1.5px solid var(--br);border-radius:9px;
+  min-height:88px;padding:8px;cursor:pointer;
+  box-shadow:0 2px 6px rgba(100,70,10,.07)}
+.cl.em{background:transparent;border-color:transparent;pointer-events:none;box-shadow:none}
+.cl.yt{background:#fff5f5;border-color:rgba(139,26,26,.28)}
+.cl.sb{background:#f5f8ff;border-color:rgba(30,58,110,.2)}
+.cl.ch{background:#f4fcf9;border-color:rgba(26,107,90,.24)}
+.cl.hb{background:#fdfaf0;border-color:rgba(184,134,11,.32)}
+.dn{font-family:'Frank Ruhl Libre',serif;font-size:19px;font-weight:700;line-height:1;
+  color:var(--g);display:block}
+.cl.yt .dn{color:var(--cr)}.cl.sb .dn{color:var(--bl)}.cl.ch .dn{color:var(--tl)}
+.dot{display:block;width:7px;height:7px;border-radius:50%;background:var(--g2);margin-top:5px}
+.dot.r{background:var(--cr)}.dot.t{background:var(--tl)}.dot.b{background:var(--bl)}
+.en{display:block;font-size:8px;font-weight:600;color:var(--mu);margin-top:3px;
+  line-height:1.3;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.cl.yt .en{color:var(--cr)}.cl.sb .en{color:var(--bl)}.cl.ch .en{color:var(--tl)}.cl.hb .en{color:var(--g)}
+.leg{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:14px;font-size:10.5px;color:var(--mu)}
+.li{display:flex;align-items:center;gap:4px}
+.ls{width:12px;height:12px;border-radius:3px}
+.ov{position:fixed;inset:0;background:rgba(10,5,0,.65);backdrop-filter:blur(5px);
+  z-index:200;display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .22s}
+.ov.on{opacity:1;pointer-events:all}
+.mo{background:#fff;border:1.5px solid var(--g2);border-radius:18px;
+  padding:24px 28px;width:min(480px,93vw);max-height:82vh;overflow-y:auto;
+  box-shadow:0 24px 70px rgba(60,30,0,.32);
+  transform:scale(.92) translateY(12px);
+  transition:transform .28s cubic-bezier(.34,1.56,.64,1)}
+.ov.on .mo{transform:scale(1) translateY(0)}
+.mt{display:flex;justify-content:space-between;align-items:flex-start;
+  padding-bottom:12px;border-bottom:1px solid var(--br);margin-bottom:14px}
+.mdn{font-family:'Frank Ruhl Libre',serif;font-size:46px;font-weight:900;color:var(--g);line-height:1}
+.mdl{font-size:11px;color:var(--mu);margin-top:4px;letter-spacing:1px}
+.xb{background:none;border:1.5px solid var(--br);color:var(--mu);width:30px;height:30px;
+  border-radius:50%;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.el{list-style:none;display:flex;flex-direction:column;gap:9px}
+.ei{display:flex;align-items:flex-start;gap:12px;padding:11px 13px;
+  background:#fffbf2;border-radius:10px;border-right:3px solid var(--g2)}
+.ei.r{border-right-color:var(--cr);background:#fff8f8}
+.ei.t{border-right-color:var(--tl);background:#f4fcf9}
+.ei.b{border-right-color:var(--bl);background:#f5f8ff}
+.eic{font-size:21px;flex-shrink:0;width:27px;text-align:center;margin-top:1px}
+.ep{width:56px;height:66px;object-fit:cover;object-position:top;border-radius:6px;
+  flex-shrink:0;border:1px solid var(--br)}
+.ep.bk{object-fit:contain;background:#0a0a1a;padding:3px;width:50px;height:66px}
+.ett{font-size:14px;font-weight:700;line-height:1.38;color:#1a1208}
+.ei.r .ett{color:var(--cr)}.ei.t .ett{color:var(--tl)}.ei.b .ett{color:var(--bl)}
+.edc{font-size:12px;color:var(--mu);margin-top:3px;line-height:1.5;font-weight:300}
+.nem{text-align:center;color:var(--mu);font-size:14px;padding:20px;font-style:italic}
+@media(max-width:500px){.cl{min-height:68px;padding:6px}.dn{font-size:15px}.en{display:none}}
+</style>
+</head>
+<body>
+<div class="hdr">
+  <div class="sub">לוח חגים ומועדים</div>
+  <h1>חודש ניסן</h1>
+  <div class="divl"></div>
+  <div class="yr">תשפ״ו</div>
+</div>
+<div class="wds">
+  <div class="wd">ראשון</div><div class="wd">שני</div><div class="wd">שלישי</div>
+  <div class="wd">רביעי</div><div class="wd">חמישי</div><div class="wd">שישי</div><div class="wd">שבת</div>
+</div>
+<div class="grid">
+<div class="cl em"></div>
+<div class="cl em"></div>
+<div class="cl em"></div>
+<div class="cl em"></div>
+<div class="cl" onclick="openM(1)">
+  <span class="dn">א</span>
+  <span class="dot"></span>
+  <span class="en">ראש חודש ניסן</span>
+</div>
+<div class="cl hb" onclick="openM(2)">
+  <span class="dn">ב</span>
+  <span class="dot b"></span>
+  <span class="en">קורבן נתנאל בן צוער</span>
+</div>
+<div class="cl sb" onclick="openM(3)">
+  <span class="dn">ג</span>
+  <span class="dot"></span>
+  <span class="en">קורבן אליאב בן חלון</span>
+</div>
+<div class="cl" onclick="openM(4)">
+  <span class="dn">ד</span>
+  <span class="dot"></span>
+  <span class="en">קורבן אלישמע בן עמיהוד</span>
+</div>
+<div class="cl" onclick="openM(5)">
+  <span class="dn">ה</span>
+  <span class="dot"></span>
+  <span class="en">קורבן גמליאל בן פדהצור</span>
+</div>
+<div class="cl" onclick="openM(6)">
+  <span class="dn">ו</span>
+  <span class="dot"></span>
+  <span class="en">קורבן אבידן בן גדעוני</span>
+</div>
+<div class="cl" onclick="openM(7)">
+  <span class="dn">ז</span>
+  <span class="dot"></span>
+  <span class="en">קורבן אחיעזר בן עמישדי</span>
+</div>
+<div class="cl" onclick="openM(8)">
+  <span class="dn">ח</span>
+  <span class="dot"></span>
+  <span class="en">קורבן פגעיאל בן עכרן</span>
+</div>
+<div class="cl" onclick="openM(9)">
+  <span class="dn">ט</span>
+  <span class="dot"></span>
+  <span class="en">קורבן אחירע בן עינן</span>
+</div>
+<div class="cl sb" onclick="openM(10)">
+  <span class="dn">י</span>
+  <span class="dot"></span>
+  <span class="en">קורבן אלישמע בן דעואל</span>
+</div>
+<div class="cl hb" onclick="openM(11)">
+  <span class="dn">יא</span>
+  <span class="dot b"></span>
+  <span class="en">יום הולדת הרבי</span>
+</div>
+<div class="cl" onclick="openM(12)">
+  <span class="dn">יב</span>
+  <span class="dot"></span>
+  <span class="en">קורבן האחרון</span>
+</div>
+<div class="cl" onclick="openM(13)">
+  <span class="dn">יג</span>
+  <span class="dot"></span>
+  <span class="en">בדיקת חמץ</span>
+</div>
+<div class="cl" onclick="openM(14)">
+  <span class="dn">יד</span>
+  <span class="dot r"></span>
+  <span class="en">שריפת החמץ</span>
+</div>
+<div class="cl yt" onclick="openM(15)">
+  <span class="dn">טו</span>
+  <span class="dot r"></span>
+  <span class="en">יום טוב ראשון של פסח</span>
+</div>
+<div class="cl ch" onclick="openM(16)">
+  <span class="dn">טז</span>
+  <span class="dot t"></span>
+  <span class="en">חול המועד פסח</span>
+</div>
+<div class="cl sb" onclick="openM(17)">
+  <span class="dn">יז</span>
+  <span class="dot t"></span>
+  <span class="en">חול המועד פסח</span>
+</div>
+<div class="cl ch" onclick="openM(18)">
+  <span class="dn">יח</span>
+  <span class="dot b"></span>
+  <span class="en">יום הולדת הרב לוי יצחק</span>
+</div>
+<div class="cl ch" onclick="openM(19)">
+  <span class="dn">יט</span>
+  <span class="dot t"></span>
+  <span class="en">חול המועד פסח</span>
+</div>
+<div class="cl ch" onclick="openM(20)">
+  <span class="dn">כ</span>
+  <span class="dot t"></span>
+  <span class="en">חול המועד פסח</span>
+</div>
+<div class="cl yt" onclick="openM(21)">
+  <span class="dn">כא</span>
+  <span class="dot r"></span>
+  <span class="en">שביעי של פסח</span>
+</div>
+<div class="cl" onclick="openM(22)">
+  <span class="dn">כב</span>
+  <span class="dot"></span>
+  <span class="en">ספירת העומר — יום ח'</span>
+</div>
+<div class="cl" onclick="openM(23)">
+  <span class="dn">כג</span>
+  <span class="dot"></span>
+  <span class="en">ספירת העומר — יום ט'</span>
+</div>
+<div class="cl sb" onclick="openM(24)">
+  <span class="dn">כד</span>
+  <span class="dot b"></span>
+  <span class="en">שבת מברכים — ר"ח אייר</span>
+</div>
+<div class="cl" onclick="openM(25)">
+  <span class="dn">כה</span>
+  <span class="dot"></span>
+  <span class="en">ספירת העומר — יום י"א</span>
+</div>
+<div class="cl" onclick="openM(26)">
+  <span class="dn">כו</span>
+  <span class="dot"></span>
+  <span class="en">ספירת העומר — יום י"ב</span>
+</div>
+<div class="cl" onclick="openM(27)">
+  <span class="dn">כז</span>
+  <span class="dot"></span>
+  <span class="en">ספירת העומר — יום י"ג</span>
+</div>
+<div class="cl" onclick="openM(28)">
+  <span class="dn">כח</span>
+  <span class="dot"></span>
+  <span class="en">ספירת העומר — יום י"ד</span>
+</div>
+<div class="cl" onclick="openM(29)">
+  <span class="dn">כט</span>
+  <span class="dot"></span>
+  <span class="en">ספירת העומר — יום ט"ו</span>
+</div>
+<div class="cl" onclick="openM(30)">
+  <span class="dn">ל</span>
+  <span class="dot r"></span>
+  <span class="en">ראש חודש אייר</span>
+</div>
+
+</div>
+<div class="leg">
+  <div class="li"><div class="ls" style="background:#fff5f5;border:1.5px solid rgba(139,26,26,.35)"></div>יום טוב</div>
+  <div class="li"><div class="ls" style="background:#f5f8ff;border:1.5px solid rgba(30,58,110,.25)"></div>שבת</div>
+  <div class="li"><div class="ls" style="background:#f4fcf9;border:1.5px solid rgba(26,107,90,.28)"></div>חול המועד</div>
+  <div class="li"><div class="ls" style="background:#fdfaf0;border:1.5px solid rgba(184,134,11,.35)"></div>חב״ד</div>
+</div>
+<div class="ov" id="ov" onclick="if(event.target===this)closeM()">
+  <div class="mo">
+    <div class="mt">
+      <div><div class="mdn" id="mD"></div><div class="mdl">ניסן תשפ״ו</div></div>
+      <button class="xb" onclick="closeM()">✕</button>
+    </div>
+    <ul class="el" id="mL"></ul>
+  </div>
+</div>
+<script>
+var IR="data:image/jpeg;base64,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",IL="data:image/jpeg;base64,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",IRS="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAwICQsJCAwLCgsODQwOEh4UEhEREiUbHBYeLCcuLisnKyoxN0Y7MTRCNCorPVM+QkhKTk9OLztWXFVMW0ZNTkv/2wBDAQ0ODhIQEiQUFCRLMisyS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0v/wAARCABuAEwDASIAAhEBAxEB/8QAGwAAAQUBAQAAAAAAAAAAAAAABQECAwQGBwD/xAA5EAACAQMCAwQHBQgDAAAAAAABAgMABBEFIRIxQQZRYXETIiNSkbHBMkKBobIHFCQzNFNyc4LR8P/EABkBAAMBAQEAAAAAAAAAAAAAAAECBAMABf/EACARAAICAgMAAwEAAAAAAAAAAAABAgMREgQhMRMiQTL/2gAMAwEAAhEDEQA/AM7YwoyAlRuT08aKpbx4xwL8Kq6bHmFfM/OiyLXj3TezPUrj0Mgto8/y1+FX1togu8a58qaGjt4WmlYJGgyzHkBVBu0+mcDlZyWUEqpQjiPQVMo2WfymzZuMPWBtf1eWG+e2tCsaRbMyqMlutD4tcvYtzIrjudAaokNO7SSP67ksfEmmyRED7Wa9uFEIxUWjzJWSbzk2Gh61BqbmCSBYpwMjHJhRWaJOHZR8Kx3ZFC2tRn3UY/lW5kXIryuVCNdmIl1EnOGZGfu4F4ieEfCm2hCo4A+99BV2+TAofCSvH/l9BVNbzAxmvsTaYPYr+PzonGN6GabtCvmfnROI71Hc/syqrxFqa1ivbOS3mGY5Bg450C0vsSJNYiiupxLanJwuVZvA91aGA7VbsZVTU7dXICvxD8qbiWzjLVPoXkQi1l+liTsR2dkjwtii4+8kjfPNZ7Wf2f2UUTS2dxPCRyVzxA/WtLLAdPt7+aKVuNlyi5A4d/DpQ24s/wB4xdvdtwczxH1lOOXjvVrskn0yWNSZzOdLrSL11jmdJE29IhIyDWn7K6vd6i88F0RL6NAwkxg88YNK2nQ6tqVzFKzCJMZ4Dgk0btLK20+D0drEsaczjmT4nrWfJug46tfYamqSllPoo3wyD4ULXYt5/Si10M5oUwAdvOkof1Gt9HadtFjuY/M0TjOTgUHspAqvxHAVmz8TUb9oI0UmCMt3Fv8AqlnTOyT1Q8bYwismojbhBJ2A5k0LvLwtqdrLA/GsR4s/dxWXu9VubzPpZW4PcBwPhV5LrOkoqYLZKE+FUUcT4ntJ9mNvI36RtBevqGnSzYkEUpKs6BeQ6AE99A73VntIXiKmQKMK5XhIPiKj0e5NtYeiZyeJ+IjPTliqt4fS284c+1Dbk7ggVR8az2jL5X+Mf2bvIop5f3iVUM3IucZNaR228K5teNyUHIFSWOrX1ntDcOE91vWX4GsL+J8ktos0q5Gi1aNrcsMGhTn2jY76i07VXvkdJuESrvsMAipD9pvOkhW4dMaU1LtAq7nEUUqA+s7sB8TQtWxkVPesTdTdwkYY/wCRqsTvmr4RwiSTyxwO1T29y0Ix0zmq/SkpwZC0OsKsKq0HtFbaQN07sV651VHQpChwe80JXupycx5UMIGRXz15mvEALSk5PlSMdwKJxJbzNbTpIvTmO8UdSYMOJTkHcGs8MGrVrM8cZVTtms5wz2PCWOiC8P8AFT7H+Y/6jVberd5/V3H+1/1GoSPVxTrxCsZmvCvGN1UOVYIeTY2NJRFHL9qnLt8KYp9al6flXBHA4FRk5NKTtRLT+z+o38AnhgxATtI5wD5d9BtL05JvwHqdt6sQt6p869dWMllKUmXfoQdjTUbArvUd4evSRe3AP91/1Go1KBl488ORxY5461avkjNzJwliS7lwRyPEdhVOZQuMdaEX0hmsHWn03T9W7N28llGhgaMBB7vh51zLWNKl02chlPoydiRWs/Z1ruIZNHmO5Jkgz1P3l+vxot2jt4ZrGf0i8XCocjwzgn8Kl2dU8fhvqrIZOWjY0oO1STA280kY4Tg7EjO1Rl2Y5Y5NVkwf7Kdnzq9yJrkFbKI+sf7h90fWugarfx2OmO3CqxxrsMbYHICoNNhjtNNtrW3dWVERCy8mYjJP51m+3V+wigtVO0hLt5A4FSNuyePwrSVcM/pn9R1Vr95PZrwk9elUEYgYZd6SI4fHQ1KQw5Yx4iqsY6RN72OuD/FT/wCxv1Gq0pJPkKnn/qZv82+ZqFhkkV0fAs9a3Elndw3EJxJE4dT4g10+W6XUrJLiLBjuQcDngOu4/BhXLWWp7K/u7Fi1tcSRcshTscHPLzpLK9w1z0G32fTbjBCgGoKc7tJI0jnLMSSabw5rRGbDOm67PZRqmSyoQy77j/wpuvX0V/PbvCzFUgVW4hybfIoWop/DQ0SeRtm1gQVY4gQD4VABvU0a+rzosET/2Q==",IT="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAA0JCgwKCA0MCwwPDg0QFCIWFBISFCkdHxgiMSszMjArLy42PE1CNjlJOi4vQ1xESVBSV1dXNEFfZl5UZU1VV1P/2wBDAQ4PDxQSFCcWFidTNy83U1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1P/wAARCAA4AEsDASIAAhEBAxEB/8QAGwABAQACAwEAAAAAAAAAAAAAAAcDBQIEBgH/xAA7EAABAgQCBQYLCQAAAAAAAAABAAIDBAURBxIGISIxcRNBc3SxshcyMzVRYWNkgZGTFDZEUlSDktHS/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAH/xAAXEQEBAQEAAAAAAAAAAAAAAAAAARFB/9oADAMBAAIRAxEAPwCnIiINVpBWmUOUhx4kF0UPiZLNIFtRPPwWh8IUsGkmRigD2jUxOdlocqfeR3XKWQ3bJNwLi2sqioHEaUG6TifUC+jEOXO6nxj+41TB0UlgZnbq9a4l+2HXB1hBatG9I4ekBmxDl3wfs5aDmcDmuCebgt4p/hS7M2rn2kPsKoCgIiICIiDxWKhto/LdaHdcpXL8k64jEBuUkXdl1/Iqp4q/d6W60O65SVjgN53eq6cHazSb8uw5l7b4mocdXoWB7mk3YCGZtQJvZceWH5hvv4gXxxBIt6b7rJJgpuEhvBq3SQ+wqhqd4ReQqvSQ+wqiICIiAiIg8Piv5glB70O45SMbjwVbxX8wynWR3HKSWIBuOZWDgsg8YfBY1z5weCIp+EXkKt0kPsKoqiGi9fmqLCmhKxIbeWc24ezNcgGy9xobpLUavUzAnIkJzOSc6zWBpuDqUV7dERAREQdCr0aSrUuyDPwjFhsfnaA8tsbEc3Fag6BaPH8E76z/AO0RB0prDWixoxfDiTUBthsMiAjjtAlYfBfSf1c9/Jn+URBnksN6NLTLYkR8zMMF7w4rxlPyAK9BTqBTKZHMaSlGwYhGUuDnHV8SiINkiIg//9k=";
+var HN=['','א','ב','ג','ד','ה','ו','ז','ח','ט','י','יא','יב','יג','יד','טו','טז','יז','יח','יט','כ','כא','כב','כג','כד','כה','כו','כז','כח','כט','ל'];
+var EV={
+1:[{i:'🌙',t:'ראש חודש ניסן',d:'א ניסן תשפ"ו — ראשון לחודשים',c:''},{i:'🏺',t:'קורבן נחשון בן עמינדב',d:'נשיא שבט יהודה, ראשון הנשיאים',c:''}],
+2:[{i:'🏺',t:'קורבן נתנאל בן צוער',d:'נשיא שבט יששכר',c:''},{img:IRS,t:'יום ההסתלקות — הרבי הרש"ב',d:'ב ניסן תרפ — הסתלקות האדמו"ר ה-5 של חב"ד, ר שלום דובער שניאורסון',c:'b'}],
+3:[{i:'🏺',t:'קורבן אליאב בן חלון',d:'נשיא שבט זבולון',c:''}],
+4:[{i:'🏺',t:'קורבן אלישמע בן עמיהוד',d:'נשיא שבט אפרים',c:''}],
+5:[{i:'🏺',t:'קורבן גמליאל בן פדהצור',d:'נשיא שבט מנשה',c:''}],
+6:[{i:'🏺',t:'קורבן אבידן בן גדעוני',d:'נשיא שבט בנימין',c:''}],
+7:[{i:'🏺',t:'קורבן אחיעזר בן עמישדי',d:'נשיא שבט דן',c:''}],
+8:[{i:'🏺',t:'קורבן פגעיאל בן עכרן',d:'נשיא שבט אשר',c:''}],
+9:[{i:'🏺',t:'קורבן אחירע בן עינן',d:'נשיא שבט נפתלי',c:''}],
+10:[{i:'🏺',t:'קורבן אלישמע בן דעואל',d:'נשיא שבט גד',c:''}],
+11:[{img:IR,t:'יום הולדת הרבי',d:'יא ניסן תרב — יום הולדת כ"ק אדמו"ר מנחם מענדל שניאורסון זיע',c:'b'},{i:'🏺',t:'קורבן פגעיאל בן עכרן',d:'אחד עשר מהנשיאים',c:''}],
+12:[{i:'🏺',t:'קורבן האחרון — סיום הנשיאים',d:'סיום יב ימי הנשיאים',c:''}],
+13:[{i:'🕯️',t:'בדיקת חמץ',d:'בדיקת חמץ לאור הנר בליל יד ניסן',c:''}],
+14:[{i:'🔥',t:'שריפת החמץ',d:'ביעור וביטול חמץ עד שעה חמישית',c:'r'},{i:'⭐',t:'ערב פסח — צום בכורות',d:'יד ניסן, ערב החג הגדול',c:'r'},{i:'🍷',t:'ליל הסדר',d:'קריאת ההגדה, ארבע כוסות, מצה ומרור',c:'r'}],
+15:[{i:'✨',t:'יום טוב ראשון של פסח',d:'טו ניסן — זמן חרותנו',c:'r'},{i:'🌧️',t:'תפילת טל',d:'מוסף יום טוב ראשון — מוריד הטל',c:'r'},{i:'🎶',t:'הלל שלם',d:'אומרים הלל שלם ביום טוב ראשון של פסח',c:'r'},{i:'🌾',t:'ספירת העומר — יום א',d:'היום יום אחד לעומר',c:'t'}],
+16:[{i:'📖',t:'חול המועד פסח',d:'טז ניסן',c:'t'},{i:'🎶',t:'חצי הלל',d:'אומרים חצי הלל בחול המועד',c:'t'},{i:'🌾',t:'ספירת העומר — יום ב',d:'היום שני ימים לעומר',c:'t'}],
+17:[{i:'📖',t:'חול המועד פסח',d:'יז ניסן',c:'t'},{i:'🎶',t:'חצי הלל',d:'אומרים חצי הלל בחול המועד',c:'t'},{i:'🌾',t:'ספירת העומר — יום ג',d:'היום שלשה ימים לעומר',c:'t'}],
+18:[{img:IL,t:'יום הולדת הרב לוי יצחק',d:'יח ניסן — יום הולדת הרב לוי יצחק שניאורסון, אביו של הרבי',c:'b'},{i:'📖',t:'חול המועד פסח',d:'יח ניסן',c:'t'},{i:'🎶',t:'חצי הלל',d:'אומרים חצי הלל בחול המועד',c:'t'},{i:'🌾',t:'ספירת העומר — יום ד',d:'היום ארבעה ימים לעומר',c:'t'}],
+19:[{i:'📖',t:'חול המועד פסח',d:'יט ניסן',c:'t'},{i:'🎶',t:'חצי הלל',d:'אומרים חצי הלל בחול המועד',c:'t'},{i:'🌾',t:'ספירת העומר — יום ה',d:'היום חמישה ימים לעומר',c:'t'}],
+20:[{i:'📖',t:'חול המועד פסח',d:'כ ניסן',c:'t'},{i:'🎶',t:'חצי הלל',d:'אומרים חצי הלל בחול המועד',c:'t'},{i:'🌾',t:'ספירת העומר — יום ו',d:'היום ששה ימים לעומר',c:'t'}],
+21:[{i:'✨',t:'שביעי של פסח',d:'כא ניסן — קריעת ים סוף',c:'r'},{i:'🍽️',t:'סעודת משיח',d:'מנהג בעל שם טוב, נוהגים בחב"ד',c:'r'},{i:'🎶',t:'הלל שלם',d:'אומרים הלל שלם בשביעי של פסח',c:'r'},{i:'🌾',t:'ספירת העומר — יום ז',d:'היום שבעה ימים שהם שבוע אחד לעומר',c:'t'}],
+22:[{i:'🌾',t:'ספירת העומר — יום ח',d:'היום שמונה ימים שהם שבוע אחד ויום אחד לעומר',c:''}],
+23:[{i:'🌾',t:'ספירת העומר — יום ט',d:'היום תשעה ימים שהם שבוע אחד ושני ימים לעומר',c:''}],
+24:[{img:IT,bk:true,t:'שבת מברכים — ראש חודש אייר',d:'כד ניסן — שבת מברכים לחודש אייר, אמירת תהילים כל השבת',c:'b'},{i:'🌾',t:'ספירת העומר — יום י',d:'היום עשרה ימים שהם שבוע אחד ושלשה ימים לעומר',c:''}],
+25:[{i:'🌾',t:'ספירת העומר — יום יא',d:'היום אחד עשר יום שהם שבוע אחד וארבעה ימים לעומר',c:''}],
+26:[{i:'🌾',t:'ספירת העומר — יום יב',d:'היום שנים עשר יום שהם שבוע אחד וחמישה ימים לעומר',c:''}],
+27:[{i:'🌾',t:'ספירת העומר — יום יג',d:'היום שלשה עשר יום שהם שבוע אחד וששה ימים לעומר',c:''}],
+28:[{i:'🌾',t:'ספירת העומר — יום יד',d:'היום ארבעה עשר יום שהם שני שבועות לעומר',c:''}],
+29:[{i:'🌾',t:'ספירת העומר — יום טו',d:'היום חמישה עשר יום שהם שני שבועות ויום אחד לעומר',c:''}],
+30:[{i:'🌙',t:'ראש חודש אייר',d:'ל ניסן — ראש חודש אייר',c:'r'},{i:'🌾',t:'ספירת העומר — יום טז',d:'היום ששה עשר יום שהם שני שבועות ושני ימים לעומר',c:'t'}]
+};
+
+function openM(d) {
+  var ev = EV[d] || [];
+  document.getElementById('mD').textContent = HN[d] + ' ניסן';
+  var L = document.getElementById('mL');
+  L.innerHTML = '';
+  if (!ev.length) {
+    L.innerHTML = '<li class="nem">אין אירועים ביום זה</li>';
+  } else {
+    for (var i = 0; i < ev.length; i++) {
+      var e = ev[i];
+      var li = document.createElement('li');
+      li.className = 'ei ' + (e.c || '');
+      var lft = e.img
+        ? '<img src="' + e.img + '" class="ep' + (e.bk ? ' bk' : '') + '" alt="">'
+        : '<span class="eic">' + e.i + '</span>';
+      li.innerHTML = lft + '<div><div class="ett">' + e.t + '</div>' + (e.d ? '<div class="edc">' + e.d + '</div>' : '') + '</div>';
+      L.appendChild(li);
+    }
+  }
+  document.getElementById('ov').className = 'ov on';
+}
+
+function closeM() {
+  document.getElementById('ov').className = 'ov';
+}
+</script>
+</body>
+</html>
