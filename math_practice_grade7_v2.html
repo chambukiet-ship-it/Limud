@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>מתמטיקה שימושית – רמה ב׳</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f0f4ff; --card: #ffffff; --card2: #f7f9ff;
+    --accent: #4f46e5; --accent-light: #ede9fe;
+    --gold: #d97706; --gold-light: #fef3c7;
+    --green: #059669; --green-light: #d1fae5;
+    --red: #dc2626; --red-light: #fee2e2;
+    --soft: #6b7280; --dark: #1e1b4b; --radius: 18px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--dark); min-height: 100vh; overflow-x: hidden; }
+  body::before {
+    content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background:
+      radial-gradient(ellipse 70% 50% at 100% 0%, rgba(99,102,241,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 40% at 0% 100%, rgba(5,150,105,0.06) 0%, transparent 60%);
+  }
+  .container { max-width: 480px; margin: 0 auto; padding: 20px 16px 40px; position: relative; z-index: 1; }
+  .screen { display: none; animation: fadeIn 0.35s ease; }
+  .screen.active { display: block; }
+  @keyframes fadeIn { from { opacity:0; transform: translateY(14px); } to { opacity:1; transform:translateY(0); } }
+
+  .welcome-hero { text-align: center; padding: 32px 0 22px; }
+  .welcome-hero .emoji-big { font-size: 64px; display: block; margin-bottom: 10px; animation: bounce 2s infinite ease-in-out; }
+  @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+  .welcome-hero h1 { font-size: 26px; font-weight: 900; color: var(--accent); line-height: 1.25; margin-bottom: 6px; }
+  .welcome-hero .sub { font-size: 14px; color: var(--soft); line-height: 1.6; }
+  .level-pill { display: inline-block; background: var(--accent-light); color: var(--accent); border-radius: 20px; padding: 5px 16px; font-size: 13px; font-weight: 700; margin-top: 10px; }
+
+  .name-box { background: var(--card); border-radius: var(--radius); padding: 22px; margin: 20px 0; box-shadow: 0 2px 12px rgba(79,70,229,0.08); border: 1.5px solid #e0e7ff; }
+  .name-box label { display: block; font-size: 14px; color: var(--soft); margin-bottom: 8px; font-weight: 600; }
+  .name-box input { width: 100%; background: var(--bg); border: 2px solid #e0e7ff; border-radius: 12px; color: var(--dark); font-family: 'Heebo', sans-serif; font-size: 18px; padding: 13px 15px; outline: none; transition: border-color 0.3s; text-align: right; }
+  .name-box input:focus { border-color: var(--accent); }
+
+  .topics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 16px 0; }
+  .topic-card { background: var(--card); border: 2px solid #e0e7ff; border-radius: var(--radius); padding: 16px 10px; text-align: center; cursor: pointer; transition: all 0.22s; box-shadow: 0 1px 6px rgba(0,0,0,0.05); }
+  .topic-card.selected { border-color: var(--accent); background: var(--accent-light); transform: scale(1.02); }
+  .topic-card .t-emoji { font-size: 28px; display: block; margin-bottom: 5px; }
+  .topic-card .t-name { font-size: 13px; font-weight: 700; color: var(--dark); }
+
+  .btn { display: block; width: 100%; padding: 16px; border: none; border-radius: 50px; font-family: 'Heebo', sans-serif; font-size: 17px; font-weight: 700; cursor: pointer; transition: all 0.22s; text-align: center; }
+  .btn-primary { background: var(--accent); color: white; box-shadow: 0 4px 18px rgba(79,70,229,0.35); }
+  .btn-primary:active { transform: scale(0.97); }
+  .btn-outline { background: white; color: var(--soft); border: 2px solid #e0e7ff; }
+  .btn + .btn { margin-top: 10px; }
+
+  .quiz-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; padding: 12px 16px; background: var(--card); border-radius: var(--radius); box-shadow: 0 1px 8px rgba(0,0,0,0.06); }
+  .progress-info { font-size: 13px; color: var(--soft); font-weight: 600; }
+  .progress-info span { color: var(--accent); font-weight: 900; font-size: 16px; }
+  .score-badge { background: var(--green-light); border-radius: 30px; padding: 5px 14px; font-size: 13px; color: var(--green); font-weight: 700; }
+  .progress-bar-wrap { background: #e0e7ff; border-radius: 10px; height: 8px; margin-bottom: 20px; overflow: hidden; }
+  .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent), #818cf8); border-radius: 10px; transition: width 0.5s cubic-bezier(0.34,1.56,0.64,1); }
+
+  /* כרטיס שאלה */
+  .question-card { background: var(--card); border-radius: var(--radius); margin-bottom: 16px; box-shadow: 0 3px 18px rgba(79,70,229,0.12); overflow: hidden; border: 1.5px solid #e0e7ff; }
+
+  /* הקדמה בולטת – רקע כהה */
+  .q-scenario-block {
+    background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+    padding: 18px 20px 20px;
+  }
+  .q-scenario-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .q-topic-badge { display: inline-block; background: rgba(255,255,255,0.22); color: white; border-radius: 20px; padding: 3px 12px; font-size: 12px; font-weight: 700; }
+  .q-num-chip { background: rgba(255,255,255,0.18); color: white; border-radius: 20px; padding: 3px 10px; font-size: 12px; font-weight: 700; }
+  .q-scenario-content { display: flex; align-items: center; gap: 14px; }
+  .q-emoji { font-size: 42px; flex-shrink: 0; }
+  .q-scenario-text { font-size: 18px; font-weight: 800; color: white; line-height: 1.45; }
+
+  /* גוף השאלה */
+  .q-body { padding: 18px 20px 20px; }
+  .q-label { font-size: 11px; font-weight: 700; color: var(--soft); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 8px; }
+  .q-text { font-size: 19px; font-weight: 900; line-height: 1.5; color: var(--dark); }
+
+  .answers-list { display: flex; flex-direction: column; gap: 9px; margin-bottom: 16px; }
+  .answer-btn { background: var(--card); border: 2px solid #e0e7ff; border-radius: 14px; padding: 16px 17px; color: var(--dark); font-family: 'Heebo', sans-serif; font-size: 18px; font-weight: 600; text-align: right; cursor: pointer; transition: all 0.18s; display: flex; align-items: center; gap: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
+  .answer-btn .ans-letter { min-width: 34px; height: 34px; background: #e0e7ff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: var(--accent); transition: all 0.18s; flex-shrink: 0; }
+  .answer-btn:not(:disabled):hover { border-color: var(--accent); background: var(--accent-light); transform: translateX(-3px); }
+  .answer-btn:not(:disabled):hover .ans-letter { background: var(--accent); color: white; }
+  .answer-btn.correct { border-color: var(--green); background: var(--green-light); animation: correctPop 0.35s ease; }
+  .answer-btn.correct .ans-letter { background: var(--green); color: white; }
+  .answer-btn.wrong { border-color: var(--red); background: var(--red-light); animation: wrongShake 0.35s ease; }
+  .answer-btn.wrong .ans-letter { background: var(--red); color: white; }
+  @keyframes correctPop { 0%{transform:scale(1)} 50%{transform:scale(1.02)} 100%{transform:scale(1)} }
+  @keyframes wrongShake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-5px)} 75%{transform:translateX(5px)} }
+
+  .feedback-box { border-radius: 14px; padding: 15px 17px; margin-bottom: 14px; display: none; animation: fadeIn 0.3s ease; }
+  .feedback-box.show { display: block; }
+  .feedback-box.correct-fb { background: var(--green-light); border: 1.5px solid #6ee7b7; }
+  .feedback-box.wrong-fb { background: var(--red-light); border: 1.5px solid #fca5a5; }
+  .fb-title { font-size: 15px; font-weight: 800; margin-bottom: 5px; }
+  .correct-fb .fb-title { color: var(--green); }
+  .wrong-fb .fb-title { color: var(--red); }
+  .fb-explain { font-size: 14px; color: #374151; line-height: 1.7; font-weight: 500; }
+
+  .hint-toggle { background: var(--gold-light); border: 1.5px solid #fde68a; border-radius: 20px; color: var(--gold); font-family: 'Heebo', sans-serif; font-size: 13px; font-weight: 700; padding: 8px 17px; cursor: pointer; margin-bottom: 12px; transition: all 0.2s; }
+  .hint-box { background: var(--gold-light); border: 1.5px solid #fde68a; border-radius: 12px; padding: 12px 15px; margin-bottom: 12px; font-size: 14px; color: #92400e; line-height: 1.7; font-weight: 500; display: none; }
+  .hint-box.show { display: block; animation: fadeIn 0.3s ease; }
+
+  .results-hero { text-align: center; padding: 26px 0 16px; }
+  .score-circle { width: 148px; height: 148px; border-radius: 50%; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; position: relative; }
+  .score-circle.great { background: conic-gradient(var(--gold) var(--pct), #e5e7eb 0); }
+  .score-circle.good  { background: conic-gradient(var(--green) var(--pct), #e5e7eb 0); }
+  .score-circle.ok    { background: conic-gradient(#f59e0b var(--pct), #e5e7eb 0); }
+  .score-circle.low   { background: conic-gradient(var(--red) var(--pct), #e5e7eb 0); }
+  .score-circle::before { content: ''; position: absolute; inset: 12px; background: var(--bg); border-radius: 50%; }
+  .score-circle-inner { position: relative; z-index: 1; text-align: center; }
+  .big-num { font-size: 38px; font-weight: 900; line-height: 1; color: var(--dark); }
+  .out-of { font-size: 13px; color: var(--soft); font-weight: 600; }
+  .results-hero h2 { font-size: 22px; font-weight: 900; margin-bottom: 6px; color: var(--dark); }
+  .results-hero .subtitle { font-size: 14px; color: var(--soft); line-height: 1.6; }
+  .level-badge { display: inline-block; border-radius: 30px; padding: 7px 18px; font-size: 14px; font-weight: 700; margin: 12px auto; }
+  .level-badge.great { background: var(--gold-light); color: var(--gold); }
+  .level-badge.good  { background: var(--green-light); color: var(--green); }
+  .level-badge.ok    { background: #fef3c7; color: #b45309; }
+  .level-badge.low   { background: var(--red-light); color: var(--red); }
+
+  .results-details { background: var(--card); border-radius: var(--radius); padding: 18px; margin: 16px 0; box-shadow: 0 2px 10px rgba(0,0,0,0.06); border: 1.5px solid #e0e7ff; }
+  .results-details h3 { font-size: 13px; color: var(--soft); margin-bottom: 12px; font-weight: 700; }
+  .detail-row { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid #f3f4f6; font-size: 14px; }
+  .detail-row:last-child { border-bottom: none; }
+  .dr-label { color: var(--soft); font-weight: 500; }
+  .dr-val { font-weight: 800; color: var(--dark); }
+  .dr-val.c { color: var(--green); }
+  .dr-val.w { color: var(--red); }
+
+  .teacher-box { background: var(--card); border-radius: var(--radius); padding: 18px; margin: 14px 0; box-shadow: 0 1px 6px rgba(0,0,0,0.05); border: 1.5px solid #e0e7ff; }
+  .teacher-box label { display: block; font-size: 14px; color: var(--soft); margin-bottom: 7px; font-weight: 600; }
+  .teacher-box input { width: 100%; background: var(--bg); border: 2px solid #e0e7ff; border-radius: 11px; color: var(--dark); font-family: 'Heebo', sans-serif; font-size: 16px; padding: 11px 13px; outline: none; transition: border-color 0.3s; direction: ltr; text-align: left; }
+  .teacher-box input:focus { border-color: #25D366; }
+
+  .btn-whatsapp { background: linear-gradient(135deg, #25D366, #128C7E); color: white; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 4px 16px rgba(37,211,102,0.3); font-size: 16px; }
+  .btn-whatsapp svg { width: 22px; height: 22px; fill: white; }
+
+  .confetti-wrap { position: fixed; inset: 0; pointer-events: none; z-index: 999; overflow: hidden; }
+  .confetti-piece { position: absolute; top: -20px; animation: confettiFall linear forwards; }
+  @keyframes confettiFall { to { transform: translateY(110vh) rotate(720deg); opacity: 0; } }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- WELCOME -->
+  <div class="screen active" id="screen-welcome">
+    <div class="welcome-hero">
+      <span class="emoji-big">🧠</span>
+      <h1>מתמטיקה שימושית<br>כיתה ז׳</h1>
+      <p class="sub">חיבור וחיסור עד 20<br>שאלות מהחיים האמיתיים</p>
+      <span class="level-pill">✦ רמה ב׳</span>
+    </div>
+    <div class="name-box">
+      <label>👋 מה שמך?</label>
+      <input type="text" id="student-name" placeholder="כתבי את שמך כאן..." maxlength="20">
+    </div>
+    <p style="font-size:13px;color:var(--soft);margin-bottom:11px;text-align:center;font-weight:600;">בחרי נושא:</p>
+    <div class="topics-grid">
+      <div class="topic-card selected" data-topic="mixed" onclick="selectTopic(this)">
+        <span class="t-emoji">🎲</span><div class="t-name">הכל ביחד</div>
+      </div>
+      <div class="topic-card" data-topic="shopping" onclick="selectTopic(this)">
+        <span class="t-emoji">🛒</span><div class="t-name">קניות וכסף</div>
+      </div>
+      <div class="topic-card" data-topic="time" onclick="selectTopic(this)">
+        <span class="t-emoji">⏰</span><div class="t-name">שעון וזמן</div>
+      </div>
+      <div class="topic-card" data-topic="measurement" onclick="selectTopic(this)">
+        <span class="t-emoji">📏</span><div class="t-name">מדידה וכמות</div>
+      </div>
+    </div>
+    <button class="btn btn-primary" onclick="startQuiz()">בואי נתחיל! 🚀</button>
+  </div>
+
+  <!-- QUIZ -->
+  <div class="screen" id="screen-quiz">
+    <div class="quiz-header">
+      <div class="progress-info">שאלה <span id="q-current">1</span> מתוך <span id="q-total">10</span></div>
+      <div class="score-badge">✓ <span id="live-score">0</span> נכון</div>
+    </div>
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" id="progress-bar" style="width:0%"></div>
+    </div>
+
+    <div class="question-card" id="question-card">
+      <div class="q-scenario-block">
+        <div class="q-scenario-top">
+          <span class="q-topic-badge" id="q-badge"></span>
+          <span class="q-num-chip" id="q-num-chip">1/10</span>
+        </div>
+        <div class="q-scenario-content">
+          <span class="q-emoji" id="q-emoji"></span>
+          <div class="q-scenario-text" id="q-scenario"></div>
+        </div>
+      </div>
+      <div class="q-body">
+        <div class="q-label">השאלה שלך:</div>
+        <div class="q-text" id="q-text"></div>
+      </div>
+    </div>
+
+    <button class="hint-toggle" onclick="toggleHint()">💡 רמז</button>
+    <div class="hint-box" id="hint-box"></div>
+    <div class="answers-list" id="answers-list"></div>
+    <div class="feedback-box" id="feedback-box">
+      <div class="fb-title" id="fb-title"></div>
+      <div class="fb-explain" id="fb-explain"></div>
+    </div>
+    <button class="btn btn-primary" id="next-btn" onclick="nextQuestion()" style="display:none">המשך ←</button>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="screen" id="screen-results">
+    <div class="results-hero">
+      <div class="score-circle" id="score-circle">
+        <div class="score-circle-inner">
+          <div class="big-num" id="result-num">0</div>
+          <div class="out-of" id="result-out">מתוך 10</div>
+        </div>
+      </div>
+      <h2 id="result-title"></h2>
+      <div class="level-badge" id="level-badge"></div>
+      <p class="subtitle" id="result-msg"></p>
+    </div>
+    <div class="results-details">
+      <h3>📊 סיכום</h3>
+      <div class="detail-row"><span class="dr-label">תשובות נכונות</span><span class="dr-val c" id="res-correct">—</span></div>
+      <div class="detail-row"><span class="dr-label">תשובות שגויות</span><span class="dr-val w" id="res-wrong">—</span></div>
+      <div class="detail-row"><span class="dr-label">ציון</span><span class="dr-val" id="res-grade">—</span></div>
+    </div>
+    <div class="teacher-box">
+      <label>📱 מספר הטלפון של המורה</label>
+      <input type="tel" id="teacher-phone" placeholder="05X-XXXXXXX">
+    </div>
+    <button class="btn btn-whatsapp" onclick="sendWhatsApp()">
+      <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      שלחי ציון למורה בוואטסאפ
+    </button>
+    <button class="btn btn-outline" onclick="restartQuiz()" style="margin-top:10px">🔄 נסי שוב</button>
+  </div>
+
+</div>
+<div class="confetti-wrap" id="confetti-wrap"></div>
+
+<script>
+const ALL_QUESTIONS = [
+  { topic:'shopping', badge:'🛒 קניות', emoji:'🍎',
+    scenario:'את בשוק ירקות.',
+    question:'קנית תפוח ב-3 ש"ח ובננה ב-5 ש"ח. כמה שילמת בסך הכל?',
+    hint:'חברי את שני המחירים: 3 + 5 = ?',
+    correct:'8 ש"ח', wrong:['6 ש"ח','9 ש"ח','7 ש"ח'],
+    explain:'3 + 5 = 8 ש"ח.' },
+  { topic:'shopping', badge:'🛒 קניות', emoji:'🥤',
+    scenario:'יש לך 15 ש"ח בכיס.',
+    question:'קנית שתייה ב-7 ש"ח. כמה נשאר לך?',
+    hint:'15 פחות 7 = ?',
+    correct:'8 ש"ח', wrong:['6 ש"ח','9 ש"ח','10 ש"ח'],
+    explain:'15 – 7 = 8 ש"ח.' },
+  { topic:'shopping', badge:'🛒 קניות', emoji:'🍫',
+    scenario:'יש לך 20 ש"ח.',
+    question:'קנית שוקולד ב-4 ש"ח וחטיף ב-6 ש"ח. כמה נשאר?',
+    hint:'קודם: 4+6=10. אחר כך: 20-10=?',
+    correct:'10 ש"ח', wrong:['8 ש"ח','12 ש"ח','9 ש"ח'],
+    explain:'4+6=10. 20–10=10 ש"ח.' },
+  { topic:'shopping', badge:'🛒 קניות', emoji:'🎁',
+    scenario:'מחיר מתנה קטנה הוא 9 ש"ח.',
+    question:'קנית 2 מתנות. כמה שילמת?',
+    hint:'9 + 9 = ?',
+    correct:'18 ש"ח', wrong:['16 ש"ח','17 ש"ח','20 ש"ח'],
+    explain:'9 + 9 = 18 ש"ח.' },
+  { topic:'shopping', badge:'🛒 קניות', emoji:'🍞',
+    scenario:'לחם עולה 7 ש"ח.',
+    question:'קנית לחם ועוד פריט שעולה 6 ש"ח. כמה שילמת בסך הכל?',
+    hint:'7 + 6 = ?',
+    correct:'13 ש"ח', wrong:['11 ש"ח','14 ש"ח','12 ש"ח'],
+    explain:'7 + 6 = 13 ש"ח.' },
+  { topic:'shopping', badge:'🛒 קניות', emoji:'🥛',
+    scenario:'יש לך 12 ש"ח.',
+    question:'קנית חלב ב-5 ש"ח. כמה נשאר?',
+    hint:'12 פחות 5 = ?',
+    correct:'7 ש"ח', wrong:['6 ש"ח','8 ש"ח','5 ש"ח'],
+    explain:'12 – 5 = 7 ש"ח.' },
+  { topic:'shopping', badge:'🛒 קניות', emoji:'🍬',
+    scenario:'קנית 3 סוכריות.',
+    question:'2 עלו 4 ש"ח כל אחת, ואחת עלתה 3 ש"ח. כמה שילמת?',
+    hint:'4 + 4 + 3 = ?',
+    correct:'11 ש"ח', wrong:['10 ש"ח','12 ש"ח','9 ש"ח'],
+    explain:'4 + 4 + 3 = 11 ש"ח.' },
+  { topic:'shopping', badge:'🛒 קניות', emoji:'🥐',
+    scenario:'קנית ארוחת בוקר.',
+    question:'לחמנייה עלתה 6 ש"ח ומיץ עלה 8 ש"ח. כמה שילמת?',
+    hint:'6 + 8 = ?',
+    correct:'14 ש"ח', wrong:['12 ש"ח','15 ש"ח','13 ש"ח'],
+    explain:'6 + 8 = 14 ש"ח.' },
+  { topic:'time', badge:'⏰ זמן', emoji:'🌅',
+    scenario:'קמת בבוקר ב-7:00.',
+    question:'הכנת את עצמך תוך 8 דקות. מה השעה עכשיו?',
+    hint:'7:00 ועוד 8 דקות = ?',
+    correct:'7:08', wrong:['7:10','7:05','7:15'],
+    explain:'7:00 + 8 דקות = 7:08.' },
+  { topic:'time', badge:'⏰ זמן', emoji:'🚶',
+    scenario:'יצאת מהבית ב-8:05.',
+    question:'הליכה לחנות לקחה 9 דקות. מתי הגעת?',
+    hint:'8:05 ועוד 9 דקות = ?',
+    correct:'8:14', wrong:['8:12','8:15','8:16'],
+    explain:'8:05 + 9 דקות = 8:14.' },
+  { topic:'time', badge:'⏰ זמן', emoji:'📚',
+    scenario:'התחלת לקרוא ב-4:00.',
+    question:'קראת 15 דקות. מתי סיימת?',
+    hint:'4:00 ועוד 15 דקות = ?',
+    correct:'4:15', wrong:['4:10','4:20','4:05'],
+    explain:'4:00 + 15 דקות = 4:15.' },
+  { topic:'time', badge:'⏰ זמן', emoji:'🍽️',
+    scenario:'ארוחת ערב הסתיימה ב-7:20.',
+    question:'היא נמשכה 17 דקות. מתי התחילה?',
+    hint:'7:20 פחות 17 דקות = ?',
+    correct:'7:03', wrong:['7:00','7:05','7:08'],
+    explain:'7:20 – 17 דקות = 7:03.' },
+  { topic:'time', badge:'⏰ זמן', emoji:'🎵',
+    scenario:'כל שיר נמשך 3 דקות.',
+    question:'האזנת ל-5 שירים ברצף. כמה דקות בסך הכל?',
+    hint:'3+3+3+3+3 = ?',
+    correct:'15 דקות', wrong:['12 דקות','18 דקות','20 דקות'],
+    explain:'3+3+3+3+3 = 15 דקות.' },
+  { topic:'time', badge:'⏰ זמן', emoji:'⌚',
+    scenario:'הפסקה מסתיימת ב-10:00.',
+    question:'יש עוד 12 דקות עד הסוף. מה השעה עכשיו?',
+    hint:'10:00 פחות 12 דקות = ?',
+    correct:'9:48', wrong:['9:50','9:45','9:52'],
+    explain:'10:00 – 12 דקות = 9:48.' },
+  { topic:'time', badge:'⏰ זמן', emoji:'🏃',
+    scenario:'התחלת לרוץ ב-5:00.',
+    question:'רצת 11 דקות. מתי סיימת?',
+    hint:'5:00 ועוד 11 דקות = ?',
+    correct:'5:11', wrong:['5:10','5:12','5:15'],
+    explain:'5:00 + 11 דקות = 5:11.' },
+  { topic:'measurement', badge:'📏 מדידה', emoji:'🧴',
+    scenario:'בבקבוק היו 20 מ"ל שמפו.',
+    question:'השתמשת ב-8 מ"ל. כמה נשאר?',
+    hint:'20 פחות 8 = ?',
+    correct:'12 מ"ל', wrong:['10 מ"ל','11 מ"ל','14 מ"ל'],
+    explain:'20 – 8 = 12 מ"ל.' },
+  { topic:'measurement', badge:'📏 מדידה', emoji:'📏',
+    scenario:'חבל אחד הוא 9 ס"מ.',
+    question:'קשרת שני חבלים יחד. כמה ס"מ בסך הכל?',
+    hint:'9 + 9 = ?',
+    correct:'18 ס"מ', wrong:['16 ס"מ','17 ס"מ','20 ס"מ'],
+    explain:'9 + 9 = 18 ס"מ.' },
+  { topic:'measurement', badge:'📏 מדידה', emoji:'🥕',
+    scenario:'היו לך 16 גזרים.',
+    question:'בישלת 7 גזרים למרק. כמה נשאר?',
+    hint:'16 פחות 7 = ?',
+    correct:'9 גזרים', wrong:['8 גזרים','10 גזרים','7 גזרים'],
+    explain:'16 – 7 = 9 גזרים.' },
+  { topic:'measurement', badge:'📏 מדידה', emoji:'🍶',
+    scenario:'בקנקן יש 14 כוסות מיץ.',
+    question:'שתית 6 כוסות. כמה נשאר?',
+    hint:'14 פחות 6 = ?',
+    correct:'8 כוסות', wrong:['7 כוסות','9 כוסות','10 כוסות'],
+    explain:'14 – 6 = 8 כוסות.' },
+  { topic:'measurement', badge:'📏 מדידה', emoji:'🐟',
+    scenario:'יש לך 5 דגים באקווריום.',
+    question:'הוספת עוד 8 דגים. כמה דגים עכשיו?',
+    hint:'5 + 8 = ?',
+    correct:'13 דגים', wrong:['11 דגים','12 דגים','14 דגים'],
+    explain:'5 + 8 = 13 דגים.' },
+  { topic:'measurement', badge:'📏 מדידה', emoji:'🌡️',
+    scenario:'בבוקר היה 11 מעלות.',
+    question:'הטמפרטורה ירדה ב-4 מעלות בלילה. כמה מעלות בלילה?',
+    hint:'11 פחות 4 = ?',
+    correct:'7 מעלות', wrong:['6 מעלות','8 מעלות','9 מעלות'],
+    explain:'11 – 4 = 7 מעלות.' },
+  { topic:'measurement', badge:'📏 מדידה', emoji:'📦',
+    scenario:'קיבלת 2 קופסאות.',
+    question:'קופסה ראשונה שוקלת 8 ק"ג. שנייה שוקלת 9 ק"ג. כמה ביחד?',
+    hint:'8 + 9 = ?',
+    correct:'17 ק"ג', wrong:['15 ק"ג','16 ק"ג','18 ק"ג'],
+    explain:'8 + 9 = 17 ק"ג.' },
+];
+
+let studentName='', selectedTopic='mixed', quizQuestions=[], currentQ=0, score=0, answered=false, shuffledAnswers=[];
+
+function selectTopic(el){
+  document.querySelectorAll('.topic-card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected'); selectedTopic=el.dataset.topic;
+}
+function shuffle(arr){
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  return a;
+}
+function buildShuffledAnswers(q){
+  return shuffle([{text:q.correct,isCorrect:true},...q.wrong.map(w=>({text:w,isCorrect:false}))]);
+}
+function startQuiz(){
+  studentName=document.getElementById('student-name').value.trim()||'תלמידה';
+  let pool=selectedTopic==='mixed'?[...ALL_QUESTIONS]:ALL_QUESTIONS.filter(q=>q.topic===selectedTopic);
+  if(pool.length<5)pool=[...ALL_QUESTIONS];
+  quizQuestions=shuffle(pool).slice(0,10);
+  shuffledAnswers=quizQuestions.map(q=>buildShuffledAnswers(q));
+  currentQ=0; score=0; answered=false;
+  showScreen('screen-quiz'); renderQuestion();
+}
+function renderQuestion(){
+  const q=quizQuestions[currentQ], total=quizQuestions.length, answers=shuffledAnswers[currentQ];
+  document.getElementById('q-current').textContent=currentQ+1;
+  document.getElementById('q-total').textContent=total;
+  document.getElementById('live-score').textContent=score;
+  document.getElementById('q-num-chip').textContent=(currentQ+1)+'/'+total;
+  document.getElementById('progress-bar').style.width=((currentQ/total)*100)+'%';
+  document.getElementById('q-badge').textContent=q.badge;
+  document.getElementById('q-emoji').textContent=q.emoji;
+  document.getElementById('q-scenario').textContent=q.scenario;
+  document.getElementById('q-text').textContent=q.question;
+  document.getElementById('hint-box').textContent='💡 '+q.hint;
+  document.getElementById('hint-box').classList.remove('show');
+  const list=document.getElementById('answers-list');
+  list.innerHTML='';
+  const letters=['א','ב','ג','ד'];
+  answers.forEach((ans,i)=>{
+    const btn=document.createElement('button');
+    btn.className='answer-btn';
+    btn.innerHTML='<span class="ans-letter">'+letters[i]+'</span>'+ans.text;
+    btn.onclick=function(){selectAnswer(i);};
+    list.appendChild(btn);
+  });
+  document.getElementById('feedback-box').className='feedback-box';
+  document.getElementById('next-btn').style.display='none';
+  answered=false;
+  const card=document.getElementById('question-card');
+  card.style.animation='none'; card.offsetHeight; card.style.animation='fadeIn 0.35s ease';
+}
+function toggleHint(){ document.getElementById('hint-box').classList.toggle('show'); }
+function selectAnswer(idx){
+  if(answered)return; answered=true;
+  const q=quizQuestions[currentQ], answers=shuffledAnswers[currentQ];
+  const isCorrect=answers[idx].isCorrect;
+  if(isCorrect)score++;
+  document.querySelectorAll('.answer-btn').forEach(function(btn,i){
+    btn.disabled=true;
+    if(answers[i].isCorrect)btn.classList.add('correct');
+    else if(i===idx&&!isCorrect)btn.classList.add('wrong');
+  });
+  document.getElementById('live-score').textContent=score;
+  const fb=document.getElementById('feedback-box');
+  if(isCorrect){fb.className='feedback-box correct-fb show';document.getElementById('fb-title').textContent='✅ כל הכבוד! נכון מאוד!';launchMiniConfetti();}
+  else{fb.className='feedback-box wrong-fb show';document.getElementById('fb-title').textContent='❌ לא נכון – בואי נלמד מזה!';}
+  document.getElementById('fb-explain').textContent=q.explain;
+  const nb=document.getElementById('next-btn');
+  nb.style.display='block';
+  nb.textContent=currentQ===quizQuestions.length-1?'לראיית הציון 🎯':'המשך ←';
+}
+function nextQuestion(){
+  if(currentQ<quizQuestions.length-1){currentQ++;renderQuestion();}
+  else showResults();
+}
+function showResults(){
+  showScreen('screen-results');
+  const total=quizQuestions.length, pct=Math.round((score/total)*100);
+  document.getElementById('result-num').textContent=score;
+  document.getElementById('result-out').textContent='מתוך '+total;
+  document.getElementById('res-correct').textContent=score;
+  document.getElementById('res-wrong').textContent=total-score;
+  document.getElementById('res-grade').textContent=pct+'/100';
+  var title,msg,cls,level;
+  if(pct>=90){title=studentName+', את ממש מדהימה! ⭐';msg='שליטה מצוינת! עבודה קשה משתלמת!';cls='great';level='⭐ מצוינת';}
+  else if(pct>=70){title=studentName+', יפה מאוד! 👏';msg='עבודה טובה! עוד קצת תרגול ותגיעי לשלמות!';cls='good';level='👍 טוב מאוד';}
+  else if(pct>=50){title=studentName+', את בדרך הנכונה! 💪';msg='ממשיכים להתאמן – כל תרגול עוזר!';cls='ok';level='📖 בהתקדמות';}
+  else{title=studentName+', אל תוותרי! 🌈';msg='עם תרגול יומיומי תראי שיפור גדול!';cls='low';level='💪 ממשיכים';}
+  document.getElementById('result-title').textContent=title;
+  document.getElementById('result-msg').textContent=msg;
+  var badge=document.getElementById('level-badge');badge.textContent=level;badge.className='level-badge '+cls;
+  var circle=document.getElementById('score-circle');circle.className='score-circle '+cls;circle.style.setProperty('--pct',pct+'%');
+  if(pct>=70)launchConfetti();
+}
+function sendWhatsApp(){
+  var phone=document.getElementById('teacher-phone').value.replace(/[^0-9]/g,'');
+  var total=quizQuestions.length, pct=Math.round((score/total)*100);
+  var topicName=selectedTopic==='mixed'?'כל הנושאים':selectedTopic==='shopping'?'קניות וכסף':selectedTopic==='time'?'שעון וזמן':'מדידה וכמות';
+  var msg=encodeURIComponent('שלום,\n\n'+studentName+' סיימה תרגול במתמטיקה שימושית כיתה ז׳ – רמה ב׳.\n\n📌 נושא: '+topicName+'\n✅ נכון: '+score+'/'+total+'\n📊 ציון: '+pct+'/100\n\nנשלח אוטומטית מקובץ התרגול.');
+  var clean=phone.startsWith('0')?'972'+phone.slice(1):phone;
+  window.open(phone?'https://wa.me/'+clean+'?text='+msg:'https://wa.me/?text='+msg,'_blank');
+}
+function restartQuiz(){showScreen('screen-welcome');}
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
+  document.getElementById(id).classList.add('active');window.scrollTo(0,0);
+}
+var COLORS=['#4f46e5','#059669','#d97706','#db2777','#0891b2','#7c3aed'];
+function launchMiniConfetti(){
+  var wrap=document.getElementById('confetti-wrap');
+  for(var i=0;i<14;i++){
+    var el=document.createElement('div');el.className='confetti-piece';
+    el.style.cssText='left:'+(20+Math.random()*60)+'%;background:'+COLORS[Math.floor(Math.random()*COLORS.length)]+';width:'+(7+Math.random()*6)+'px;height:'+(7+Math.random()*6)+'px;border-radius:'+(Math.random()>.5?'50%':'2px')+';animation-duration:'+(0.9+Math.random()*.7)+'s;animation-delay:'+(Math.random()*.3)+'s;';
+    wrap.appendChild(el);setTimeout(function(){el.remove();},1600);
+  }
+}
+function launchConfetti(){
+  var wrap=document.getElementById('confetti-wrap');
+  for(var i=0;i<60;i++){
+    var el=document.createElement('div');el.className='confetti-piece';
+    el.style.cssText='left:'+(Math.random()*100)+'%;background:'+COLORS[Math.floor(Math.random()*COLORS.length)]+';width:'+(8+Math.random()*8)+'px;height:'+(8+Math.random()*8)+'px;border-radius:'+(Math.random()>.5?'50%':'2px')+';animation-duration:'+(1.5+Math.random()*2)+'s;animation-delay:'+Math.random()+'s;';
+    wrap.appendChild(el);setTimeout(function(){el.remove();},4000);
+  }
+}
+</script>
+</body>
+</html>
