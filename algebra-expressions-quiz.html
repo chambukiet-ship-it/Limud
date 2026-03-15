@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>חידון ביטויים אלגבריים 🌟</title>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;900&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0f0c29; --card:#1a1740;
+  --a1:#ff6fd8; --a2:#6ef7c4; --a3:#ffe36e; --a4:#7b9fff;
+  --text:#f0eeff; --muted:#8a84b3;
+  --ok:#6ef7c4; --bad:#ff6b6b; --r:20px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Rubik',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;position:relative;}
+body::before{content:'';position:fixed;inset:0;
+  background:radial-gradient(ellipse at 15% 25%,rgba(110,247,196,.13) 0%,transparent 50%),
+             radial-gradient(ellipse at 85% 75%,rgba(255,111,216,.13) 0%,transparent 50%),
+             radial-gradient(ellipse at 50% 50%,rgba(123,159,255,.07) 0%,transparent 60%);
+  animation:bgP 8s ease-in-out infinite alternate;pointer-events:none;z-index:0;}
+@keyframes bgP{0%{opacity:.6}100%{opacity:1}}
+
+.wrap{max-width:480px;margin:0 auto;padding:20px 16px 40px;position:relative;z-index:1;}
+
+/* header */
+.hdr{text-align:center;margin-bottom:22px;animation:sld .6s ease;}
+@keyframes sld{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
+.hdr-emoji{font-size:3rem;display:block;margin-bottom:6px;}
+.hdr h1{font-family:'Fredoka One',cursive;font-size:1.9rem;
+  background:linear-gradient(135deg,var(--a2),var(--a4));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.15;}
+.hdr p{color:var(--muted);font-size:.95rem;margin-top:6px;}
+
+/* progress */
+.plbl{display:flex;justify-content:space-between;font-size:.8rem;color:var(--muted);margin-bottom:6px;}
+.pwrap{background:rgba(255,255,255,.08);border-radius:50px;height:10px;margin-bottom:20px;overflow:hidden;}
+.pbar{height:100%;border-radius:50px;
+  background:linear-gradient(90deg,var(--a2),var(--a4));
+  transition:width .5s cubic-bezier(.4,0,.2,1);
+  box-shadow:0 0 12px rgba(110,247,196,.5);}
+
+/* stars */
+.sstrip{display:flex;justify-content:center;gap:8px;margin-bottom:18px;}
+.star{font-size:1.4rem;filter:grayscale(1) brightness(.4);transition:transform .3s;}
+.star.earned{filter:none;animation:sPop .4s ease;}
+@keyframes sPop{0%{transform:scale(0)}70%{transform:scale(1.4)}100%{transform:scale(1)}}
+
+/* card */
+.card{background:var(--card);border-radius:var(--r);padding:22px 20px;margin-bottom:14px;
+  border:1px solid rgba(255,255,255,.08);box-shadow:0 8px 32px rgba(0,0,0,.3);animation:cIn .4s ease;}
+@keyframes cIn{from{opacity:0;transform:translateY(16px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+
+.qbadge{display:inline-flex;align-items:center;gap:6px;
+  background:rgba(110,247,196,.12);border:1px solid rgba(110,247,196,.3);
+  color:var(--a2);border-radius:50px;padding:4px 12px;
+  font-size:.78rem;font-weight:700;margin-bottom:12px;letter-spacing:.5px;}
+
+/* story box */
+.story{background:rgba(110,247,196,.06);border:1px solid rgba(110,247,196,.18);
+  border-radius:14px;padding:14px 16px;margin-bottom:14px;
+  font-size:1rem;line-height:1.85;color:#e8e3ff;position:relative;}
+.story::before{content:'📖';position:absolute;top:-12px;right:14px;
+  font-size:1.2rem;background:var(--card);padding:0 4px;}
+.story .hl{color:var(--a3);font-weight:700;}
+.story .vhl{display:inline-block;background:rgba(110,247,196,.15);
+  border:1px solid rgba(110,247,196,.3);color:var(--a2);
+  border-radius:6px;padding:1px 7px;font-weight:700;
+  font-family:'Courier New',monospace;font-size:.97rem;}
+
+.qask{font-size:1.05rem;font-weight:700;color:var(--text);margin-bottom:10px;line-height:1.5;}
+
+/* hint */
+.hbtn{background:none;border:1px dashed rgba(110,247,196,.4);color:var(--a2);
+  border-radius:8px;padding:6px 12px;font-family:'Rubik',sans-serif;
+  font-size:.82rem;cursor:pointer;margin-top:8px;transition:all .2s;}
+.hbtn:hover{background:rgba(110,247,196,.08);}
+.htxt{display:none;background:rgba(110,247,196,.07);border:1px solid rgba(110,247,196,.2);
+  border-radius:10px;padding:10px 12px;font-size:.88rem;color:#9af3d5;
+  margin-top:8px;line-height:1.7;animation:fIn .3s ease;}
+.htxt.show{display:block;}
+@keyframes fIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* options */
+.opts{display:flex;flex-direction:column;gap:10px;}
+.obtn{background:rgba(255,255,255,.05);border:2px solid rgba(255,255,255,.1);
+  border-radius:14px;padding:14px 18px;color:var(--text);
+  font-family:'Rubik',sans-serif;font-size:1rem;font-weight:500;
+  cursor:pointer;text-align:right;transition:all .2s;
+  display:flex;align-items:center;gap:12px;}
+.obtn:hover:not(:disabled){border-color:rgba(110,247,196,.45);transform:translateX(-3px);background:rgba(110,247,196,.07);}
+.obtn:active:not(:disabled){transform:scale(.97);}
+.obtn .ol{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.08);
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:.85rem;flex-shrink:0;transition:all .2s;}
+.obtn .expr{font-family:'Courier New',monospace;font-size:1rem;color:var(--a3);font-weight:700;}
+.obtn.ok{background:rgba(110,247,196,.12);border-color:var(--ok);animation:cPulse .5s ease;}
+.obtn.ok .ol{background:var(--ok);color:#0f0c29;}
+.obtn.bad{background:rgba(255,107,107,.1);border-color:var(--bad);animation:shake .4s ease;}
+.obtn.bad .ol{background:var(--bad);color:#fff;}
+.obtn:disabled{cursor:not-allowed;}
+@keyframes cPulse{0%{transform:scale(1)}50%{transform:scale(1.02)}100%{transform:scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+/* feedback */
+.fb{border-radius:14px;padding:14px 16px;margin-top:12px;
+  font-size:.93rem;line-height:1.7;display:none;}
+.fb.show{display:block;animation:fIn .3s ease;}
+.fb.ok-fb{background:rgba(110,247,196,.1);border:1px solid rgba(110,247,196,.3);color:var(--ok);}
+.fb.bad-fb{background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.3);color:#ff9a9a;}
+
+/* next */
+.nbtn{width:100%;padding:16px;border-radius:14px;
+  background:linear-gradient(135deg,var(--a2),var(--a4));
+  border:none;color:#1a1740;font-family:'Fredoka One',cursive;
+  font-size:1.15rem;cursor:pointer;margin-top:10px;display:none;
+  font-weight:700;box-shadow:0 4px 20px rgba(110,247,196,.3);transition:all .2s;}
+.nbtn.show{display:block;animation:fIn .3s ease;}
+.nbtn:hover{transform:translateY(-2px);box-shadow:0 6px 28px rgba(110,247,196,.45);}
+
+/* results */
+.results{display:none;animation:cIn .5s ease;}
+.results.show{display:block;}
+.rcard{background:var(--card);border-radius:var(--r);padding:30px 24px;
+  text-align:center;border:1px solid rgba(255,255,255,.1);box-shadow:0 8px 40px rgba(0,0,0,.4);}
+.trophy{font-size:4rem;display:block;margin-bottom:10px;animation:bnc 1s ease;}
+@keyframes bnc{0%,100%{transform:translateY(0) rotate(0deg)}25%{transform:translateY(-12px) rotate(-5deg)}75%{transform:translateY(-6px) rotate(5deg)}}
+.rtitle{font-family:'Fredoka One',cursive;font-size:1.8rem;
+  background:linear-gradient(135deg,var(--a2),var(--a4));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px;}
+.sbig{font-size:3.5rem;font-weight:900;color:white;line-height:1;margin:14px 0 4px;}
+.sbig span{font-size:1.4rem;color:var(--muted);font-weight:400;}
+.sgrade{font-size:1rem;color:var(--muted);margin-bottom:20px;}
+.rstars{font-size:2rem;letter-spacing:4px;margin-bottom:20px;display:block;}
+
+/* personal feedback */
+.fbcard{background:rgba(255,255,255,.04);border-radius:18px;padding:20px;
+  margin:16px 0;border:1px solid rgba(255,255,255,.1);text-align:right;
+  animation:cIn .5s ease .3s both;}
+.lvlbadge{display:inline-block;border-radius:50px;padding:5px 14px;
+  font-size:.78rem;font-weight:700;margin-bottom:12px;letter-spacing:.5px;}
+.lv0{background:rgba(255,107,107,.18);border:1px solid rgba(255,107,107,.4);color:#ff9a9a;}
+.lv1{background:rgba(255,227,110,.15);border:1px solid rgba(255,227,110,.4);color:var(--a3);}
+.lv2{background:rgba(123,159,255,.15);border:1px solid rgba(123,159,255,.4);color:var(--a4);}
+.lv3{background:rgba(110,247,196,.15);border:1px solid rgba(110,247,196,.4);color:var(--ok);}
+.fbtitle{font-family:'Fredoka One',cursive;font-size:1.2rem;margin-bottom:10px;color:var(--text);}
+.fbbody{font-size:.92rem;line-height:1.75;color:#c8c3e8;margin-bottom:14px;}
+.fbtips{display:flex;flex-direction:column;gap:8px;}
+.tip{display:flex;align-items:flex-start;gap:10px;background:rgba(255,255,255,.04);
+  border-radius:10px;padding:10px 12px;font-size:.88rem;color:#c8c3e8;
+  line-height:1.5;border-right:3px solid;text-align:right;}
+.tg{border-color:var(--ok)}.ty{border-color:var(--a3)}.tp{border-color:var(--a1);}
+
+/* send form */
+.sform{background:rgba(255,255,255,.04);border-radius:16px;padding:20px;
+  margin-top:20px;border:1px solid rgba(255,255,255,.08);text-align:right;}
+.sform h3{font-size:1rem;font-weight:700;margin-bottom:14px;color:var(--a2);
+  display:flex;align-items:center;gap:8px;}
+.ig{margin-bottom:12px;}
+.ig label{display:block;font-size:.85rem;color:var(--muted);margin-bottom:6px;font-weight:500;}
+.ig input,.ig textarea{width:100%;background:rgba(255,255,255,.07);
+  border:1.5px solid rgba(255,255,255,.12);border-radius:10px;
+  padding:12px 14px;color:var(--text);font-family:'Rubik',sans-serif;
+  font-size:.95rem;outline:none;transition:border-color .2s;direction:rtl;}
+.ig input:focus,.ig textarea:focus{border-color:var(--a2);}
+.ig textarea{resize:none;height:70px;}
+.srow{display:flex;gap:10px;margin-bottom:10px;}
+.wabtn{flex:1;padding:14px 10px;border-radius:12px;
+  background:linear-gradient(135deg,#25d366,#128c7e);border:none;color:#fff;
+  font-family:'Fredoka One',cursive;font-size:1rem;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  transition:all .2s;box-shadow:0 4px 16px rgba(37,211,102,.3);}
+.wabtn:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(37,211,102,.5);}
+.embtn{flex:1;padding:14px 10px;border-radius:12px;
+  background:rgba(110,247,196,.12);border:1.5px solid rgba(110,247,196,.3);
+  color:var(--a2);font-family:'Fredoka One',cursive;font-size:1rem;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s;}
+.embtn:hover{background:rgba(110,247,196,.22);transform:translateY(-2px);}
+.sentmsg{display:none;text-align:center;padding:14px;border-radius:12px;
+  background:rgba(110,247,196,.12);border:1px solid rgba(110,247,196,.3);
+  color:var(--ok);font-weight:600;animation:fIn .3s ease;}
+.sentmsg.show{display:block;}
+.retrybtn{width:100%;padding:14px;border-radius:12px;
+  background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.15);
+  color:var(--text);font-family:'Fredoka One',cursive;font-size:1rem;
+  cursor:pointer;margin-top:12px;transition:all .2s;}
+.retrybtn:hover{background:rgba(255,255,255,.1);}
+
+/* name screen */
+.ncard{background:var(--card);border-radius:var(--r);padding:32px 24px;
+  text-align:center;border:1px solid rgba(255,255,255,.1);box-shadow:0 8px 40px rgba(0,0,0,.4);}
+.ncard h2{font-family:'Fredoka One',cursive;font-size:1.6rem;
+  background:linear-gradient(135deg,var(--a2),var(--a4));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px;}
+.ncard p{color:var(--muted);font-size:.9rem;margin-bottom:24px;line-height:1.6;}
+.niwrap{position:relative;margin-bottom:16px;}
+.niwrap input{width:100%;background:rgba(255,255,255,.07);
+  border:2px solid rgba(110,247,196,.3);border-radius:12px;
+  padding:14px 48px 14px 14px;color:var(--text);font-family:'Rubik',sans-serif;
+  font-size:1.1rem;font-weight:500;outline:none;text-align:right;
+  transition:border-color .2s;direction:rtl;}
+.niwrap input:focus{border-color:var(--a2);}
+.niwrap .nico{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:1.3rem;}
+.startbtn{width:100%;padding:16px;border-radius:12px;
+  background:linear-gradient(135deg,var(--a2),var(--a4));
+  border:none;color:#0f0c29;font-family:'Fredoka One',cursive;
+  font-size:1.2rem;cursor:pointer;font-weight:700;transition:all .2s;
+  box-shadow:0 4px 20px rgba(110,247,196,.3);}
+.startbtn:hover{transform:translateY(-2px);box-shadow:0 6px 28px rgba(110,247,196,.5);}
+
+/* confetti */
+.cfwrap{position:fixed;inset:0;pointer-events:none;z-index:999;overflow:hidden;}
+.cfp{position:absolute;width:8px;height:8px;border-radius:2px;animation:cfFall linear forwards;}
+@keyframes cfFall{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+</style>
+</head>
+<body>
+<div class="cfwrap" id="cfWrap"></div>
+<div class="wrap">
+
+  <!-- Name -->
+  <div id="nameScreen">
+    <div class="hdr">
+      <span class="hdr-emoji">🔢</span>
+      <h1>ביטויים אלגבריים</h1>
+      <p>כיתה ז׳ · מילים הופכות לאלגברה</p>
+    </div>
+    <div class="ncard">
+      <h2>שלום! 👋</h2>
+      <p>בחידון הזה נתרגל איך לכתוב<br>ביטוי אלגברי מתוך תיאור במילים.<br>מה השם שלך?</p>
+      <div class="niwrap">
+        <span class="nico">✏️</span>
+        <input type="text" id="nameIn" placeholder="הכנסי את שמך כאן..." />
+      </div>
+      <button class="startbtn" onclick="startQuiz()">בואי נתחיל! 🚀</button>
+    </div>
+  </div>
+
+  <!-- Quiz -->
+  <div id="quizScreen" style="display:none">
+    <div class="hdr">
+      <span class="hdr-emoji">🔢</span>
+      <h1>ביטויים אלגבריים</h1>
+      <p id="greet" style="color:var(--a2);font-weight:600"></p>
+    </div>
+    <div class="plbl">
+      <span id="qnum">שאלה 1 מתוך 9</span>
+      <span id="slbl">✨ 0 נקודות</span>
+    </div>
+    <div class="pwrap"><div class="pbar" id="pbar" style="width:0%"></div></div>
+    <div class="sstrip" id="sstrip"></div>
+
+    <div class="card" id="qcard">
+      <div class="qbadge" id="qbadge">🔢</div>
+      <div class="story" id="story"></div>
+      <div class="qask" id="qask"></div>
+      <button class="hbtn" id="hbtn" onclick="toggleHint()">💡 רמז</button>
+      <div class="htxt" id="htxt"></div>
+    </div>
+
+    <div class="opts" id="opts"></div>
+    <div class="fb" id="fb"></div>
+    <button class="nbtn" id="nbtn" onclick="nextQ()">הבאה ←</button>
+  </div>
+
+  <!-- Results -->
+  <div class="results" id="results">
+    <div class="rcard">
+      <span class="trophy" id="trophy">🏆</span>
+      <div class="rtitle" id="rtitle"></div>
+      <p style="color:var(--muted);font-size:.9rem;margin-bottom:4px" id="rname"></p>
+      <div class="sbig" id="sbig">0 <span>/ 9</span></div>
+      <div class="sgrade" id="sgrade"></div>
+      <span class="rstars" id="rstars"></span>
+
+      <div class="fbcard">
+        <div class="lvlbadge" id="lvlbadge"></div>
+        <div class="fbtitle"  id="fbtitle"></div>
+        <div class="fbbody"   id="fbbody"></div>
+        <div class="fbtips"   id="fbtips"></div>
+      </div>
+
+      <div class="sform">
+        <h3>📲 שלחי ציון למורה</h3>
+        <div class="ig">
+          <label>שם המורה</label>
+          <input type="text" id="tname" placeholder="למשל: מורה רחל" />
+        </div>
+        <div class="ig">
+          <label>הערה אישית (אופציונלי)</label>
+          <textarea id="tnote" placeholder="למשל: השתדלתי מאוד! 😊"></textarea>
+        </div>
+        <div class="srow">
+          <button class="wabtn" onclick="sendWA()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+              <path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.112 1.523 5.836L.057 23.215a.75.75 0 00.921.921l5.379-1.466A11.943 11.943 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.75a9.718 9.718 0 01-4.953-1.355l-.355-.211-3.684 1.004 1.004-3.684-.211-.355A9.718 9.718 0 012.25 12C2.25 6.615 6.615 2.25 12 2.25S21.75 6.615 21.75 12 17.385 21.75 12 21.75z"/>
+            </svg>
+            וואטסאפ
+          </button>
+          <button class="embtn" onclick="sendEmail()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 7 10-7"/>
+            </svg>
+            מייל
+          </button>
+        </div>
+        <div class="sentmsg" id="sentmsg">✅ נשלח בהצלחה! כל הכבוד! 🌟</div>
+      </div>
+      <button class="retrybtn" onclick="retry()">🔄 שחקי שוב</button>
+    </div>
+  </div>
+
+</div><!-- /wrap -->
+
+<script>
+let sName='', cQ=0, score=0, answered=false;
+
+const Q=[
+  {
+    badge:'🍬 ממתקים',
+    story:`לאיה יש <span class="hl">x</span> סוכריות.<br>
+           לחברתה יש <span class="hl">5</span> סוכריות יותר מאיה.`,
+    ask:'כתבי ביטוי אלגברי למספר הסוכריות של החברה.',
+    hint:'יותר = מוסיפים. "5 יותר מ-x" זה x ועוד 5.',
+    opts:['x + 5','x − 5','5x','x + 5x'],
+    ok:0,
+    explain:'החברה יש לה 5 יותר מאיה → x + 5 ✓'
+  },
+  {
+    badge:'💰 כסף',
+    story:`לדן יש <span class="hl">y</span> שקלים.<br>
+           לאחיו יש <span class="hl">פי 3</span> יותר כסף מדן.`,
+    ask:'כתבי ביטוי אלגברי לכמות הכסף של האח.',
+    hint:'"פי 3" זה כפל — 3 כפול y.',
+    opts:['3y','y + 3','y ÷ 3','y − 3'],
+    ok:0,
+    explain:'פי 3 מ-y זה → 3y ✓'
+  },
+  {
+    badge:'📦 קופסאות',
+    story:`בכל קופסה יש <span class="hl">n</span> כדורים.<br>
+           יש <span class="hl">4</span> קופסאות.`,
+    ask:'כתבי ביטוי לסך כל הכדורים.',
+    hint:'4 קופסאות, כל אחת n כדורים — כמה סך הכל?',
+    opts:['4n','n + 4','n ÷ 4','4 + 4n'],
+    ok:0,
+    explain:'4 קופסאות × n כדורים בכל קופסה = 4n ✓'
+  },
+  {
+    badge:'🎂 גיל',
+    story:`גיל של נועם הוא <span class="hl">a</span> שנים.<br>
+           גיל אחותו הוא <span class="hl">3</span> שנים <span class="hl">פחות</span> מנועם.`,
+    ask:'כתבי ביטוי אלגברי לגיל האחות.',
+    hint:'"פחות" = מחסירים. 3 פחות מ-a זה a פחות 3.',
+    opts:['a − 3','a + 3','3a','a ÷ 3'],
+    ok:0,
+    explain:'3 שנים פחות מ-a → a − 3 ✓'
+  },
+  {
+    badge:'🍕 פיצה',
+    story:`מחיר פיצה אחת הוא <span class="hl">p</span> שקלים.<br>
+           רונית קנתה <span class="hl">2</span> פיצות ושילמה <span class="hl">10 ₪</span> דמי משלוח נוספים.`,
+    ask:'כתבי ביטוי לסכום הכולל ששילמה רונית.',
+    hint:'מחיר 2 פיצות ועוד 10 משלוח.',
+    opts:['2p + 10','2p − 10','p + 10','2(p + 10)'],
+    ok:0,
+    explain:'2 פיצות = 2p, ועוד 10 משלוח → 2p + 10 ✓'
+  },
+  {
+    badge:'📏 מידות',
+    story:`לריבוע צלע באורך <span class="hl">s</span> ס"מ.`,
+    ask:'כתבי ביטוי לסך כל הצלעות (היקף) של הריבוע.',
+    hint:'ריבוע = 4 צלעות שוות.',
+    opts:['4s','s + 4','s²','2s'],
+    ok:0,
+    explain:'4 צלעות, כל אחת באורך s → 4s ✓'
+  },
+  {
+    badge:'🚌 נסיעה',
+    story:`מחיר כרטיס אוטובוס הוא <span class="hl">k</span> שקלים.<br>
+           יש <span class="hl">הנחה של 4 ₪</span> לתלמידים.`,
+    ask:'כתבי ביטוי למחיר כרטיס לתלמיד.',
+    hint:'הנחה = מחסירים מהמחיר המלא.',
+    opts:['k − 4','k + 4','4k','4 − k'],
+    ok:0,
+    explain:'מחיר מלא פחות הנחה → k − 4 ✓'
+  },
+  {
+    badge:'🌟 שני נעלמים',
+    story:`לאורי יש <span class="hl">x</span> ספרים.<br>
+           לגלי יש <span class="hl">y</span> ספרים.`,
+    ask:'כתבי ביטוי לסך כל הספרים של שניהם יחד.',
+    hint:'סך הכל = חיבור של שני הכמויות.',
+    opts:['x + y','x · y','x − y','2x + y'],
+    ok:0,
+    explain:'ספרי אורי ועוד ספרי גלי → x + y ✓'
+  },
+  {
+    badge:'🏆 אתגר',
+    story:`לכיתה יש <span class="hl">t</span> תלמידים.<br>
+           <span class="hl">מחצית</span> מהתלמידים הם בנות.<br>
+           לכל בת יש <span class="hl">2</span> עפרונות.`,
+    ask:'כתבי ביטוי לסך כל העפרונות של הבנות.',
+    hint:'קודם כתבי כמה בנות יש (מחצית מ-t), ואז כפלי ב-2.',
+    opts:['2 · (t/2) = t','t/2','t + 2','2t'],
+    ok:0,
+    explain:'מספר בנות = t/2. עפרונות = 2 × (t/2) = t ✓'
+  }
+];
+
+function startQuiz(){
+  const n=document.getElementById('nameIn').value.trim();
+  if(!n){
+    document.getElementById('nameIn').style.borderColor='var(--bad)';
+    document.getElementById('nameIn').placeholder='⚠️ נא להכניס שם!';
+    return;
+  }
+  sName=n;
+  document.getElementById('nameScreen').style.display='none';
+  document.getElementById('quizScreen').style.display='block';
+  document.getElementById('greet').textContent=`היי ${sName}! 🌸`;
+  buildStars(); loadQ();
+}
+
+function buildStars(){
+  const s=document.getElementById('sstrip'); s.innerHTML='';
+  Q.forEach((_,i)=>{
+    const el=document.createElement('span');
+    el.className='star'; el.textContent='⭐'; el.id='st'+i;
+    s.appendChild(el);
+  });
+}
+
+function shuffleOpts(optsArr, correctIdx){
+  const paired=optsArr.map((o,i)=>({o,correct:i===correctIdx}));
+  for(let i=paired.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [paired[i],paired[j]]=[paired[j],paired[i]];
+  }
+  return {shuffled:paired.map(p=>p.o), newCorrect:paired.findIndex(p=>p.correct)};
+}
+
+let currentCorrect=0;
+
+function loadQ(){
+  answered=false;
+  const q=Q[cQ];
+  document.getElementById('qbadge').innerHTML=q.badge;
+  document.getElementById('story').innerHTML=q.story;
+  document.getElementById('qask').textContent=q.ask;
+  document.getElementById('qnum').textContent=`שאלה ${cQ+1} מתוך ${Q.length}`;
+  document.getElementById('slbl').textContent=`✨ ${score} נקודות`;
+  document.getElementById('pbar').style.width=`${(cQ/Q.length)*100}%`;
+  document.getElementById('htxt').classList.remove('show');
+  document.getElementById('htxt').textContent=q.hint;
+  document.getElementById('hbtn').style.display='inline-block';
+
+  const {shuffled,newCorrect}=shuffleOpts(q.opts,q.ok);
+  currentCorrect=newCorrect;
+
+  const opts=document.getElementById('opts'); opts.innerHTML='';
+  const letters=['א','ב','ג','ד'];
+  shuffled.forEach((o,i)=>{
+    const b=document.createElement('button');
+    b.className='obtn';
+    b.innerHTML=`<span class="ol">${letters[i]}</span><span class="expr">${o}</span>`;
+    b.onclick=()=>pick(i);
+    opts.appendChild(b);
+  });
+  document.getElementById('fb').classList.remove('show','ok-fb','bad-fb');
+  document.getElementById('fb').innerHTML='';
+  document.getElementById('nbtn').classList.remove('show');
+}
+
+function toggleHint(){document.getElementById('htxt').classList.toggle('show');}
+
+function pick(idx){
+  if(answered)return;
+  answered=true;
+  const q=Q[cQ];
+  const btns=document.querySelectorAll('.obtn');
+  btns.forEach(b=>b.disabled=true);
+  const fb=document.getElementById('fb');
+  if(idx===currentCorrect){
+    score++;
+    btns[idx].classList.add('ok');
+    fb.className='fb show ok-fb';
+    fb.innerHTML=`✅ נכון! ${q.explain}`;
+    document.getElementById('st'+cQ).classList.add('earned');
+    confetti();
+  }else{
+    btns[idx].classList.add('bad');
+    btns[currentCorrect].classList.add('ok');
+    fb.className='fb show bad-fb';
+    fb.innerHTML=`❌ לא נכון. ${q.explain}`;
+  }
+  document.getElementById('slbl').textContent=`✨ ${score} נקודות`;
+  document.getElementById('hbtn').style.display='none';
+  const nb=document.getElementById('nbtn');
+  nb.textContent=cQ===Q.length-1?'📊 לתוצאות':'הבאה ←';
+  nb.classList.add('show');
+}
+
+function nextQ(){
+  cQ++;
+  if(cQ>=Q.length){showResults();return;}
+  const c=document.getElementById('qcard');
+  c.style.animation='none';
+  requestAnimationFrame(()=>{c.style.animation='cIn .4s ease';loadQ();});
+}
+
+function showResults(){
+  document.getElementById('pbar').style.width='100%';
+  document.getElementById('quizScreen').style.display='none';
+  document.getElementById('results').classList.add('show');
+  const p=score/Q.length;
+  let tr,ti,gr;
+  if(p===1)        {tr='🏆';ti='מושלם לחלוטין!'; gr='ציון: 100 — מדהים!';}
+  else if(p>=.78)  {tr='🥇';ti='כל הכבוד!';       gr='ציון: מעולה';}
+  else if(p>=.55)  {tr='🥈';ti='יופי, כמעט!';     gr='ציון: טוב — אפשר לשפר';}
+  else             {tr='💪';ti='שווה לנסות שוב!'; gr='ציון: נמשיך להתאמן!';}
+  document.getElementById('trophy').textContent=tr;
+  document.getElementById('rtitle').textContent=ti;
+  document.getElementById('rname').textContent=`${sName} — כל הכבוד על ניסיונך! 🌸`;
+  document.getElementById('sbig').innerHTML=`${score} <span>/ ${Q.length}</span>`;
+  document.getElementById('sgrade').textContent=gr;
+  document.getElementById('rstars').textContent='⭐'.repeat(score)+'☆'.repeat(Q.length-score);
+  buildFeedback(p);
+  confetti(true);
+}
+
+function buildFeedback(p){
+  const badge=document.getElementById('lvlbadge');
+  const title=document.getElementById('fbtitle');
+  const body =document.getElementById('fbbody');
+  const tips =document.getElementById('fbtips');
+  let lc,lt,ft,fb,fts;
+
+  if(p===1){
+    lc='lv3';lt='🌟 רמה: מצוינת';
+    ft=`${sName}, את פשוט מדהימה! 🎉`;
+    fb=`ציון מושלם! את מצליחה לתרגם כל תיאור מילולי לביטוי אלגברי מדויק — חיבור, חיסור, כפל וחלוקה. זה דורש הבנה עמוקה ואת שם!`;
+    fts=[
+      {i:'🚀',t:'את מוכנה לנושא הבא — פישוט ביטויים וקיבוץ איברים דומים!',c:'tg'},
+      {i:'💡',t:'נסי לכתוב ביטויים משלך על מצבים מחיי היומיום — זה כיף!',c:'tg'},
+      {i:'📐',t:'אפשר להמשיך לבניית משוואות מביטויים — הצעד הטבעי הבא.',c:'tg'}
+    ];
+  }else if(p>=.78){
+    lc='lv2';lt='👍 רמה: טובה מאוד';
+    ft=`${sName}, עבודה ממש יפה! 💙`;
+    fb=`את שולטת ברוב הסוגים — חיבור, חיסור וכפל. שגיאות קטנות בשאלות מורכבות יותר, אבל זה נורמלי לגמרי. עוד קצת תרגול ואת שם!`;
+    fts=[
+      {i:'🔍',t:'עברי על השאלות שטעית — בדקי האם טעית בסוג הפעולה (חיבור במקום כפל?) או בצורת הכתיבה.',c:'ty'},
+      {i:'✏️',t:'"פי" = כפל, "יותר/פחות" = חיבור/חיסור. שמרי את זה בראש כמו כלל!',c:'ty'},
+      {i:'💪',t:'עוד סיבוב ואת תגיעי ל-100!',c:'tp'}
+    ];
+  }else if(p>=.55){
+    lc='lv1';lt='📈 רמה: מתפתחת';
+    ft=`${sName}, את בדרך הנכונה! 🌱`;
+    fb=`יש לך הבנה של מה זה ביטוי אלגברי, אבל לפעמים קשה לדעת איזו פעולה להשתמש. זה בסדר — זה נלמד ומתרגלים!`;
+    fts=[
+      {i:'📌',t:'זכרי: "יותר" = +, "פחות" = −, "פי" = ×, "חלוקה לחלקים שווים" = ÷',c:'ty'},
+      {i:'🔢',t:'לפני שבוחרים תשובה — קראי בקול את הסיפור ושאלי: "מה הפעולה שמתארים כאן?"',c:'ty'},
+      {i:'💬',t:'בקשי מהמורה להסביר שוב את ההבדל בין "יותר" (חיבור) לבין "פי" (כפל).',c:'tp'}
+    ];
+  }else{
+    lc='lv0';lt='🌱 רמה: מתחילה';
+    ft=`${sName}, אל תוותרי — את יכולה! 💖`;
+    fb=`הנושא הזה חדש ולוקח זמן. הכי חשוב שניסית! עם עזרה מהמורה ותרגול הדרגתי — זה יבוא בטוח.`;
+    fts=[
+      {i:'📖',t:'חזרי לדף ההגדרות מהשיעור — מה זה נעלם? מה זה ביטוי אלגברי?',c:'tp'},
+      {i:'🤝',t:'שבי עם המורה ותעברו יחד על 3-4 דוגמאות לפני שמתרגלות לבד.',c:'tp'},
+      {i:'🎯',t:'השתמשי בכפתור "רמז" בכל שאלה — הוא מסביר מה הפעולה שצריך.',c:'ty'}
+    ];
+  }
+
+  badge.className=`lvlbadge ${lc}`;
+  badge.textContent=lt;
+  title.textContent=ft;
+  body.textContent=fb;
+  tips.innerHTML=fts.map(t=>`<div class="tip ${t.c}"><span>${t.i}</span><span>${t.t}</span></div>`).join('');
+}
+
+function buildMsg(){
+  const teacher=document.getElementById('tname').value.trim();
+  const note=document.getElementById('tnote').value.trim();
+  const p=score/Q.length;
+  const lbl=p===1?'מצוינת 🌟':p>=.78?'טובה מאוד 👍':p>=.55?'מתפתחת 📈':'מתחילה 🌱';
+  return (teacher?`שלום ${teacher},\n\n`:'')+
+    `🔢 *חידון ביטויים אלגבריים*\n`+
+    `👩‍🎓 תלמידה: *${sName}*\n`+
+    `✅ ציון: *${score} מתוך ${Q.length}*\n`+
+    `📊 רמה: ${lbl}\n`+
+    (note?`\n💬 הערה: "${note}"\n`:'')+
+    `\nנשלח מחידון מתמטיקה דיגיטלי 📱`;
+}
+
+function sendWA(){
+  const t=document.getElementById('tname').value.trim();
+  if(!t){
+    document.getElementById('tname').style.borderColor='var(--bad)';
+    document.getElementById('tname').placeholder='⚠️ נא להכניס שם מורה';
+    return;
+  }
+  window.open(`https://wa.me/?text=${encodeURIComponent(buildMsg())}`,'_blank');
+  document.getElementById('sentmsg').classList.add('show');
+}
+
+function sendEmail(){
+  const sub=encodeURIComponent(`ציון חידון ביטויים אלגבריים – ${sName}`);
+  window.location.href=`mailto:?subject=${sub}&body=${encodeURIComponent(buildMsg())}`;
+  document.getElementById('sentmsg').classList.add('show');
+}
+
+function retry(){
+  cQ=0;score=0;answered=false;
+  document.getElementById('results').classList.remove('show');
+  document.getElementById('sentmsg').classList.remove('show');
+  document.getElementById('nameScreen').style.display='block';
+}
+
+function confetti(many=false){
+  const w=document.getElementById('cfWrap');
+  const cols=['#ff6fd8','#6ef7c4','#ffe36e','#7b9fff','#ff9a9a'];
+  const n=many?60:20;
+  for(let i=0;i<n;i++){
+    const el=document.createElement('div');
+    el.className='cfp';
+    el.style.left=Math.random()*100+'vw';
+    el.style.background=cols[Math.floor(Math.random()*cols.length)];
+    el.style.width=(6+Math.random()*8)+'px';
+    el.style.height=(6+Math.random()*8)+'px';
+    el.style.animationDuration=(1.2+Math.random()*2)+'s';
+    el.style.animationDelay=Math.random()*.6+'s';
+    w.appendChild(el);
+    setTimeout(()=>el.remove(),4000);
+  }
+}
+
+document.getElementById('nameIn').addEventListener('keydown',e=>{if(e.key==='Enter')startQuiz();});
+</script>
+</body>
+</html>
