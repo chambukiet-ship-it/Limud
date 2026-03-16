@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎉 פסח חסידי – משחק מסכם</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@300;400;700;900&family=Heebo:wght@300;400;600;800&display=swap');
+:root {
+  --gold:#c8951a; --gold-light:#f0c040; --gold-pale:#fdf3d0;
+  --deep:#1a0a00; --wine:#6b1a2a; --wine-light:#9b2a3e;
+  --cream:#faf6ee; --matza:#e8d5a0; --green:#2d6a2d; --blue-night:#0d1b3e;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Heebo',sans-serif;background:var(--cream);color:var(--deep);min-height:100vh;overflow-x:hidden;}
+
+/* HEADER */
+#main-header{background:linear-gradient(135deg,var(--blue-night) 0%,#1a1040 50%,var(--wine) 100%);color:white;text-align:center;padding:36px 20px;position:relative;overflow:hidden;}
+.stars{position:absolute;width:100%;height:100%;top:0;left:0;pointer-events:none;}
+.star{position:absolute;width:3px;height:3px;background:white;border-radius:50%;animation:twinkle 2s infinite alternate;}
+@keyframes twinkle{from{opacity:0.2}to{opacity:1}}
+#main-header h1{font-family:'Frank Ruhl Libre',serif;font-size:clamp(2rem,6vw,3.5rem);font-weight:900;color:var(--gold-light);text-shadow:0 2px 20px rgba(200,149,26,0.6);position:relative;z-index:1;line-height:1.2;}
+#main-header p{color:rgba(255,255,255,0.85);font-size:1rem;margin-top:8px;position:relative;z-index:1;}
+.progress-bar-wrap{background:rgba(255,255,255,0.15);border-radius:20px;height:12px;margin:18px auto;max-width:600px;overflow:hidden;position:relative;z-index:1;}
+.progress-bar-fill{background:linear-gradient(90deg,var(--gold),var(--gold-light));height:100%;border-radius:20px;transition:width 0.6s ease;width:0%;}
+#score-display{font-size:1.3rem;color:var(--gold-light);font-weight:700;position:relative;z-index:1;margin-top:6px;}
+
+/* NAV */
+#nav-tabs{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;padding:14px 10px;background:var(--deep);position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(0,0,0,0.4);}
+.tab-btn{background:rgba(255,255,255,0.08);border:1px solid rgba(200,149,26,0.3);color:rgba(255,255,255,0.75);padding:7px 14px;border-radius:30px;cursor:pointer;font-family:'Heebo',sans-serif;font-size:0.82rem;transition:all 0.3s;white-space:nowrap;}
+.tab-btn:hover,.tab-btn.active{background:var(--gold);color:var(--deep);font-weight:700;border-color:var(--gold);transform:translateY(-2px);box-shadow:0 4px 15px rgba(200,149,26,0.4);}
+
+/* SECTIONS */
+.section{display:none;max-width:900px;margin:0 auto;padding:30px 20px 60px;animation:fadeIn 0.5s ease;}
+.section.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.section-title{font-family:'Frank Ruhl Libre',serif;font-size:1.9rem;color:var(--wine);border-bottom:3px solid var(--gold);padding-bottom:10px;margin-bottom:22px;text-align:center;}
+.section-intro{background:linear-gradient(135deg,var(--gold-pale),#fff9e8);border-right:4px solid var(--gold);border-radius:0 12px 12px 0;padding:14px 18px;margin-bottom:22px;font-size:0.93rem;line-height:1.75;color:#333;}
+
+/* QUIZ CARDS */
+.quiz-card{background:white;border-radius:16px;padding:22px;margin-bottom:18px;box-shadow:0 4px 20px rgba(0,0,0,0.08);border:2px solid transparent;transition:border-color 0.3s;}
+.quiz-card.answered-correct{border-color:var(--green);background:#f0fff0;}
+.quiz-card.answered-wrong{border-color:var(--wine-light);background:#fff0f3;}
+.quiz-q{font-size:1rem;font-weight:600;color:var(--deep);margin-bottom:14px;line-height:1.65;}
+.quiz-q .q-num{display:inline-block;background:var(--wine);color:white;border-radius:50%;width:26px;height:26px;text-align:center;line-height:26px;font-size:0.82rem;margin-left:7px;}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+@media(max-width:600px){.options{grid-template-columns:1fr;}}
+.option-btn{background:#f8f4ee;border:2px solid #e0d5c0;border-radius:10px;padding:11px 14px;text-align:right;cursor:pointer;font-family:'Heebo',sans-serif;font-size:0.9rem;color:var(--deep);transition:all 0.2s;line-height:1.5;}
+.option-btn:hover:not(:disabled){background:var(--gold-pale);border-color:var(--gold);transform:translateY(-2px);box-shadow:0 4px 12px rgba(200,149,26,0.2);}
+.option-btn.correct{background:#e8f5e9;border-color:var(--green);color:var(--green);font-weight:700;}
+.option-btn.wrong{background:#ffeaea;border-color:var(--wine-light);color:var(--wine-light);}
+.option-btn:disabled{cursor:default;}
+.answer-feedback{margin-top:13px;padding:11px 15px;border-radius:10px;font-size:0.88rem;line-height:1.65;display:none;}
+.answer-feedback.show{display:block;}
+.answer-feedback.correct-fb{background:#e8f5e9;color:#1b5e20;border-right:3px solid var(--green);}
+.answer-feedback.wrong-fb{background:#ffeaea;color:var(--wine);border-right:3px solid var(--wine-light);}
+
+/* TRUE/FALSE */
+.tf-btns{display:flex;gap:11px;margin-top:11px;}
+.tf-btn{flex:1;padding:13px;border:2px solid;border-radius:12px;font-size:1.05rem;font-weight:700;cursor:pointer;font-family:'Heebo',sans-serif;transition:all 0.2s;}
+.tf-btn.true-btn{border-color:var(--green);color:var(--green);background:#f0fff0;}
+.tf-btn.false-btn{border-color:var(--wine-light);color:var(--wine-light);background:#fff0f3;}
+.tf-btn:hover:not(:disabled){transform:scale(1.04);box-shadow:0 4px 15px rgba(0,0,0,0.15);}
+.tf-btn.selected-correct{background:var(--green);color:white;}
+.tf-btn.selected-wrong{background:var(--wine-light);color:white;}
+.tf-btn:disabled{cursor:default;opacity:0.7;}
+
+/* ===== SEDER PLATE DRAG & DROP ===== */
+#plate-area{text-align:center;margin:0 auto 25px;max-width:700px;}
+.plate-instruction{background:#fff8e1;border:2px solid var(--gold);border-radius:12px;padding:12px 18px;margin-bottom:18px;font-size:0.9rem;color:#555;text-align:center;}
+/* Food tokens to drag */
+.food-bank{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;padding:16px;background:linear-gradient(135deg,#f5f0e8,#ede5d0);border-radius:14px;border:2px dashed var(--gold);margin-bottom:20px;min-height:70px;}
+.food-token{background:white;border:2px solid var(--gold);border-radius:40px;padding:8px 16px;font-size:0.95rem;font-weight:600;cursor:grab;user-select:none;transition:all 0.2s;box-shadow:0 2px 8px rgba(0,0,0,0.1);white-space:nowrap;}
+.food-token:hover{transform:scale(1.06);box-shadow:0 4px 14px rgba(200,149,26,0.35);}
+.food-token.dragging{opacity:0.5;cursor:grabbing;}
+.food-token.placed{opacity:0.35;cursor:not-allowed;text-decoration:line-through;}
+
+/* The plate SVG container */
+.plate-svg-wrap{position:relative;width:360px;height:360px;margin:0 auto;}
+.plate-svg-wrap svg{width:100%;height:100%;position:absolute;top:0;left:0;pointer-events:none;}
+
+/* Drop zones on the plate */
+.drop-zone{position:absolute;border-radius:50%;border:2.5px dashed rgba(180,130,20,0.8);cursor:pointer;transition:all 0.25s;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:700;color:rgba(100,60,10,0.9);text-align:center;background:rgba(255,252,235,0.6);}
+.drop-zone:hover,.drop-zone.drag-over{background:rgba(255,230,80,0.6);border-color:var(--gold);transform:scale(1.1);}
+.drop-zone.filled{border-style:solid;border-color:var(--wine);background:rgba(255,255,255,0.95);color:var(--deep);cursor:pointer;}
+.drop-zone.filled:hover{background:rgba(253,243,208,1);}
+.drop-zone.correct-place{border-color:var(--green)!important;background:rgba(200,255,200,0.9)!important;}
+.drop-zone.wrong-place{border-color:var(--wine-light)!important;background:rgba(255,200,200,0.9)!important;}
+.dz-name{font-size:0.58rem;line-height:1.2;text-align:center;padding:1px 2px;}
+.dz-emoji{font-size:1.25rem;line-height:1;}
+
+/* Plate info popup */
+.plate-info-box{background:white;border-radius:14px;padding:18px 20px;margin-top:12px;box-shadow:0 6px 25px rgba(0,0,0,0.12);border-right:5px solid var(--gold);display:none;animation:fadeIn 0.3s ease;text-align:right;}
+.plate-info-box.show{display:block;}
+.plate-info-box h3{color:var(--wine);font-family:'Frank Ruhl Libre',serif;font-size:1.2rem;margin-bottom:6px;}
+.plate-info-box p{font-size:0.9rem;line-height:1.7;color:#444;}
+.plate-info-box .pi-emoji{font-size:2rem;display:block;margin-bottom:6px;}
+
+/* Check plate button */
+.plate-check-btn{background:var(--wine);color:white;border:none;border-radius:30px;padding:12px 30px;font-family:'Heebo',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;margin:10px 5px;transition:all 0.25s;}
+.plate-check-btn:hover{background:var(--wine-light);transform:translateY(-2px);}
+.plate-check-btn.gold{background:var(--gold);color:var(--deep);}
+.plate-check-btn.gold:hover{background:var(--gold-light);}
+#plate-result{padding:14px;border-radius:12px;margin-top:12px;font-weight:600;display:none;font-size:0.95rem;line-height:1.7;}
+#plate-result.success{background:#e8f5e9;color:#1b5e20;display:block;}
+#plate-result.fail{background:#ffeaea;color:var(--wine);display:block;}
+
+/* FILL BLANK */
+.fill-blank-q{background:white;border-radius:13px;padding:18px 22px;margin-bottom:15px;box-shadow:0 3px 14px rgba(0,0,0,0.07);border-right:4px solid var(--matza);}
+.fill-blank-q p{font-size:0.97rem;line-height:1.9;margin-bottom:10px;}
+.fill-blank-input{border:2px solid var(--gold);border-radius:8px;padding:7px 12px;font-family:'Heebo',sans-serif;font-size:0.97rem;text-align:right;direction:rtl;width:130px;transition:border-color 0.2s;}
+.fill-blank-input:focus{outline:none;border-color:var(--wine);box-shadow:0 0 0 3px rgba(107,26,42,0.1);}
+.fill-blank-input.correct{border-color:var(--green);background:#e8f5e9;}
+.fill-blank-input.wrong{border-color:var(--wine-light);background:#ffeaea;}
+.check-btn{background:var(--wine);color:white;border:none;border-radius:8px;padding:8px 18px;font-family:'Heebo',sans-serif;font-size:0.9rem;cursor:pointer;margin-right:8px;transition:all 0.2s;font-weight:600;vertical-align:middle;}
+.check-btn:hover:not(:disabled){background:var(--wine-light);transform:translateY(-1px);}
+.check-btn:disabled{background:#ccc;cursor:default;}
+
+/* SEDER ORDER */
+.seder-order-game{background:white;border-radius:16px;padding:22px;box-shadow:0 4px 20px rgba(0,0,0,0.08);}
+.seder-items-pool{display:flex;flex-wrap:wrap;gap:8px;min-height:58px;padding:11px;background:var(--gold-pale);border-radius:10px;border:2px dashed var(--gold);margin-bottom:13px;}
+.seder-slot{display:flex;gap:8px;flex-wrap:wrap;min-height:52px;padding:9px;background:#f0f0f0;border-radius:10px;border:2px dashed #ccc;margin-bottom:9px;align-items:center;}
+.seder-token{background:var(--wine);color:white;border:none;border-radius:8px;padding:7px 13px;font-family:'Heebo',sans-serif;font-size:0.9rem;cursor:pointer;transition:all 0.2s;font-weight:600;}
+.seder-token:hover{background:var(--wine-light);transform:translateY(-2px);}
+.seder-token.placed{background:#aaa;cursor:default;opacity:0.5;}
+.seder-token.slot-item{background:var(--blue-night);font-size:0.87rem;cursor:pointer;}
+.seder-token.slot-item:hover{background:var(--wine);}
+.slot-label{font-size:0.83rem;color:#999;font-style:italic;margin-left:8px;}
+#order-result{padding:14px;border-radius:10px;margin-top:14px;font-weight:600;display:none;font-size:0.92rem;line-height:1.7;}
+#order-result.success{background:#e8f5e9;color:#1b5e20;display:block;}
+#order-result.fail{background:#ffeaea;color:var(--wine);display:block;}
+
+/* MATCHING */
+.matching-game{display:grid;grid-template-columns:1fr 1fr;gap:18px;background:white;border-radius:16px;padding:22px;box-shadow:0 4px 20px rgba(0,0,0,0.08);}
+@media(max-width:600px){.matching-game{grid-template-columns:1fr;}}
+.match-col h4{font-size:0.97rem;color:var(--wine);margin-bottom:11px;border-bottom:2px solid var(--gold);padding-bottom:5px;}
+.match-item{background:#f8f4ee;border:2px solid #e0d5c0;border-radius:10px;padding:9px 13px;margin-bottom:7px;cursor:pointer;transition:all 0.2s;font-size:0.88rem;line-height:1.4;}
+.match-item:hover{background:var(--gold-pale);border-color:var(--gold);}
+.match-item.selected{background:var(--wine);color:white;border-color:var(--wine);}
+.match-item.matched{background:#e8f5e9;border-color:var(--green);color:var(--green);cursor:default;font-weight:700;}
+.match-item.wrong-match{animation:shake 0.4s ease;}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+
+/* RIDDLES */
+.riddle-card{background:linear-gradient(135deg,var(--blue-night),#1a1040);color:white;border-radius:20px;padding:28px;margin-bottom:18px;text-align:center;box-shadow:0 8px 30px rgba(0,0,0,0.25);}
+.riddle-card .riddle-text{font-size:1.08rem;font-style:italic;line-height:1.9;color:rgba(255,255,255,0.9);margin-bottom:18px;}
+.riddle-reveal-btn{background:var(--gold);color:var(--deep);border:none;border-radius:30px;padding:11px 28px;font-family:'Heebo',sans-serif;font-size:0.97rem;font-weight:700;cursor:pointer;transition:all 0.3s;}
+.riddle-reveal-btn:hover{background:var(--gold-light);transform:scale(1.05);}
+.riddle-answer{background:rgba(255,255,255,0.1);border:2px solid var(--gold);border-radius:11px;padding:14px;margin-top:13px;display:none;animation:fadeIn 0.4s ease;}
+.riddle-answer.show{display:block;}
+.riddle-answer h4{color:var(--gold-light);font-size:1.05rem;margin-bottom:7px;}
+.riddle-answer p{font-size:0.88rem;line-height:1.65;}
+
+/* GLOSSARY */
+.glossary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;}
+.glossary-card{background:white;border-radius:13px;padding:17px;border-top:4px solid var(--gold);box-shadow:0 3px 14px rgba(0,0,0,0.07);cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;}
+.glossary-card:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(0,0,0,0.12);}
+.glossary-card h4{font-size:1.05rem;color:var(--wine);font-family:'Frank Ruhl Libre',serif;margin-bottom:5px;}
+.glossary-card .g-short{font-size:0.83rem;color:#888;margin-bottom:7px;}
+.glossary-card .g-desc{font-size:0.87rem;line-height:1.65;color:#444;display:none;border-top:1px solid #eee;padding-top:9px;margin-top:7px;}
+.glossary-card .g-desc.open{display:block;animation:fadeIn 0.3s;}
+.g-click-hint{font-size:0.72rem;color:var(--gold);text-align:left;margin-top:5px;}
+
+/* FACT CARDS */
+.fact-cards-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:13px;margin-bottom:18px;}
+.fact-card{background:white;border-radius:13px;padding:16px;border-right:4px solid var(--wine);box-shadow:0 3px 12px rgba(0,0,0,0.07);}
+.fact-card .fact-icon{font-size:1.7rem;margin-bottom:7px;display:block;}
+.fact-card h4{font-size:0.92rem;font-weight:700;color:var(--wine);margin-bottom:5px;}
+.fact-card p{font-size:0.84rem;line-height:1.65;color:#555;}
+
+/* NAV BUTTONS */
+.section-nav{display:flex;justify-content:space-between;align-items:center;margin-top:28px;flex-wrap:wrap;gap:9px;}
+.nav-btn{background:var(--wine);color:white;border:none;border-radius:30px;padding:11px 26px;font-family:'Heebo',sans-serif;font-size:0.97rem;font-weight:600;cursor:pointer;transition:all 0.3s;box-shadow:0 4px 14px rgba(107,26,42,0.25);}
+.nav-btn:hover{background:var(--wine-light);transform:translateY(-2px);}
+.nav-btn.gold{background:var(--gold);color:var(--deep);box-shadow:0 4px 14px rgba(200,149,26,0.25);}
+.nav-btn.gold:hover{background:var(--gold-light);}
+
+/* FINAL */
+#final-section{text-align:center;}
+.final-card{background:linear-gradient(135deg,var(--blue-night),#2a1060);color:white;border-radius:22px;padding:46px 28px;box-shadow:0 14px 48px rgba(0,0,0,0.3);}
+.final-score-num{font-size:4.5rem;font-weight:900;color:var(--gold-light);font-family:'Frank Ruhl Libre',serif;text-shadow:0 0 28px rgba(240,192,64,0.5);}
+.final-score-label{font-size:1.15rem;color:rgba(255,255,255,0.8);margin-bottom:18px;}
+.final-message{font-size:1.05rem;line-height:1.85;color:rgba(255,255,255,0.9);max-width:480px;margin:0 auto 28px;}
+.confetti-emoji{font-size:1.9rem;animation:bounce 0.5s ease infinite alternate;display:inline-block;}
+@keyframes bounce{from{transform:translateY(0)}to{transform:translateY(-9px)}}
+
+/* TOAST */
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--deep);color:white;padding:13px 26px;border-radius:30px;font-size:0.97rem;font-weight:600;box-shadow:0 8px 28px rgba(0,0,0,0.28);transition:transform 0.4s ease;z-index:1000;text-align:center;max-width:310px;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+
+.order-instructions{font-size:0.87rem;color:#666;margin-bottom:13px;font-style:italic;text-align:center;}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div id="main-header">
+  <div class="stars" id="stars-container"></div>
+  <h1>🕯️ פסח חסידי<br>משחק מסכם</h1>
+  <p>הלכות ומנהגי חב"ד – ליל הסדר</p>
+  <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progress-fill"></div></div>
+  <div id="score-display">ניקוד: <span id="score-num">0</span> נקודות</div>
+</div>
+
+<!-- NAV TABS -->
+<div id="nav-tabs">
+  <button class="tab-btn active" onclick="showSection('s0')">🏠 פתיחה</button>
+  <button class="tab-btn" onclick="showSection('s1')">📅 לפני פסח</button>
+  <button class="tab-btn" onclick="showSection('s2')">🍽️ קערת הסדר</button>
+  <button class="tab-btn" onclick="showSection('s3')">📋 סימני הסדר</button>
+  <button class="tab-btn" onclick="showSection('s4')">📖 מגיד</button>
+  <button class="tab-btn" onclick="showSection('s5')">🫓 מצה ומרור</button>
+  <button class="tab-btn" onclick="showSection('s6')">🧩 חידות</button>
+  <button class="tab-btn" onclick="showSection('s7')">🔤 מונחים</button>
+  <button class="tab-btn" onclick="showSection('s8')">🏆 ניקוד</button>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<!-- ======================================================== -->
+<!-- SECTION 0: INTRO -->
+<!-- ======================================================== -->
+<div class="section active" id="s0">
+  <h2 class="section-title">🌟 ברוכים הבאים!</h2>
+  <div class="section-intro">
+    <strong>שלום וברכה!</strong> לפניכם משחק מסכם מלא ומעשיר על הלכות ומנהגי חב"ד לליל הסדר, על פי החוברת "פסח חסידי".<br><br>
+    המשחק כולל: קערת הסדר אינטראקטיבית עם גרירת מאכלים, שאלות אמת/שקר, רב-ברירה, השלמת משפטים, חיבור זוגות, חידות ומאגר מונחים – <strong>יותר מ-60 פעילויות!</strong>
+  </div>
+  <div class="fact-cards-row">
+    <div class="fact-card"><span class="fact-icon">📖</span><h4>הגדה של פסח</h4><p>ספר ייחודי לליל הסדר, שבו מסופרת יציאת מצרים. הרבי הוציא הגדה עם "לקוטי טעמים ומנהגים".</p></div>
+    <div class="fact-card"><span class="fact-icon">🕯️</span><h4>ליל הסדר</h4><p>הלילה ה"מסודר" – 15 סימנים בסדר מדויק, שבהם מקיימים מצוות רבות כזכר ליציאת מצרים.</p></div>
+    <div class="fact-card"><span class="fact-icon">🍷</span><h4>ארבע כוסות</h4><p>כנגד ארבע לשונות גאולה: "והוצאתי, והצלתי, וגאלתי, ולקחתי" – חובה על כולם, גם נשים!</p></div>
+    <div class="fact-card"><span class="fact-icon">🫓</span><h4>מיכלא דמהימנותא</h4><p>בזוהר הקדוש נקראת המצה "מאכל האמונה" ו"מאכל הרפואה" – סגולה לחיזוק האמונה.</p></div>
+  </div>
+  <div class="section-nav"><div></div><button class="nav-btn gold" onclick="showSection('s1')">התחל! ←</button></div>
+</div>
+
+<!-- ======================================================== -->
+<!-- SECTION 1: לפני פסח -->
+<!-- ======================================================== -->
+<div class="section" id="s1">
+  <h2 class="section-title">📅 ימים שלפני פסח</h2>
+  <div class="section-intro">בדקו את הידע שלכם על ההכנות לפסח, בדיקת חמץ, שריפתו ומכירתו!</div>
+
+  <div class="quiz-card" id="tf1">
+    <div class="quiz-q">❓ אמת או שקר: <strong>מותר</strong> לאכול מצה 30 יום לפני הפסח?</div>
+    <div class="tf-btns">
+      <button class="tf-btn true-btn" onclick="checkTF('tf1','false',this)">אמת ✓</button>
+      <button class="tf-btn false-btn" onclick="checkTF('tf1','false',this)">שקר ✗</button>
+    </div>
+    <div class="answer-feedback" id="tf1-fb">✅ <strong>שקר!</strong> אסור לאכול מצה 30 יום לפני הפסח – מפורים ואילך. הסיבה: כדי שיהיה תיאבון לאכילת מצה מצווה בליל הסדר.</div>
+  </div>
+
+  <div class="quiz-card" id="tf2">
+    <div class="quiz-q">❓ אמת או שקר: את עשרת פתיתי החמץ צריך להחביא דווקא <strong>בחורים וסדקים</strong>?</div>
+    <div class="tf-btns">
+      <button class="tf-btn true-btn" onclick="checkTF('tf2','false',this)">אמת ✓</button>
+      <button class="tf-btn false-btn" onclick="checkTF('tf2','false',this)">שקר ✗</button>
+    </div>
+    <div class="answer-feedback" id="tf2-fb">✅ <strong>שקר!</strong> אין צורך להחביאם בחורים. טוב להניחם בפינות החדרים, כרוכים בפיסת נייר.</div>
+  </div>
+
+  <div class="quiz-card" id="tf3">
+    <div class="quiz-q">❓ אמת או שקר: בדיקת חמץ נעשית לאור <strong>נר שמן</strong>?</div>
+    <div class="tf-btns">
+      <button class="tf-btn true-btn" onclick="checkTF('tf3','false',this)">אמת ✓</button>
+      <button class="tf-btn false-btn" onclick="checkTF('tf3','false',this)">שקר ✗</button>
+    </div>
+    <div class="answer-feedback" id="tf3-fb">✅ <strong>שקר!</strong> הבדיקה נעשית לאור <strong>נר שעווה</strong>, בעזרת נוצת עוף, ואוספים בשקית נייר בתוך כף עץ.</div>
+  </div>
+
+  <div class="quiz-card" id="q1">
+    <div class="quiz-q"><span class="q-num">1</span> כמה פתיתי חמץ מניחים לפני הבדיקה ולמה?</div>
+    <div class="options">
+      <button class="option-btn" onclick="checkQ('q1',this,false,'התשובה הנכונה: 10 פתיתים – כנגד יו"ד כתרין דמסאבותא (עשרה מקורות טומאה), על פי האר"י ז"ל.')">7 – כנגד ימי השבוע</button>
+      <button class="option-btn" onclick="checkQ('q1',this,false,'התשובה הנכונה: 10 פתיתים – כנגד יו"ד כתרין דמסאבותא (עשרה מקורות טומאה), על פי האר"י ז"ל.')">15 – כנגד סימני הסדר</button>
+      <button class="option-btn" onclick="checkQ('q1',this,true,'')">10 – כנגד יו"ד כתרין דמסאבותא</button>
+      <button class="option-btn" onclick="checkQ('q1',this,false,'התשובה הנכונה: 10 פתיתים – כנגד יו"ד כתרין דמסאבותא (עשרה מקורות טומאה), על פי האר"י ז"ל.')">3 – כנגד כהן לוי ישראל</button>
+    </div>
+    <div class="answer-feedback" id="q1-fb">🎯 עשרה פתיתים כנגד יו"ד כתרין דמסאבותא (עשרה מקורות טומאה), על פי האר"י ז"ל.</div>
+  </div>
+
+  <div class="quiz-card" id="q2">
+    <div class="quiz-q"><span class="q-num">2</span> עד מתי מותר לאכול חמץ בערב פסח, ועד מתי שורפים?</div>
+    <div class="options">
+      <button class="option-btn" onclick="checkQ('q2',this,false,'אכילה – עד סוף שעה רביעית (כ-10:39). שריפה – עד סוף שעה חמישית (כ-11:42 באזור המרכז).')">אכילה עד חצות, שריפה עד השקיעה</button>
+      <button class="option-btn" onclick="checkQ('q2',this,true,'')">אכילה עד סוף שעה רביעית, שריפה עד סוף שעה חמישית</button>
+      <button class="option-btn" onclick="checkQ('q2',this,false,'אכילה – עד סוף שעה רביעית (כ-10:39). שריפה – עד סוף שעה חמישית (כ-11:42 באזור המרכז).')">שניהם עד סוף שעה שישית</button>
+      <button class="option-btn" onclick="checkQ('q2',this,false,'אכילה – עד סוף שעה רביעית (כ-10:39). שריפה – עד סוף שעה חמישית (כ-11:42 באזור המרכז).')">אכילה עד הצהריים, שריפה כל היום</button>
+    </div>
+    <div class="answer-feedback" id="q2-fb">🎯 אכילה – עד סוף שעה רביעית (≈10:39 באזור המרכז). שריפה – עד סוף שעה חמישית (≈11:42).</div>
+  </div>
+
+  <div class="quiz-card" id="q3">
+    <div class="quiz-q"><span class="q-num">3</span> מדוע הבכורות מתענים בערב פסח?</div>
+    <div class="options">
+      <button class="option-btn" onclick="checkQ('q3',this,false,'זכר לנס שנעשה לבכורות ישראל – בכורי מצרים נהרגו ובכורי ישראל ניצלו.')">לזכר עבודת הפרך הקשה</button>
+      <button class="option-btn" onclick="checkQ('q3',this,true,'')">זכר לנס מכת בכורות – בכורי מצרים נהרגו ובכורי ישראל ניצלו</button>
+      <button class="option-btn" onclick="checkQ('q3',this,false,'זכר לנס שנעשה לבכורות ישראל – בכורי מצרים נהרגו ובכורי ישראל ניצלו.')">כדי לפתוח תיאבון לסדר</button>
+      <button class="option-btn" onclick="checkQ('q3',this,false,'זכר לנס שנעשה לבכורות ישראל – בכורי מצרים נהרגו ובכורי ישראל ניצלו.')">לכבוד שבת הגדול</button>
+    </div>
+    <div class="answer-feedback" id="q3-fb">🎯 תענית בכורות זכר לנס. נהוג להשתתף בסיום מסכת כדי להיפטר מהתענית.</div>
+  </div>
+
+  <div class="quiz-card" id="q4">
+    <div class="quiz-q"><span class="q-num">4</span> מה מייחד את "שבת הגדול" ומה עושים בה?</div>
+    <div class="options">
+      <button class="option-btn" onclick="checkQ('q4',this,false,'שבת הגדול נקראת כן כי נעשה בה נס גדול. במנחה קוראים חלק מההגדה מ-עבדים היינו עד לכפר על כל עוונותינו.')">בה מתחילים לבדוק חמץ ולנקות את הבית לקראת פסח</button>
+      <button class="option-btn" onclick="checkQ('q4',this,false,'שבת הגדול נקראת כן כי נעשה בה נס גדול. במנחה קוראים חלק מההגדה מ-עבדים היינו עד לכפר על כל עוונותינו.')">בה מכינים את הקערה ומסדרים את השולחן לליל הסדר</button>
+      <button class="option-btn" onclick="checkQ('q4',this,true,'')">נקראת כן כי נעשה בה נס גדול; במנחה קוראים חלק מההגדה מ"עבדים היינו" עד "לכפר על כל עוונותינו"</button>
+      <button class="option-btn" onclick="checkQ('q4',this,false,'שבת הגדול נקראת כן כי נעשה בה נס גדול. במנחה קוראים חלק מההגדה מ-עבדים היינו עד לכפר על כל עוונותינו.')">בה שורפים את החמץ ומוכרים אותו לגוי לפני הפסח</button>
+    </div>
+    <div class="answer-feedback" id="q4-fb">🎯 שבת הגדול – "התחלת הגאולה והניסים". נקראת כן כי נעשה בה נס גדול. במנחה קוראים חלק מההגדה מ"עבדים היינו" עד "לכפר על כל עוונותינו".</div>
+  </div>
+
+  <div class="section-nav">
+    <button class="nav-btn" onclick="showSection('s0')">→ חזרה</button>
+    <button class="nav-btn gold" onclick="showSection('s2')">← קערת הסדר</button>
+  </div>
+</div>
+
+<!-- ======================================================== -->
+<!-- SECTION 2: קערת הסדר – DRAG & DROP -->
+<!-- ======================================================== -->
+<div class="section" id="s2">
+  <h2 class="section-title">🍽️ קערת הסדר</h2>
+  <div class="section-intro">
+    <strong>שלב א':</strong> גררו כל מאכל אל המקום הנכון בקערה.<br>
+    <strong>שלב ב':</strong> לאחר הצבת המאכלים – לחצו עליהם לגילוי מה עניינם!
+  </div>
+
+  <div id="plate-area">
+    <!-- Food bank -->
+    <div class="plate-instruction">🖱️ גררו את המאכלים למקום הנכון בקערה</div>
+    <div class="food-bank" id="food-bank">
+      <div class="food-token" draggable="true" data-item="zeroa" id="token-zeroa">🍗 זרוע</div>
+      <div class="food-token" draggable="true" data-item="beitza" id="token-beitza">🥚 ביצה</div>
+      <div class="food-token" draggable="true" data-item="maror" id="token-maror">🥬 מרור (חסה+חריין)</div>
+      <div class="food-token" draggable="true" data-item="charoset" id="token-charoset">🥣 חרוסת</div>
+      <div class="food-token" draggable="true" data-item="karpas" id="token-karpas">🧅 כרפס</div>
+      <div class="food-token" draggable="true" data-item="hazeret" id="token-hazeret">🥬 חזרת (חסה+חריין)</div>
+    </div>
+
+    <!-- Plate with SVG + drop zones — layout matches photo exactly -->
+    <!--
+      Photo layout (RTL plate, viewed LTR in screen coords):
+      TOP ROW:    זרוע (top-right) | ביצה (top-left)
+      MIDDLE:     מרור (center)
+      BOTTOM ROW: חרוסת (bottom-right) | כרפס (bottom-left)
+      BOTTOM CTR: חזרת (bottom-center)
+
+      Plate 360x360, center at (180,180), inner radius ~115px
+      Positions (center of each zone):
+        זרוע:   (258, 95)  → top-right
+        ביצה:   (100, 95)  → top-left
+        מרור:   (180, 130) → center-top (upper middle)
+        חרוסת:  (258, 265) → bottom-right
+        כרפס:   (100, 265) → bottom-left
+        חזרת:   (180, 265) → bottom-center
+    -->
+    <div class="plate-svg-wrap">
+      <!-- Background plate SVG -->
+      <svg viewBox="0 0 360 360" xmlns="http://www.w3.org/2000/svg">
+        <!-- Outer rim -->
+        <circle cx="180" cy="180" r="175" fill="#ddd5c0" stroke="#a07820" stroke-width="5"/>
+        <!-- Decorative outer ring -->
+        <circle cx="180" cy="180" r="168" fill="none" stroke="#c49030" stroke-width="2" stroke-dasharray="10,5"/>
+        <!-- Main plate surface -->
+        <circle cx="180" cy="180" r="160" fill="#ede5d0" stroke="#b08828" stroke-width="3"/>
+        <!-- Inner decorative ring -->
+        <circle cx="180" cy="180" r="128" fill="#e5dcc5" stroke="#c0982a" stroke-width="2"/>
+        <!-- Center circle -->
+        <circle cx="180" cy="180" r="44" fill="#d8ccb0" stroke="#a07820" stroke-width="2"/>
+        <text x="180" y="175" text-anchor="middle" font-family="'Frank Ruhl Libre',serif" font-size="13" fill="#6b1a2a" font-weight="bold">קערת</text>
+        <text x="180" y="192" text-anchor="middle" font-family="'Frank Ruhl Libre',serif" font-size="13" fill="#6b1a2a" font-weight="bold">הסדר</text>
+        <!-- Charoset SVG drawing (bowl with brown paste) in bottom-right zone area -->
+        <!-- drawn as background hint only, drop zone overlays it -->
+      </svg>
+
+      <!-- DROP ZONES — מותאם בדיוק לתמונות:
+           מרור = למעלה-אמצע
+           זרוע = למעלה-ימין | ביצה = למעלה-שמאל
+           חרוסת = אמצע-ימין | כרפס = אמצע-שמאל
+           חזרת = למטה-אמצע
+      -->
+      <!-- מרור – CENTER -->
+      <div class="drop-zone" id="dz-maror"
+           style="width:68px;height:68px;top:146px;left:146px;"
+           ondragover="dzOver(event)" ondragleave="dzLeave(event)" ondrop="dzDrop(event,'maror')"
+           onclick="infoClick('maror')">
+        <span class="dz-name">· · ·</span>
+      </div>
+      <!-- זרוע – TOP RIGHT -->
+      <div class="drop-zone" id="dz-zeroa"
+           style="width:68px;height:68px;top:95px;left:240px;"
+           ondragover="dzOver(event)" ondragleave="dzLeave(event)" ondrop="dzDrop(event,'zeroa')"
+           onclick="infoClick('zeroa')">
+        <span class="dz-name">· · ·</span>
+      </div>
+      <!-- ביצה – TOP LEFT -->
+      <div class="drop-zone" id="dz-beitza"
+           style="width:68px;height:68px;top:95px;left:52px;"
+           ondragover="dzOver(event)" ondragleave="dzLeave(event)" ondrop="dzDrop(event,'beitza')"
+           onclick="infoClick('beitza')">
+        <span class="dz-name">· · ·</span>
+      </div>
+      <!-- חרוסת – MIDDLE RIGHT -->
+      <div class="drop-zone" id="dz-charoset"
+           style="width:68px;height:68px;top:200px;left:240px;"
+           ondragover="dzOver(event)" ondragleave="dzLeave(event)" ondrop="dzDrop(event,'charoset')"
+           onclick="infoClick('charoset')">
+        <span class="dz-name">· · ·</span>
+      </div>
+      <!-- כרפס – MIDDLE LEFT -->
+      <div class="drop-zone" id="dz-karpas"
+           style="width:68px;height:68px;top:200px;left:52px;"
+           ondragover="dzOver(event)" ondragleave="dzLeave(event)" ondrop="dzDrop(event,'karpas')"
+           onclick="infoClick('karpas')">
+        <span class="dz-name">· · ·</span>
+      </div>
+      <!-- חזרת – BOTTOM CENTER -->
+      <div class="drop-zone" id="dz-hazeret"
+           style="width:68px;height:68px;top:255px;left:146px;"
+           ondragover="dzOver(event)" ondragleave="dzLeave(event)" ondrop="dzDrop(event,'hazeret')"
+           onclick="infoClick('hazeret')">
+        <span class="dz-name">· · ·</span>
+      </div>
+    </div><!-- /plate-svg-wrap -->
+
+    <div style="text-align:center;margin-top:14px;">
+      <button class="plate-check-btn" onclick="checkPlate()">בדיקת הקערה ✓</button>
+      <button class="plate-check-btn gold" onclick="resetPlate()">אתחול 🔄</button>
+    </div>
+    <div id="plate-result"></div>
+
+    <!-- Info box appears when clicking a placed item -->
+    <div class="plate-info-box" id="plate-info">
+      <span class="pi-emoji" id="pi-emoji">🍗</span>
+      <h3 id="pi-title">זרוע</h3>
+      <p id="pi-text"></p>
+    </div>
+  </div>
+
+  <!-- Quiz about plate -->
+  <div class="quiz-card" id="qp1">
+    <div class="quiz-q"><span class="q-num">1</span> מהו שיעור הכרפס שאוכלים, ומדוע?</div>
+    <div class="options">
+      <button class="option-btn" onclick="checkQ('qp1',this,false,'אוכלים <strong>פחות</strong> מכזית (פחות מ-19 גרם) כדי שלא יצטרכו לברך ברכה אחרונה ויפסיקו את ה"הגדה".')">כזית שלם – 27 גרם</button>
+      <button class="option-btn" onclick="checkQ('qp1',this,false,'אוכלים <strong>פחות</strong> מכזית (פחות מ-19 גרם) כדי שלא יצטרכו לברך ברכה אחרונה ויפסיקו את ה"הגדה".')">חצי כזית – 13 גרם</button>
+      <button class="option-btn" onclick="checkQ('qp1',this,true,'')">פחות מכזית (פחות מ-19 גרם) – כדי שלא לברך ברכה אחרונה</button>
+      <button class="option-btn" onclick="checkQ('qp1',this,false,'אוכלים <strong>פחות</strong> מכזית (פחות מ-19 גרם) כדי שלא יצטרכו לברך ברכה אחרונה ויפסיקו את ה"הגדה".')">כמה שרוצים – אין שיעור</button>
+    </div>
+    <div class="answer-feedback" id="qp1-fb">🎯 אוכלים פחות מכזית (פחות מ-19 גרם) כדי שלא יצטרכו לברך ברכה אחרונה ויפסיקו את ה"הגדה".</div>
+  </div>
+
+  <div class="quiz-card" id="qp2">
+    <div class="quiz-q"><span class="q-num">2</span> מה ההבדל בין "מרור" ל"חזרת" שבקערה מבחינת התוכן?</div>
+    <div class="options">
+      <button class="option-btn" onclick="checkQ('qp2',this,true,'')">שניהם אותו הדבר – חסה (סאלאט) ותמכא (חריין). ההבדל הוא רק ייעודם: מרור לאכילת מצוות מרור, חזרת לכורך</button>
+      <button class="option-btn" onclick="checkQ('qp2',this,false,'שניהם חסה ותמכא. מרור = למצוות מרור; חזרת = לכורך.')">מרור = חסה ותמכא; חזרת = רק חסה ללא חריין כלל</button>
+      <button class="option-btn" onclick="checkQ('qp2',this,false,'שניהם חסה ותמכא. מרור = למצוות מרור; חזרת = לכורך.')">מרור = רק תמכא (חריין); חזרת = רק חסה ירוקה</button>
+      <button class="option-btn" onclick="checkQ('qp2',this,false,'שניהם חסה ותמכא. מרור = למצוות מרור; חזרת = לכורך.')">חזרת = מרור חריף יותר שמיועד לאכילת מצוות מרור</button>
+    </div>
+    <div class="answer-feedback" id="qp2-fb">🎯 נוהגים ליקח חסה (סאלאט) ותמכא (חריין) – שניהם, הן למרור והן לכורך. זה מה שמניחים בשתי המקומות בקערה.</div>
+  </div>
+
+  <div class="quiz-card" id="qp3">
+    <div class="quiz-q"><span class="q-num">3</span> מדוע החרוסת חייבת להיות עבה וסמיכה (ורק אחר כך מרככים)?</div>
+    <div class="options">
+      <button class="option-btn" onclick="checkQ('qp3',this,false,'החרוסת עבה זכר לטיט שהשתעבדו בו. לפני הטיבול מרככים ביין אדום – זכר למכת דם.')">כדי שיהיה קל לאכול</button>
+      <button class="option-btn" onclick="checkQ('qp3',this,true,'')">זכר לטיט שהשתעבדו בו; ומרככים ביין אדום זכר למכת דם</button>
+      <button class="option-btn" onclick="checkQ('qp3',this,false,'החרוסת עבה זכר לטיט שהשתעבדו בו. לפני הטיבול מרככים ביין אדום – זכר למכת דם.')">כדי שתתחזק טעמה</button>
+      <button class="option-btn" onclick="checkQ('qp3',this,false,'החרוסת עבה זכר לטיט שהשתעבדו בו. לפני הטיבול מרככים ביין אדום – זכר למכת דם.')">כדי שלא תיפול מהמרור</button>
+    </div>
+    <div class="answer-feedback" id="qp3-fb">🎯 עבה זכר לטיט. מרככים ביין אדום – זכר למכת דם.</div>
+  </div>
+
+  <div class="section-nav">
+    <button class="nav-btn" onclick="showSection('s1')">→ חזרה</button>
+    <button class="nav-btn gold" onclick="showSection('s3')">← סימני הסדר</button>
+  </div>
+</div>
+
+<!-- ======================================================== -->
+<!-- SECTION 3: סימני הסדר -->
+<!-- ======================================================== -->
+<div class="section" id="s3">
+  <h2 class="section-title">📋 סדר הסימנים</h2>
+  <div class="section-intro"><strong>סדרו את 15 הסימנים בסדר הנכון!</strong> לחצו להוסיף, לחצו שוב להחזיר.</div>
+
+  <div class="seder-order-game">
+    <h3 style="color:var(--wine);margin-bottom:10px;">🎯 סדרו את הסימנים</h3>
+    <p class="order-instructions">לחצו על סימן מהבריכה למטה – יצורף לרשימה. לחצו עליו ברשימה להחזירו.</p>
+    <div class="seder-items-pool" id="seder-pool"></div>
+    <div style="background:#f0f0f0;border-radius:10px;padding:13px;margin-bottom:10px;">
+      <strong style="color:#333;font-size:0.88rem;">הסדר שלי:</strong>
+      <div class="seder-slot" id="seder-answer" style="margin-top:7px;"></div>
+    </div>
+    <button class="nav-btn gold" onclick="checkSederOrder()" style="width:100%;margin-bottom:8px;">בדיקת הסדר ✓</button>
+    <button class="nav-btn" onclick="resetSederOrder()" style="width:100%;background:#999;">אתחול 🔄</button>
+    <div id="order-result"></div>
+  </div>
+
+  <br>
+
+  <div class="quiz-card" id="qs1">
+    <div class="quiz-q"><span class="q-num">1</span> "יחץ" – מאיזו מצה פורסים, ולמה דווקא ממנה?</div>
+    <div class="options">
+      <button class="option-btn" onclick="checkQ('qs1',this,false,'פורסים את מצה האמצעית (הלוי) כי ההגדה נאמרת על "לחם עוני" – פרוסה. חלק קטן בין המצות, חלק גדול לאפיקומן.')">מהמצה העליונה (הכהן) – כי היא ראשונה</button>
+      <button class="option-btn" onclick="checkQ('qs1',this,true,'')">מהמצה האמצעית (הלוי) – כי ההגדה נאמרת על לחם עוני = פרוסה</button>
+      <button class="option-btn" onclick="checkQ('qs1',this,false,'פורסים את מצה האמצעית (הלוי) כי ההגדה נאמרת על "לחם עוני" – פרוסה. חלק קטן בין המצות, חלק גדול לאפיקומן.')">מהמצה התחתונה (ישראל) – כי היא הבסיס</button>
+      <button class="option-btn" onclick="checkQ('qs1',this,false,'פורסים את מצה האמצעית (הלוי) כי ההגדה נאמרת על "לחם עוני" – פרוסה. חלק קטן בין המצות, חלק גדול לאפיקומן.')">משלוש המצות יחד</button>
+    </div>
+    <div class="answer-feedback" id="qs1-fb">🎯 מצה הלוי (אמצעית). רבותינו שוברים האפיקומן לחמש חתיכות (על פי קבלה).</div>
+  </div>
+
+  <div class="quiz-card" id="qs2">
+    <div class="quiz-q"><span class="q-num">2</span> ב"ורחץ" – האם מברכים על נטילת הידיים, ומדוע?</div>
+    <div class="options">
+      <button class="option-btn" onclick="checkQ('qs2',this,false,'נוטלים ללא ברכה. הסיבה לנטילה: כל מאכל שמטבילים במשקה צריך נטילת ידיים. הטיבול עצמו (לא אי-הברכה) הוא שמתמיה את הילדים.')">כן, מברכים – כי זו נטילה לסעודה כמו בכל יום טוב</button>
+      <button class="option-btn" onclick="checkQ('qs2',this,false,'נוטלים ללא ברכה. הסיבה לנטילה: כל מאכל שמטבילים במשקה צריך נטילת ידיים. הטיבול עצמו (לא אי-הברכה) הוא שמתמיה את הילדים.')">כן, מברכים – כי הרבי נהג לברך על כל נטילה בליל הסדר</button>
+      <button class="option-btn" onclick="checkQ('qs2',this,true,'')">לא מברכים – כי כל מאכל שמטבילים במשקה צריך נטילה, ואין מברכים עליה</button>
+      <button class="option-btn" onclick="checkQ('qs2',this,false,'נוטלים ללא ברכה. הסיבה לנטילה: כל מאכל שמטבילים במשקה צריך נטילת ידיים. הטיבול עצמו (לא אי-הברכה) הוא שמתמיה את הילדים.')">לא נוטלים ידיים כלל ב"ורחץ" – הנטילה היא רק לפני המוציא</button>
+    </div>
+    <div class="answer-feedback" id="qs2-fb">🎯 נוטלים ללא ברכה. הסיבה: כל מאכל שמטבילים במשקה צריך נטילת ידיים, ואין מברכים עליה. ב"רחצה" (לפני המוציא) – נוטלים עם ברכה.</div>
+  </div>
+
+  <div class="quiz-card" id="qs3">
+    <div class="quiz-q"><span class="q-num">3</span> מה עושים ב"צפון" (האפיקומן)?</div>
+    <div class="options">
+      <button class="option-btn" onclick="checkQ('qs3',this,false,'אוכלים האפיקומן – שני כזיתים, בהסיבה, לפני חצות. לאחריו אין אוכלים ושותים.')">מצפינים את האפיקומן למחר</button>
+      <button class="option-btn" onclick="checkQ('qs3',this,true,'')">אוכלים האפיקומן – שני כזיתים, בהסיבה, לפני חצות</button>
+      <button class="option-btn" onclick="checkQ('qs3',this,false,'אוכלים האפיקומן – שני כזיתים, בהסיבה, לפני חצות. לאחריו אין אוכלים ושותים.')">שותים את הכוס השלישית</button>
+      <button class="option-btn" onclick="checkQ('qs3',this,false,'אוכלים האפיקומן – שני כזיתים, בהסיבה, לפני חצות. לאחריו אין אוכלים ושותים.')">מגלים לילדים איפה הוחבא</button>
+    </div>
+    <div class="answer-feedback" id="qs3-fb">🎯 צפון = אכילת האפיקומן. לפני חצות הלילה (≈12:44). לאחריו אין אוכלים ואפילו לא שותים מים!</div>
+  </div>
+
+  <div class="section-nav">
+    <button class="nav-btn" onclick="showSection('s2')">→ חזרה</button>
+    <button class="nav-btn gold" onclick="showSection('s4')">← מגיד</button>
+  </div>
+</div>
+
+<!-- ======================================================== -->
+<!-- SECTION 4: מגיד -->
+<!-- ======================================================== -->
+<div class="section" id="s4">
+  <h2 class="section-title">📖 מגיד – סיפור יציאת מצרים</h2>
+  <div class="section-intro">שאלות על אמירת ההגדה, ארבע הכוסות, פתיחת הדלת ועוד!</div>
+
+  <h3 style="color:var(--wine);margin-bottom:14px;">🔗 חברו: ארבע לשונות הגאולה ← הכוס המתאימה</h3>
+  <div class="matching-game" id="matching1">
+    <div class="match-col">
+      <h4>לשון הגאולה</h4>
+      <div class="match-item" data-pair="1" data-side="A" onclick="matchClick(this,'matching1')">והוצאתי</div>
+      <div class="match-item" data-pair="2" data-side="A" onclick="matchClick(this,'matching1')">והצלתי</div>
+      <div class="match-item" data-pair="3" data-side="A" onclick="matchClick(this,'matching1')">וגאלתי</div>
+      <div class="match-item" data-pair="4" data-side="A" onclick="matchClick(this,'matching1')">ולקחתי</div>
+    </div>
+    <div class="match-col">
+      <h4>הכוס המתאימה</h4>
+      <div class="match-item" data-pair="3" data-side="B" onclick="matchClick(this,'matching1')">כוס שלישית</div>
+      <div class="match-item" data-pair="1" data-side="B" onclick="matchClick(this,'matching1')">כוס ראשונה</div>
+      <div class="match-item" data-pair="4" data-side="B" onclick="matchClick(this,'matching1')">כוס רביעית</div>
+      <div class="match-item" data-pair="2" data-side="B" onclick="matchClick(this,'matching1')">כוס שניה</div>
+    </div>
+  </div>
+  <div id="matching1-score" style="margin-top:9px;text-align:center;font-weight:600;color:var(--wine);"></div>
+  <br>
+
+  <div class="quiz-card" id="qm1">
+    <div class="quiz-q"><span class="q-num">1</span> מי שואל את ארבע הקושיות ראשון, ומה הסדר אם אין ילדים?</div>
+    <div class="options">
+      <button class="option-btn" onclick="checkQ('qm1',this,true,'')">הקטן שבבנים ראשון. אם אין בנים – הבת. אם אין ילדים – האשה. אם אין אשה – הוא שואל את עצמו</button>
+      <button class="option-btn" onclick="checkQ('qm1',this,false,'הקטן שבבנים הוא שואל ראשון. אחריו שואלים גם הגדולים, בנוסח: אבא, אשאלך ארבע קושיות.')">עורך הסדר שואל ראשון, ואחריו שואלים הילדים לפי גילם מהגדול לקטן</button>
+      <button class="option-btn" onclick="checkQ('qm1',this,false,'הקטן שבבנים הוא שואל ראשון. אחריו שואלים גם הגדולים, בנוסח: אבא, אשאלך ארבע קושיות.')">הגדול שבמסובים שואל ראשון כדי להדגים לילדים</button>
+      <button class="option-btn" onclick="checkQ('qm1',this,false,'הקטן שבבנים הוא שואל ראשון. אחריו שואלים גם הגדולים, בנוסח: אבא, אשאלך ארבע קושיות.')">כולם שואלים יחד בקול אחד כדי שהתינוקות ישמעו</button>
+    </div>
+    <div class="answer-feedback" id="qm1-fb">🎯 הקטן שבבנים שואל ראשון. לאחריו שואלים גם הגדולים, ובנוסח: "טאטע, איך וועל בא דיר פרעגען פיר קשיות" (אבא, אשאלך ארבע קושיות). לפני כל קושיא מדגישים את מספרה: "הקושיא הראשונה היא" וכו'.</div>
+  </div>
+
+  <div class="quiz-card" id="qm2">
+    <div class="quiz-q"><span class="q-num">2</span> כמה פעמים שופכים יין מהכוס בסך הכל בזמן "מגיד" ולמה?</div>
+    <div class="options">
+      <button class="option-btn" onclick="checkQ('qm2',this,false,'16 פעמים: 3 ("דם ואש") + 10 (עשר מכות) + 3 ("דצ"ך עד"ש באח"ב"). שופכים מהכוס עצמה ולא באצבע!')">10 – כנגד עשר המכות</button>
+      <button class="option-btn" onclick="checkQ('qm2',this,false,'16 פעמים: 3 ("דם ואש") + 10 (עשר מכות) + 3 ("דצ"ך עד"ש באח"ב"). שופכים מהכוס עצמה ולא באצבע!')">13 – כנגד מידות הרחמים</button>
+      <button class="option-btn" onclick="checkQ('qm2',this,true,'')">16 – כנגד חרבו של הקב"ה הנקראת "יוה"ך" (16 בגימטריה)</button>
+      <button class="option-btn" onclick="checkQ('qm2',this,false,'16 פעמים: 3 ("דם ואש") + 10 (עשר מכות) + 3 ("דצ"ך עד"ש באח"ב"). שופכים מהכוס עצמה ולא באצבע!')">4 – כנגד ארבע כוסות</button>
+    </div>
+    <div class="answer-feedback" id="qm2-fb">🎯 3+10+3 = 16. שופכים מהכוס עצמה – ולא באצבע! מנהג חב"ד שלא להשתמש באצבע.</div>
+  </div>
+
+  <div class="quiz-card" id="qm3">
+    <div class="quiz-q"><span class="q-num">3</span> מה עושים לפני "והיא שעמדה"?</div>
+    <div class="options">
+      <button class="option-btn" onclick="checkQ('qm3',this,false,'מכסים המצות ומגביהים הכוס. אומרים "והיא שעמדה" בישיבה.')">פותחים את הדלת</button>
+      <button class="option-btn" onclick="checkQ('qm3',this,true,'')">מכסים את המצות ומגביהים את הכוס</button>
+      <button class="option-btn" onclick="checkQ('qm3',this,false,'מכסים המצות ומגביהים הכוס. אומרים "והיא שעמדה" בישיבה.')">מניחים את הכוס ומגלים המצות</button>
+      <button class="option-btn" onclick="checkQ('qm3',this,false,'מכסים המצות ומגביהים הכוס. אומרים "והיא שעמדה" בישיבה.')">שרים ניגון חסידי</button>
+    </div>
+    <div class="answer-feedback" id="qm3-fb">🎯 מכסים המצות → מגביהים הכוס → אומרים "והיא שעמדה" בישיבה → מעמידים הכוס → מגלים שוב מקצת המצות.</div>
+  </div>
+
+  <div class="quiz-card" id="qm4">
+    <div class="quiz-q"><span class="q-num">4</span> מה אמר הרבי מוהרש"ב לבנו לבקש בפתיחת הדלת?</div>
+    <div class="options">
+      <button class="option-btn" onclick="checkQ('qm4',this,false,'הרבי אמר: "אל תבקש גשמיות – בקש רוחניות".')">לבקש פרנסה טובה ובריאות</button>
+      <button class="option-btn" onclick="checkQ('qm4',this,true,'')">אל תבקש גשמיות – בקש רוחניות (במחשבה)</button>
+      <button class="option-btn" onclick="checkQ('qm4',this,false,'הרבי אמר: "אל תבקש גשמיות – בקש רוחניות".')">לבקש שיבוא אליהו ויאמר מי גנב האפיקומן</button>
+      <button class="option-btn" onclick="checkQ('qm4',this,false,'הרבי אמר: "אל תבקש גשמיות – בקש רוחניות".')">להשתחוות בפתח הדלת</button>
+    </div>
+    <div class="answer-feedback" id="qm4-fb">🎯 מסר רוחני עמוק: פתיחת הדלת היא עת רצון – ראוי לבקש רוחניות, לא גשמיות.</div>
+  </div>
+
+  <div class="section-nav">
+    <button class="nav-btn" onclick="showSection('s3')">→ חזרה</button>
+    <button class="nav-btn gold" onclick="showSection('s5')">← מצה ומרור</button>
+  </div>
+</div>
+
+<!-- ======================================================== -->
+<!-- SECTION 5: מצה ומרור -->
+<!-- ======================================================== -->
+<div class="section" id="s5">
+  <h2 class="section-title">🫓 מצה, מרור, כורך ואפיקומן</h2>
+  <div class="section-intro">הלכות מעשיות – כמויות, זמנים, הסיבה ועוד!</div>
+
+  <h3 style="color:var(--wine);margin-bottom:14px;">✏️ השלמת משפטים</h3>
+
+  <div class="fill-blank-q" id="fbq1">
+    <p>שיעור <strong>"כזית"</strong> מצה הוא בערך
+      <input type="text" class="fill-blank-input" id="fbi1" placeholder="גרם?">
+       גרם.</p>
+    <button class="check-btn" id="fbbt1" onclick="checkFB('fbi1','fbbt1','fbr1',['27'],'שיעור כזית מצה הוא 27 גרם (כשליש מצת יד). אוכלים שני כזיתים לכל הפחות.')">בדוק</button>
+    <div class="answer-feedback" id="fbr1"></div>
+  </div>
+
+  <div class="fill-blank-q" id="fbq2">
+    <p>אכילת המצה צריכה להסתיים תוך
+      <input type="text" class="fill-blank-input" id="fbi2" placeholder="דקות?">
+       דקות (לכתחילה – זמן אכילת פרס).</p>
+    <button class="check-btn" id="fbbt2" onclick="checkFB('fbi2','fbbt2','fbr2',['4','ארבע'],'לכתחילה 4 דקות. בדיעבד עד 6 דקות. אין לאכול לאט מדי!')">בדוק</button>
+    <div class="answer-feedback" id="fbr2"></div>
+  </div>
+
+  <div class="fill-blank-q" id="fbq3">
+    <p>שיעור רביעית (כוס) הוא
+      <input type="text" class="fill-blank-input" id="fbi3" placeholder="גרם?">
+       גרם.</p>
+    <button class="check-btn" id="fbbt3" onclick="checkFB('fbi3','fbbt3','fbr3',['86'],'שיעור רביעית מצומצם = 86 גרם (כמניין כוס = 86). צריך לשתות את רוב הכוס בהסיבה.')">בדוק</button>
+    <div class="answer-feedback" id="fbr3"></div>
+  </div>
+
+  <br>
+
+  <div class="quiz-card" id="qa1">
+    <div class="quiz-q"><span class="q-num">1</span> "בלע מרור לא יצא" – מה פירוש הדבר?</div>
+    <div class="options">
+      <button class="option-btn" onclick="checkQ('qa1',this,false,'חייב ללעוס המרור עד שירגיש מרירותו בפיו. מרור שחריפותו בלתי נסבלת – אין יוצאים בו ידי חובה.')">אסור בכלל לבלוע מרור</button>
+      <button class="option-btn" onclick="checkQ('qa1',this,true,'')">חייב ללעוס עד שירגיש טעם מרירות בפיו – לא לבלוע בלי לעיסה</button>
+      <button class="option-btn" onclick="checkQ('qa1',this,false,'חייב ללעוס המרור עד שירגיש מרירותו בפיו. מרור שחריפותו בלתי נסבלת – אין יוצאים בו ידי חובה.')">יש לאכול המרור ממש לפני הסעודה</button>
+      <button class="option-btn" onclick="checkQ('qa1',this,false,'חייב ללעוס המרור עד שירגיש מרירותו בפיו. מרור שחריפותו בלתי נסבלת – אין יוצאים בו ידי חובה.')">יש לשתות מים אחרי האכילה</button>
+    </div>
+    <div class="answer-feedback" id="qa1-fb">🎯 "בלע מרור לא יצא" – חובה ללעוס ולהרגיש מרירות. גם מרור שחריף מדי – אין יוצאים בו.</div>
+  </div>
+
+  <div class="quiz-card" id="qa2">
+    <div class="quiz-q"><span class="q-num">2</span> ל"כורך" – מאיזו מצה לוקחים?</div>
+    <div class="options">
+      <button class="option-btn" onclick="checkQ('qa2',this,false,'ל"כורך" לוקחים מהמצה התחתונה (הישראל).')">מהמצה העליונה (הכהן)</button>
+      <button class="option-btn" onclick="checkQ('qa2',this,false,'ל"כורך" לוקחים מהמצה התחתונה (הישראל).')">מהמצה האמצעית (הלוי)</button>
+      <button class="option-btn" onclick="checkQ('qa2',this,true,'')">מהמצה התחתונה (הישראל)</button>
+      <button class="option-btn" onclick="checkQ('qa2',this,false,'ל"כורך" לוקחים מהמצה התחתונה (הישראל).')">משלוש המצות יחד</button>
+    </div>
+    <div class="answer-feedback" id="qa2-fb">🎯 כורך – מהמצה התחתונה (ישראל). כורכים עם חסה, טובלים בחרוסת יבשה, אוכלים בהסיבה.</div>
+  </div>
+
+  <div class="quiz-card" id="qa3">
+    <div class="quiz-q"><span class="q-num">3</span> מנהג חב"ד לגבי חטיפת האפיקומן?</div>
+    <div class="options">
+      <button class="option-btn" onclick="checkQ('qa3',this,false,'אין נוהגים לחטוף האפיקומן בבית הרב.')">מעודדים לחטוף ונותנים פרסים</button>
+      <button class="option-btn" onclick="checkQ('qa3',this,true,'')">אין נוהגים לחטוף האפיקומן בבית הרב</button>
+      <button class="option-btn" onclick="checkQ('qa3',this,false,'אין נוהגים לחטוף האפיקומן בבית הרב.')">רק ילדים מתחת לגיל 6 מותר להם לחטוף</button>
+      <button class="option-btn" onclick="checkQ('qa3',this,false,'אין נוהגים לחטוף האפיקומן בבית הרב.')">צריך לחטוף ולהחביא בחדר שינה</button>
+    </div>
+    <div class="answer-feedback" id="qa3-fb">🎯 אין נוהגים לחטוף. גם יתרון: "ניצולים מהחשש שיחביאו במקום שאינו נקי".</div>
+  </div>
+
+  <div class="section-nav">
+    <button class="nav-btn" onclick="showSection('s4')">→ חזרה</button>
+    <button class="nav-btn gold" onclick="showSection('s6')">← חידות</button>
+  </div>
+</div>
+
+<!-- ======================================================== -->
+<!-- SECTION 6: חידות -->
+<!-- ======================================================== -->
+<div class="section" id="s6">
+  <h2 class="section-title">🧩 חידות מעניינות</h2>
+  <div class="section-intro">חישבו היטב – ואחר כך גלו את התשובה!</div>
+
+  <div class="riddle-card">
+    <div class="riddle-text">
+      אני נאכלת ללא מלח, ללא שום תוספת.<br>
+      הזוהר קוראני "מאכל האמונה" ו"מאכל הרפואה".<br>
+      30 יום לפני שאוכלים אותי – לא אוכלים אותי.<br>
+      מי אני?
+    </div>
+    <button class="riddle-reveal-btn" onclick="revealRiddle('r1',this)">גלה תשובה 🔍</button>
+    <div class="riddle-answer" id="r1">
+      <h4>🫓 המצה!</h4>
+      <p>המצה נקראת בזוהר "מיכלא דמהימנותא" (מאכל האמונה) ו"מיכלא דאסוותא" (מאכל הרפואה). אין מטבלים אותה במלח מפני חיבוב המצוה. 30 יום לפני פסח אין אוכלים אותה כדי שיהיה תיאבון.</p>
+    </div>
+  </div>
+
+  <div class="riddle-card">
+    <div class="riddle-text">
+      אני שוכן בין שני כרים ונשבר לחמש חתיכות.<br>
+      חייבים לאכלי לפני חצות הלילה.<br>
+      לאחר שאוכלים אותי – אסור לשתות אפילו מים.<br>
+      מי אני?
+    </div>
+    <button class="riddle-reveal-btn" onclick="revealRiddle('r2',this)">גלה תשובה 🔍</button>
+    <div class="riddle-answer" id="r2">
+      <h4>🫓 האפיקומן!</h4>
+      <p>האפיקומן – החלק הגדול ממצה הלוי – נשבר לחמש חתיכות (על פי קבלה) ומוצפן בין שני כרים. יש לאכלו לפני חצות (≈12:44), שני כזיתים, בהסיבה. לאחריו – אין אוכלים ושותים.</p>
+    </div>
+  </div>
+
+  <div class="riddle-card">
+    <div class="riddle-text">
+      אני נוזל, מסמל דמעות ועבדות.<br>
+      בי טובלים את הכרפס לפני ההגדה.<br>
+      הכרפס שטובלים בי רומז לששים ריבוא שעבדו עבודת פרך.<br>
+      מי אני?
+    </div>
+    <button class="riddle-reveal-btn" onclick="revealRiddle('r3',this)">גלה תשובה 🔍</button>
+    <div class="riddle-answer" id="r3">
+      <h4>🧂 מי המלח!</h4>
+      <p>מי המלח – זכר לדמעות שנשרו מעיני בני ישראל במצרים. הכרפס שטובלים בו רומז לששים ריבוא (כרפס = ס' פרך). מכינים את מי המלח מבעוד יום.</p>
+    </div>
+  </div>
+
+  <div class="riddle-card">
+    <div class="riddle-text">
+      אני כוס מיוחדת שנמזגת ב"ברך".<br>
+      אינני נשתית – עומדת על השולחן עד סוף הסדר.<br>
+      הרבי השתמש בי כוס זכוכית.<br>
+      של מי אני?
+    </div>
+    <button class="riddle-reveal-btn" onclick="revealRiddle('r4',this)">גלה תשובה 🔍</button>
+    <div class="riddle-answer" id="r4">
+      <h4>🍷 כוס של אליהו הנביא!</h4>
+      <p>כוס של אליהו – כדי להודות על הגאולה המשמשת ובאה. נשארת על השולחן עד "לשנה הבאה בירושלים". אחר כך מנגנים "אל–י אתה ואודך" – ניגון מעשרת ניגוני רבנו הזקן.</p>
+    </div>
+  </div>
+
+  <div class="quiz-card" id="qe1">
+    <div class="quiz-q"><span class="q-num">1</span> מה מיוחד בקריאת שמע שעל המיטה בליל הסדר?</div>
+    <div class="options">
+      <button class="option-btn" onclick="checkQ('qe1',this,false,'אומרים רק פרשת שמע וברכת "המפיל" – כי ליל הסדר הוא "ליל שימורים" המשומר מן המזיקין.')">אין אומרים שמע כלל</button>
+      <button class="option-btn" onclick="checkQ('qe1',this,true,'')">אומרים רק פרשת "שמע" וברכת "המפיל" – כי זה ליל שימורים</button>
+      <button class="option-btn" onclick="checkQ('qe1',this,false,'אומרים רק פרשת שמע וברכת "המפיל" – כי ליל הסדר הוא "ליל שימורים" המשומר מן המזיקין.')">אומרים שמע שלוש פעמים</button>
+      <button class="option-btn" onclick="checkQ('qe1',this,false,'אומרים רק פרשת שמע וברכת "המפיל" – כי ליל הסדר הוא "ליל שימורים" המשומר מן המזיקין.')">אומרים כל הבקשות כרגיל</button>
+    </div>
+    <div class="answer-feedback" id="qe1-fb">🎯 ליל שימורים = שמור מן המזיקין. לכן אין אומרים הבקשות הרגילות של שמירה.</div>
+  </div>
+
+  <div class="section-nav">
+    <button class="nav-btn" onclick="showSection('s5')">→ חזרה</button>
+    <button class="nav-btn gold" onclick="showSection('s7')">← מונחים</button>
+  </div>
+</div>
+
+<!-- ======================================================== -->
+<!-- SECTION 7: מונחים -->
+<!-- ======================================================== -->
+<div class="section" id="s7">
+  <h2 class="section-title">🔤 מאגר מונחים</h2>
+  <div class="section-intro"><strong>לחצו על כל כרטיס</strong> לגלות הסבר מפורט!</div>
+  <div class="glossary-grid">
+    <div class="glossary-card" onclick="toggleGlossary(this)">
+      <h4>ביעור חמץ</h4><div class="g-short">שריפת החמץ בערב פסח</div>
+      <div class="g-desc">שורפים כל החמץ שלא נמכר, כולל עשרת הפתיתים. עד סוף שעה חמישית. שורפים ביד ימין. בשעת הבערה אומרים "כל חמירא" השני – מבטלים כל חמץ שמצאנו ושלא מצאנו.</div>
+      <div class="g-click-hint">לחץ להרחבה ↓</div>
+    </div>
+    <div class="glossary-card" onclick="toggleGlossary(this)">
+      <h4>מיכלא דמהימנותא</h4><div class="g-short">מאכל האמונה – שם המצה בזוהר</div>
+      <div class="g-desc">בזוהר הקדוש נקראת המצה "מיכלא דמהימנותא" (מאכל האמונה) ו"מיכלא דאסוותא" (מאכל הרפואה). אכילתה בפסח מחזקת האמונה ומרפאת תחלואי הנפש.</div>
+      <div class="g-click-hint">לחץ להרחבה ↓</div>
+    </div>
+    <div class="glossary-card" onclick="toggleGlossary(this)">
+      <h4>לחם עוני</h4><div class="g-short">מצה פרוסה – לחם של עניים</div>
+      <div class="g-desc">ההגדה נאמרת על המצה האמצעית הפרוסה (הלוי), כי "לחם עוני" = פרוסה – לחם עני שאין לו מצה שלמה. לכן צריך שיהיה בחלק הקטן לפחות כזית.</div>
+      <div class="g-click-hint">לחץ להרחבה ↓</div>
+    </div>
+    <div class="glossary-card" onclick="toggleGlossary(this)">
+      <h4>הסיבה</h4><div class="g-short">ישיבה נשענת לצד שמאל</div>
+      <div class="g-desc">שתיית ארבע כוסות, אכילת מצה, כורך ואפיקומן – בהסיבת שמאל, דרך חירות כבני מלכים. הסיבת ימין אינה הסיבה. נשים נוהגות שלא להסב בזמן הזה.</div>
+      <div class="g-click-hint">לחץ להרחבה ↓</div>
+    </div>
+    <div class="glossary-card" onclick="toggleGlossary(this)">
+      <h4>תמכא / חריין</h4><div class="g-short">חזרת – מרור חריף</div>
+      <div class="g-desc">חריין (חזרת) – אחד ממיני המרור. הרבי היה מודד 4 כפות גדולות חריין טחון, סוחטן, ועושה עיגול כגודל ביצה, עוטפו בעלי חסה. אוכל כפי שהוא, ללא תוספת.</div>
+      <div class="g-click-hint">לחץ להרחבה ↓</div>
+    </div>
+    <div class="glossary-card" onclick="toggleGlossary(this)">
+      <h4>כורך</h4><div class="g-short">מצה ומרור כרוכים יחד</div>
+      <div class="g-desc">כן עשה הלל – כרך פסח, מצה ומרור יחד. לוקחים כזית ממצה תחתונה (ישראל), חסה, טובלים בחרוסת יבשה (בלי יין! מחשש שרויה), כורכים ואוכלים בהסיבה.</div>
+      <div class="g-click-hint">לחץ להרחבה ↓</div>
+    </div>
+    <div class="glossary-card" onclick="toggleGlossary(this)">
+      <h4>מצה שמורה</h4><div class="g-short">מצה שנשמרה לשם מצוה</div>
+      <div class="g-desc">מצה שנשמרה מחמץ מזמן קצירת החיטה, אפויה ביד ולא במכונה. מנהג הרבי לשלוח למכריו מצות עגולות אפויות יד. "מצה ענינה אמונה".</div>
+      <div class="g-click-hint">לחץ להרחבה ↓</div>
+    </div>
+    <div class="glossary-card" onclick="toggleGlossary(this)">
+      <h4>יל"ך</h4><div class="g-short">סדר הנחת המצות בקערה</div>
+      <div class="g-desc">ר"ת יל"ך: ישראל (תחתון), לוי (אמצעי), כהן (עליון). "לרמוז שהוא מהלך בעבודתו" – גם ישראל הדיוט מהלך ומתקדם בעבודת ה'.</div>
+      <div class="g-click-hint">לחץ להרחבה ↓</div>
+    </div>
+    <div class="glossary-card" onclick="toggleGlossary(this)">
+      <h4>שרויה (געברוקטס)</h4><div class="g-short">מצה שנרטבה במים</div>
+      <div class="g-desc">מצה שנרטבה עלולה לחמוץ. בחב"ד נזהרים: המצות מכוסות שלא יפלו עליהן טיפות מים, ובדיקה קודם שפיכת מים בסעודה.</div>
+      <div class="g-click-hint">לחץ להרחבה ↓</div>
+    </div>
+    <div class="glossary-card" onclick="toggleGlossary(this)">
+      <h4>אפיקומן</h4><div class="g-short">מצה צפונה – זכר לקרבן פסח</div>
+      <div class="g-desc">החלק הגדול ממצה האמצעית (הלוי). שוברים לחמש חתיכות (קבלה). מצפינים בין שני כרים. אוכלים בסוף הסעודה – שני כזיתים, בהסיבה, לפני חצות. לאחריו אין אוכלים.</div>
+      <div class="g-click-hint">לחץ להרחבה ↓</div>
+    </div>
+    <div class="glossary-card" onclick="toggleGlossary(this)">
+      <h4>שבת הגדול</h4><div class="g-short">שבת שלפני פסח</div>
+      <div class="g-desc">נקראת "שבת הגדול" לפי שנעשה בה נס גדול. היא "התחלת הגאולה". במנחה קוראים חלק מההגדה מ"עבדים היינו" עד "לכפר על כל עוונותינו".</div>
+      <div class="g-click-hint">לחץ להרחבה ↓</div>
+    </div>
+    <div class="glossary-card" onclick="toggleGlossary(this)">
+      <h4>ליל שימורים</h4><div class="g-short">הלילה השמור מן המזיקין</div>
+      <div class="g-desc">ליל הסדר נקרא "ליל שימורים" – שמור על ידי הקב"ה. לכן בקריאת שמע שעל המיטה אין אומרים בקשות השמירה הרגילות.</div>
+      <div class="g-click-hint">לחץ להרחבה ↓</div>
+    </div>
+  </div>
+  <div class="section-nav">
+    <button class="nav-btn" onclick="showSection('s6')">→ חזרה</button>
+    <button class="nav-btn gold" onclick="showSection('s8')">← ניקוד סופי 🏆</button>
+  </div>
+</div>
+
+<!-- ======================================================== -->
+<!-- SECTION 8: FINAL -->
+<!-- ======================================================== -->
+<div class="section" id="s8">
+  <h2 class="section-title">🏆 תוצאות סופיות!</h2>
+  <div class="final-card">
+    <div class="confetti-emoji">🎉</div>
+    <div class="final-score-num" id="final-score-num">0</div>
+    <div class="final-score-label">נקודות מתוך <span id="max-score">350</span></div>
+    <div class="final-message" id="final-message"></div>
+    <button class="nav-btn gold" onclick="location.reload()" style="margin-top:18px;">שחק שוב! 🔄</button>
+  </div>
+  <br>
+  <div style="background:white;border-radius:16px;padding:22px;box-shadow:0 4px 20px rgba(0,0,0,0.08);">
+    <h3 style="color:var(--wine);margin-bottom:13px;font-family:'Frank Ruhl Libre',serif;">📝 סיכום הלכות עיקריות</h3>
+    <div style="font-size:0.88rem;line-height:2.1;color:#444;">
+      <p>✅ <strong>30 יום לפני</strong> – לומדים הלכות פסח, לא אוכלים מצה</p>
+      <p>✅ <strong>י"ג ניסן ליל</strong> – בדיקת חמץ עם נר שעווה ונוצה, 10 פתיתים</p>
+      <p>✅ <strong>י"ד ניסן</strong> – תענית בכורות, שריפת חמץ עד 11:42, אכילה עד 10:39</p>
+      <p>✅ <strong>הקערה</strong> – שלוש מצות (יל"ך), שישה מינים בפיזור לפי הסידור</p>
+      <p>✅ <strong>ארבע כוסות</strong> – 86 גרם כל אחת, שותים בהסיבה</p>
+      <p>✅ <strong>מצה</strong> – שני כזיתים (27 גרם כ"א), תוך 4 דקות, בהסיבה</p>
+      <p>✅ <strong>מרור</strong> – 19 גרם, ללא הסיבה, ללעוס ולהרגיש מרירות</p>
+      <p>✅ <strong>אפיקומן</strong> – לפני חצות (12:44), לאחריו אין אוכלים ואין שותים</p>
+    </div>
+  </div>
+</div>
+
+<!-- ======================================================== -->
+<!-- JAVASCRIPT -->
+<!-- ======================================================== -->
+<script>
+let score = 0, answeredQ = 0;
+
+/* ---- Stars ---- */
+(function(){
+  const c = document.getElementById('stars-container');
+  for(let i=0;i<40;i++){
+    const s=document.createElement('div'); s.className='star';
+    s.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*100}%;animation-delay:${Math.random()*2}s;`;
+    c.appendChild(s);
+  }
+})();
+
+/* ---- Navigation ---- */
+function showSection(id){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.tab-btn').forEach(b=>{
+    b.classList.remove('active');
+    if(b.getAttribute('onclick')&&b.getAttribute('onclick').includes("'"+id+"'")) b.classList.add('active');
+  });
+  if(id==='s8') updateFinalScore();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ---- MCQ ---- */
+function checkQ(cardId, btn, isCorrect, wrongMsg){
+  const card=document.getElementById(cardId);
+  if(card.classList.contains('answered-correct')||card.classList.contains('answered-wrong')) return;
+  const fb=document.getElementById(cardId+'-fb');
+  card.querySelectorAll('.option-btn').forEach(b=>b.disabled=true);
+  if(isCorrect){
+    btn.classList.add('correct');
+    card.classList.add('answered-correct');
+    fb.className='answer-feedback correct-fb show';
+    fb.innerHTML='✅ נכון! '+fb.innerHTML;
+    addScore(10);
+  } else {
+    btn.classList.add('wrong');
+    card.classList.add('answered-wrong');
+    fb.className='answer-feedback wrong-fb show';
+    fb.innerHTML='❌ לא נכון. '+wrongMsg+'<br>'+fb.innerHTML;
+    card.querySelectorAll('.option-btn').forEach(b=>{
+      if(b.getAttribute('onclick')&&b.getAttribute('onclick').includes(',true,')) b.classList.add('correct');
+    });
+  }
+  answeredQ++; updateProgress();
+}
+
+/* ---- True/False ---- */
+// correctAnswer is 'true' or 'false' as string
+function checkTF(cardId, correctAnswer, btn){
+  const card=document.getElementById(cardId);
+  if(card.classList.contains('answered-correct')||card.classList.contains('answered-wrong')) return;
+  const fb=document.getElementById(cardId+'-fb');
+  card.querySelectorAll('.tf-btn').forEach(b=>b.disabled=true);
+  const userSaysTrue=btn.classList.contains('true-btn');
+  const isCorrect=(userSaysTrue===(correctAnswer==='true'));
+  if(isCorrect){
+    btn.classList.add('selected-correct'); card.classList.add('answered-correct');
+    fb.className='answer-feedback correct-fb show'; addScore(10);
+  } else {
+    btn.classList.add('selected-wrong'); card.classList.add('answered-wrong');
+    fb.className='answer-feedback wrong-fb show';
+  }
+  fb.innerHTML=fb.innerHTML; // already set in HTML
+  answeredQ++; updateProgress();
+}
+
+/* ---- Fill in blank ---- */
+function checkFB(inputId, btnId, resId, correctAnswers, explanation){
+  const input=document.getElementById(inputId);
+  const btn=document.getElementById(btnId);
+  const res=document.getElementById(resId);
+  if(input.disabled) return;
+  const val=input.value.trim();
+  const ok=correctAnswers.some(a=>val===a.toString());
+  input.disabled=true; btn.disabled=true;
+  if(ok){
+    input.classList.add('correct');
+    res.className='answer-feedback correct-fb show';
+    res.innerHTML='✅ מצוין! '+explanation;
+    addScore(8);
+  } else {
+    input.classList.add('wrong');
+    res.className='answer-feedback wrong-fb show';
+    res.innerHTML='❌ לא נכון. '+explanation;
+  }
+  answeredQ++; updateProgress();
+}
+
+/* ---- Riddles ---- */
+function revealRiddle(id, btn){
+  document.getElementById(id).classList.add('show');
+  if(btn) btn.disabled=true;
+  addScore(5); updateProgress();
+}
+
+/* ---- Glossary ---- */
+function toggleGlossary(card){
+  card.querySelector('.g-desc').classList.toggle('open');
+}
+
+/* ---- Seder Order ---- */
+const correctOrder=['קדש','ורחץ','כרפס','יחץ','מגיד','רחצה','מוציא','מצה','מרור','כורך','שולחן עורך','צפון','ברך','הלל','נרצה'];
+let curOrder=[];
+function initSederOrder(){
+  curOrder=[];
+  const pool=document.getElementById('seder-pool');
+  const ans=document.getElementById('seder-answer');
+  const res=document.getElementById('order-result');
+  res.className=''; res.style.display='none';
+  const shuffled=[...correctOrder].sort(()=>Math.random()-0.5);
+  pool.innerHTML='';
+  ans.innerHTML='<span class="slot-label">לחצו על סימן להוסיפו...</span>';
+  shuffled.forEach(item=>{
+    const btn=document.createElement('button');
+    btn.className='seder-token'; btn.textContent=item;
+    btn.onclick=function(){
+      if(this.classList.contains('placed')) return;
+      this.classList.add('placed'); curOrder.push(item);
+      const sb=document.createElement('button');
+      sb.className='seder-token slot-item'; sb.textContent=item;
+      sb.onclick=function(){
+        const idx=curOrder.indexOf(item); if(idx>-1) curOrder.splice(idx,1);
+        this.remove(); btn.classList.remove('placed');
+        if(curOrder.length===0) ans.innerHTML='<span class="slot-label">לחצו על סימן להוסיפו...</span>';
+      };
+      const hint=ans.querySelector('.slot-label'); if(hint) hint.remove();
+      ans.appendChild(sb);
+    };
+    pool.appendChild(btn);
+  });
+}
+function checkSederOrder(){
+  const res=document.getElementById('order-result');
+  if(curOrder.length!==15){
+    res.className='fail'; res.style.display='block';
+    res.innerHTML=`❌ יש להכניס את כל 15 הסימנים! כרגע יש ${curOrder.length}.`; return;
+  }
+  let ok=0;
+  correctOrder.forEach((item,i)=>{ if(curOrder[i]===item) ok++; });
+  if(ok===15){
+    res.className='success'; res.style.display='block';
+    res.innerHTML='🎉 מעולה! הסדר נכון! +30 נקודות<br><strong>קדש–ורחץ–כרפס–יחץ–מגיד–רחצה–מוציא–מצה–מרור–כורך–שולחן עורך–צפון–ברך–הלל–נרצה</strong>';
+    addScore(30);
+  } else {
+    res.className='fail'; res.style.display='block';
+    res.innerHTML=`❌ ${ok} מתוך 15 נכונים. נסה שוב!<br>הסדר הנכון: <strong>קדש–ורחץ–כרפס–יחץ–מגיד–רחצה–מוציא–מצה–מרור–כורך–שולחן עורך–צפון–ברך–הלל–נרצה</strong>`;
+  }
+  updateProgress();
+}
+function resetSederOrder(){ initSederOrder(); }
+
+/* ---- Matching ---- */
+let matchState={};
+function matchClick(item,gameId){
+  if(item.classList.contains('matched')) return;
+  if(!matchState[gameId]) matchState[gameId]={};
+  const st=matchState[gameId];
+  if(st.selected){
+    if(st.selected===item){ item.classList.remove('selected'); st.selected=null; return; }
+    if(st.selected.dataset.side!==item.dataset.side){
+      if(st.selected.dataset.pair===item.dataset.pair){
+        st.selected.classList.remove('selected'); st.selected.classList.add('matched');
+        item.classList.add('matched'); st.selected=null;
+        st.matched=(st.matched||0)+1; addScore(8);
+        const total=document.querySelectorAll(`#${gameId} [data-side="A"]`).length;
+        const el=document.getElementById(`${gameId}-score`);
+        if(el) el.textContent=`✅ ${st.matched} / ${total} זוגות נכונים`;
+        if(st.matched===total) showToast('🎉 כל הזוגות נכונים!');
+      } else {
+        item.classList.add('wrong-match'); st.selected.classList.add('wrong-match');
+        setTimeout(()=>{ item.classList.remove('wrong-match'); st.selected.classList.remove('wrong-match','selected'); st.selected=null; },500);
+        return;
+      }
+    }
+  } else {
+    document.querySelectorAll(`#${gameId} .match-item.selected`).forEach(i=>i.classList.remove('selected'));
+    item.classList.add('selected'); st.selected=item;
+  }
+  updateProgress();
+}
+
+/* ===== DRAG & DROP SEDER PLATE ===== */
+const plateData={
+  zeroa:{emoji:'🍗',name:'זרוע',info:'חלק מצוואר עוף, צלוי על האש מבעוד יום. זכר לקרבן פסח שהיו מקריבים בבית המקדש, וזכר לגאולה "בזרוע נטויה". מדקדקים שלא לאכלו גם למחרת!'},
+  beitza:{emoji:'🥚',name:'ביצה',info:'ביצה מבושלת קשה בקליפתה. זכר לקרבן חגיגה שהיו מקריבים בזמן הבית. הרבי דקדק שלא תישבר הקליפה. מתחילים הסעודה באכילתה טבולה במי מלח – זכר לאבלות חורבן הבית.'},
+  maror:{emoji:'🥬',name:'מרור',info:'חסה (סאלאט) ובתוכה תמכא (חריין) – שני המינים יחד. זכר למרירות חיי אבותינו במצרים. שיעור כזית = 19 גרם. אוכלים ללא הסיבה. "בלע מרור לא יצא" – חייב ללעוס ולהרגיש מרירות!'},
+  charoset:{emoji:'🥣',name:'חרוסת',info:'עשויה מתפוחים ואגסים מרוסקים ואגוזים טחונים. ר"ת "אב"ן" (אפל-בארן-ניסן). חייבת להיות עבה – זכר לטיט שהשתעבדו בו. לפני הטיבול מרככים ביין אדום – זכר למכת דם.'},
+  karpas:{emoji:'🧅',name:'כרפס',info:'מנהג חב"ד – בצל חי. כרפס = ס\' פרך = ששים ריבוא שעבדו עבודת פרך. אוכלים פחות מכזית (פחות מ-19 גרם), טבול במי מלח, ללא הסיבה.'},
+  hazeret:{emoji:'🥬',name:'חזרת',info:'חסה (סאלאט) ובתוכה תמכא (חריין) – כמו המרור. זהו מרור נוסף לשם הכורך, כפי שעשה הלל שכרך פסח מצה ומרור. טובלים את החסה בחרוסת יבשה (בלי יין! מחשש שרויה) ואוכלים בהסיבה.'}
+};
+let draggedItem=null;
+let plateState={}; // itemId -> dzId
+
+document.querySelectorAll('.food-token').forEach(tok=>{
+  tok.addEventListener('dragstart',e=>{
+    draggedItem=tok.dataset.item;
+    tok.classList.add('dragging');
+    e.dataTransfer.effectAllowed='move';
+  });
+  tok.addEventListener('dragend',()=>{
+    tok.classList.remove('dragging');
+  });
+});
+
+function dzOver(e){ e.preventDefault(); e.currentTarget.classList.add('drag-over'); }
+function dzLeave(e){ e.currentTarget.classList.remove('drag-over'); }
+
+function dzDrop(e, dzId){
+  e.preventDefault();
+  const dz=e.currentTarget;
+  dz.classList.remove('drag-over');
+  if(!draggedItem) return;
+  // If another item already placed here, return it to bank
+  const existing=Object.keys(plateState).find(k=>plateState[k]===dzId);
+  if(existing){
+    delete plateState[existing];
+    const t=document.getElementById('token-'+existing);
+    if(t){ t.classList.remove('placed'); }
+  }
+  // Place new item
+  plateState[draggedItem]=dzId;
+  const data=plateData[draggedItem];
+  dz.classList.add('filled');
+  dz.innerHTML=`<span class="dz-emoji">${data.emoji}</span><span class="dz-name">${data.name}</span>`;
+  // Mark token as placed
+  document.getElementById('token-'+draggedItem).classList.add('placed');
+  draggedItem=null;
+}
+
+function infoClick(dzId){
+  // Find which item is in this dz
+  const itemId=Object.keys(plateState).find(k=>plateState[k]===dzId);
+  if(!itemId) return;
+  const data=plateData[itemId];
+  const box=document.getElementById('plate-info');
+  document.getElementById('pi-emoji').textContent=data.emoji;
+  document.getElementById('pi-title').textContent=data.name;
+  document.getElementById('pi-text').textContent=data.info;
+  box.classList.remove('show');
+  setTimeout(()=>box.classList.add('show'),50);
+}
+
+// The correct mapping: itemId -> dzId
+const correctPlacement={zeroa:'zeroa',beitza:'beitza',maror:'maror',charoset:'charoset',karpas:'karpas',hazeret:'hazeret'};
+
+function checkPlate(){
+  const res=document.getElementById('plate-result');
+  const placed=Object.keys(plateState).length;
+  if(placed<6){
+    res.className='fail'; res.style.display='block';
+    res.innerHTML=`❌ יש להציב את כל 6 המאכלים בקערה! כרגע ${placed} מוצבים.`; return;
+  }
+  let ok=0;
+  Object.keys(correctPlacement).forEach(item=>{
+    const dz=document.getElementById(plateState[item]);
+    if(plateState[item]===correctPlacement[item]){
+      ok++;
+      if(dz){ dz.classList.remove('wrong-place'); dz.classList.add('correct-place'); }
+    } else {
+      if(dz){ dz.classList.remove('correct-place'); dz.classList.add('wrong-place'); }
+    }
+  });
+  if(ok===6){
+    res.className='success'; res.style.display='block';
+    res.innerHTML='🎉 מעולה! כל המאכלים במקום הנכון! עכשיו לחצו על כל מאכל לגלות עליו! +20 נקודות';
+    addScore(20);
+    showToast('🎉 קערת הסדר מושלמת!');
+  } else {
+    res.className='fail'; res.style.display='block';
+    res.innerHTML=`❌ ${ok} מתוך 6 במקום הנכון. הירוקים = נכון, האדומים = לא נכון. נסה שוב!`;
+  }
+  updateProgress();
+}
+
+function resetPlate(){
+  plateState={};
+  document.querySelectorAll('.food-token').forEach(t=>t.classList.remove('placed'));
+  document.querySelectorAll('.drop-zone').forEach(dz=>{
+    dz.classList.remove('filled','correct-place','wrong-place','drag-over');
+    const id=dz.id.replace('dz-','');
+    const names={zeroa:'זרוע',beitza:'ביצה',maror:'מרור',charoset:'חרוסת',karpas:'כרפס',hazeret:'חזרת'};
+    dz.innerHTML=`<span class="dz-name">${names[id]||''}</span>`;
+  });
+  document.getElementById('plate-result').style.display='none';
+  document.getElementById('plate-info').classList.remove('show');
+  draggedItem=null;
+}
+
+/* ---- Score & Progress ---- */
+function addScore(pts){
+  score+=pts;
+  document.getElementById('score-num').textContent=score;
+  updateProgress();
+}
+function updateProgress(){
+  const pct=Math.min(100,(answeredQ/32)*100);
+  document.getElementById('progress-fill').style.width=pct+'%';
+}
+function updateFinalScore(){
+  document.getElementById('final-score-num').textContent=score;
+  const pct=(score/350)*100;
+  let msg='';
+  if(pct>=90) msg='🏆 מדהים! אתה מומחה אמיתי בהלכות פסח חסידי! כל הכבוד!';
+  else if(pct>=70) msg='⭐ יפה מאוד! ידע טוב ומרשים בהלכות ומנהגי חב"ד לפסח!';
+  else if(pct>=50) msg='👍 לא רע! כדאי לחזור על החוברת ולחזק הידע.';
+  else msg='📖 כדאי ללמוד שוב את החוברת "פסח חסידי" – הרבה מה לגלות!';
+  document.getElementById('final-message').textContent=msg;
+}
+
+/* ---- Toast ---- */
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+/* ---- Init ---- */
+initSederOrder();
+</script>
+</body>
+</html>
