@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>פסח חסידי - משחק לימודי</title>
+<link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;700;900&family=Heebo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #c8902a;
+  --gold-light: #e8b84b;
+  --gold-pale: #fff3d0;
+  --bg: #fffdf5;
+  --bg2: #fff8e8;
+  --card: #ffffff;
+  --card2: #fffbf0;
+  --text: #2c1a00;
+  --text2: #5a3e00;
+  --text3: #8a6000;
+  --border: #e8d5a0;
+  --border2: #f0e4b8;
+  --green: #1e8a4a;
+  --green-bg: #edfaf3;
+  --red: #c0392b;
+  --red-bg: #fff0ee;
+  --blue: #1a5fa8;
+  --blue-bg: #eef5ff;
+  --shadow: 0 4px 20px rgba(200,144,42,0.12);
+  --shadow2: 0 8px 32px rgba(200,144,42,0.18);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Heebo', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ===== TOP DECORATION ===== */
+.top-deco {
+  position: fixed; top: 0; left: 0; right: 0; height: 5px; z-index: 100;
+  background: linear-gradient(90deg, #e8b84b, #c8902a, #a06818, #c8902a, #e8b84b);
+}
+
+/* ===== SCREENS ===== */
+.screen { display: none; min-height: 100vh; padding: 20px 16px 40px; }
+.screen.active { display: flex; flex-direction: column; align-items: center; }
+
+/* ===== WELCOME ===== */
+#welcome {
+  justify-content: center; text-align: center; gap: 20px;
+  background: radial-gradient(ellipse at 50% 0%, #fff8e0 0%, var(--bg) 70%);
+  padding-top: 60px;
+}
+.welcome-emoji { font-size: 5rem; animation: float 3s ease-in-out infinite; }
+@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+
+.title-main {
+  font-family: 'Frank Ruhl Libre', serif;
+  font-size: clamp(2.6rem, 8vw, 5rem);
+  font-weight: 900;
+  color: var(--gold);
+  line-height: 1.1;
+  text-shadow: 0 2px 0 rgba(200,144,42,0.15);
+}
+.title-sub {
+  font-size: 1.15rem; color: var(--text2);
+  font-weight: 400; letter-spacing: 1px;
+}
+.welcome-desc {
+  max-width: 500px; color: var(--text2); font-size: 1rem; line-height: 1.7;
+  background: var(--card); border: 1px solid var(--border2);
+  border-radius: 16px; padding: 16px 20px;
+}
+.chips-wrap { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; max-width: 560px; }
+.chip {
+  background: var(--gold-pale); border: 1px solid #e8d090;
+  color: var(--gold); border-radius: 20px; padding: 5px 14px; font-size: 0.82rem; font-weight: 600;
+}
+.start-btn {
+  background: linear-gradient(135deg, var(--gold-light), var(--gold));
+  color: white; border: none; border-radius: 50px;
+  padding: 16px 56px; font-size: 1.3rem; font-weight: 900;
+  font-family: 'Frank Ruhl Libre', serif; cursor: pointer;
+  box-shadow: 0 6px 24px rgba(200,144,42,0.35);
+  transition: all 0.3s; letter-spacing: 1px;
+}
+.start-btn:hover { transform: scale(1.04) translateY(-2px); box-shadow: 0 10px 32px rgba(200,144,42,0.45); }
+
+/* ===== MENU ===== */
+#menu { gap: 16px; padding-top: 36px; max-width: 860px; margin: 0 auto; width: 100%; }
+.menu-top { text-align: center; width: 100%; }
+.menu-title {
+  font-family: 'Frank Ruhl Libre', serif; font-size: 1.8rem; font-weight: 700;
+  color: var(--gold); margin-bottom: 8px;
+}
+.score-row {
+  display: flex; align-items: center; justify-content: center; gap: 16px;
+  margin-bottom: 12px;
+}
+.score-pill {
+  background: var(--gold-pale); border: 1px solid var(--border);
+  border-radius: 20px; padding: 6px 18px; font-weight: 700; color: var(--gold);
+  font-size: 0.95rem;
+}
+.progress-wrap { width: 100%; max-width: 500px; margin: 0 auto; }
+.progress-track {
+  background: var(--border2); border-radius: 10px; height: 10px; overflow: hidden;
+}
+.progress-fill {
+  height: 100%; border-radius: 10px;
+  background: linear-gradient(90deg, var(--gold), var(--gold-light));
+  transition: width 0.6s ease;
+}
+.progress-label { font-size: 0.82rem; color: var(--text3); margin-top: 4px; text-align: center; }
+
+.topics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 14px; width: 100%;
+}
+.topic-card {
+  background: var(--card); border: 2px solid var(--border2);
+  border-radius: 18px; padding: 18px 20px;
+  cursor: pointer; transition: all 0.25s;
+  box-shadow: var(--shadow); position: relative;
+}
+.topic-card:hover {
+  border-color: var(--gold-light); transform: translateY(-3px);
+  box-shadow: var(--shadow2);
+}
+.topic-card.done {
+  border-color: #a8dfc0; background: linear-gradient(135deg, #f0faf5, var(--card));
+}
+.done-badge {
+  position: absolute; top: 12px; left: 12px;
+  background: var(--green); color: white; border-radius: 50%;
+  width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
+  font-size: 0.75rem; font-weight: 900;
+}
+.card-emoji { font-size: 2.2rem; margin-bottom: 8px; }
+.card-title {
+  font-family: 'Frank Ruhl Libre', serif; font-size: 1.15rem;
+  font-weight: 700; color: var(--text); margin-bottom: 4px;
+}
+.card-desc { font-size: 0.82rem; color: var(--text3); line-height: 1.5; }
+
+/* ===== ACTIVITY ===== */
+#activity { gap: 18px; max-width: 720px; margin: 0 auto; width: 100%; padding-top: 28px; }
+.back-btn {
+  align-self: flex-start;
+  background: var(--card); border: 1px solid var(--border);
+  color: var(--text2); border-radius: 20px; padding: 7px 18px;
+  cursor: pointer; font-family: 'Heebo', sans-serif; font-size: 0.9rem;
+  transition: all 0.2s; box-shadow: var(--shadow);
+}
+.back-btn:hover { border-color: var(--gold-light); color: var(--gold); }
+.act-header { text-align: center; width: 100%; }
+.act-emoji { font-size: 3rem; margin-bottom: 6px; }
+.act-title {
+  font-family: 'Frank Ruhl Libre', serif; font-size: 1.9rem;
+  font-weight: 900; color: var(--text);
+}
+.act-content { width: 100%; }
+
+/* ===== QUIZ BOX ===== */
+.quiz-box {
+  background: var(--card); border: 1px solid var(--border2);
+  border-radius: 20px; padding: 24px 22px; margin-bottom: 14px;
+  box-shadow: var(--shadow);
+}
+.pts-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: var(--gold-pale); border: 1px solid var(--border);
+  border-radius: 16px; padding: 4px 14px; font-size: 0.82rem;
+  color: var(--gold); font-weight: 700; margin-bottom: 14px;
+}
+
+/* ===== INFO / TEACH CARD ===== */
+.teach-card {
+  background: var(--bg2); border: 1px solid var(--border2);
+  border-radius: 14px; padding: 18px 20px; margin-bottom: 16px;
+  line-height: 1.8; font-size: 0.97rem; color: var(--text);
+}
+.teach-card h3 {
+  font-family: 'Frank Ruhl Libre', serif; color: var(--gold);
+  font-size: 1.15rem; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;
+}
+.highlight-box {
+  background: var(--gold-pale); border-right: 3px solid var(--gold);
+  padding: 10px 14px; border-radius: 0 10px 10px 0;
+  margin: 10px 0; font-style: italic; color: var(--text2); font-size: 0.93rem;
+  line-height: 1.7;
+}
+
+/* ===== QUESTION ===== */
+.q-label {
+  font-size: 0.78rem; font-weight: 700; color: var(--blue);
+  text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px;
+}
+.quiz-q {
+  font-family: 'Frank Ruhl Libre', serif; font-size: 1.2rem;
+  font-weight: 700; color: var(--text); margin-bottom: 16px; line-height: 1.5;
+}
+.options { display: flex; flex-direction: column; gap: 10px; }
+.opt {
+  background: var(--bg); border: 2px solid var(--border2);
+  color: var(--text); border-radius: 12px; padding: 13px 18px;
+  text-align: right; cursor: pointer; font-family: 'Heebo', sans-serif;
+  font-size: 0.97rem; transition: all 0.22s; line-height: 1.5;
+}
+.opt:hover:not(:disabled) {
+  background: var(--gold-pale); border-color: var(--gold-light);
+  transform: translateX(-3px);
+}
+.opt.correct { background: var(--green-bg); border-color: var(--green); color: #0f5c30; }
+.opt.wrong { background: var(--red-bg); border-color: var(--red); color: #7a1010; }
+@keyframes correct-pop { 0%,100%{transform:scale(1)} 50%{transform:scale(1.02)} }
+@keyframes wrong-shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+.opt.correct { animation: correct-pop 0.35s; }
+.opt.wrong { animation: wrong-shake 0.35s; }
+
+.feedback {
+  border-radius: 12px; padding: 14px 18px; margin-top: 14px;
+  font-size: 0.95rem; line-height: 1.65; display: none;
+}
+.feedback.show { display: block; animation: fade-up 0.3s; }
+@keyframes fade-up { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+.feedback.ok { background: var(--green-bg); border: 1px solid #a8e0c0; color: #0f5c30; }
+.feedback.err { background: var(--red-bg); border: 1px solid #f0b8b0; color: #7a1010; }
+
+.next-q-btn {
+  display: none; margin-top: 12px;
+  background: linear-gradient(135deg, var(--gold-light), var(--gold));
+  color: white; border: none; border-radius: 26px;
+  padding: 11px 32px; font-size: 0.97rem; font-weight: 700;
+  cursor: pointer; transition: all 0.25s; font-family: 'Frank Ruhl Libre', serif;
+}
+.next-q-btn.show { display: inline-block; animation: fade-up 0.3s; }
+.next-q-btn:hover { transform: scale(1.04); box-shadow: 0 6px 18px rgba(200,144,42,0.35); }
+
+/* ===== NUSACH ===== */
+.nusach-box {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 14px; padding: 20px; margin: 12px 0; text-align: center;
+}
+.nusach-label { color: var(--gold); font-weight: 700; font-size: 0.9rem; margin-bottom: 10px; }
+.nusach-text {
+  font-family: 'Frank Ruhl Libre', serif; font-size: 1.15rem;
+  line-height: 2; color: var(--text); margin: 10px 0;
+}
+.show-trans-btn {
+  background: var(--gold-pale); border: 1px solid var(--border);
+  color: var(--gold); border-radius: 18px; padding: 7px 18px;
+  cursor: pointer; font-family: 'Heebo', sans-serif; font-size: 0.88rem;
+  transition: all 0.25s; font-weight: 600; margin-top: 6px;
+}
+.show-trans-btn:hover { background: #fde9a0; }
+.trans-box {
+  display: none; margin-top: 12px; padding: 14px 16px;
+  background: var(--blue-bg); border: 1px solid #c0d8f0; border-radius: 10px;
+  color: var(--blue); font-size: 0.93rem; line-height: 1.8; text-align: right;
+}
+.trans-box.show { display: block; animation: fade-up 0.3s; }
+
+/* ===== SEDER PLATE ===== */
+.plate-outer {
+  display: flex; flex-direction: column; align-items: center; gap: 14px; width: 100%;
+}
+.plate-hint { color: var(--text3); font-size: 0.92rem; text-align: center; }
+
+.plate-svg-wrap {
+  position: relative; width: 300px; height: 300px; margin: 0 auto;
+}
+.plate-circle {
+  width: 300px; height: 300px; border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #f5e8c0 0%, #e0c070 35%, #c8a040 65%, #a07820 100%);
+  border: 5px solid #c8902a;
+  box-shadow: 0 8px 30px rgba(200,144,42,0.25), inset 0 0 20px rgba(0,0,0,0.06);
+  position: absolute; top: 0; left: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.plate-center {
+  font-family: 'Frank Ruhl Libre', serif; font-size: 1rem;
+  font-weight: 900; color: #6a4000; text-align: center; line-height: 1.3;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.3);
+}
+.food-pin {
+  position: absolute; transform: translate(-50%, -50%);
+  cursor: pointer; z-index: 10;
+  display: flex; flex-direction: column; align-items: center;
+  transition: transform 0.25s;
+}
+.food-pin:hover { transform: translate(-50%, -50%) scale(1.2); }
+.pin-emoji {
+  font-size: 2rem;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.25));
+}
+.pin-label {
+  font-size: 0.62rem; font-weight: 700; color: #6a4000;
+  background: rgba(255,240,190,0.92); border-radius: 6px;
+  padding: 1px 5px; margin-top: 2px; white-space: nowrap;
+  border: 1px solid rgba(200,144,42,0.4);
+}
+
+/* POPUP */
+.popup-overlay {
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(44,26,0,0.45); backdrop-filter: blur(3px);
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+}
+.popup-card {
+  background: var(--card); border: 2px solid var(--border);
+  border-radius: 24px; padding: 28px 24px; max-width: 400px; width: 100%;
+  text-align: center; position: relative;
+  box-shadow: 0 20px 60px rgba(200,144,42,0.2);
+  animation: pop-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes pop-in { from{transform:scale(0.7);opacity:0} to{transform:scale(1);opacity:1} }
+.popup-big-emoji { font-size: 3.5rem; margin-bottom: 10px; }
+.popup-name { font-family:'Frank Ruhl Libre',serif; font-size:1.6rem; font-weight:900; color:var(--gold); margin-bottom:10px; }
+.popup-desc { font-size:0.97rem; line-height:1.75; color:var(--text2); }
+.popup-close {
+  position:absolute; top:12px; left:12px;
+  background: var(--bg2); border: 1px solid var(--border);
+  color: var(--text3); border-radius:50%; width:32px; height:32px;
+  cursor:pointer; font-size:1rem; transition:all 0.2s;
+  display:flex;align-items:center;justify-content:center;
+}
+.popup-close:hover { background: var(--red-bg); color:var(--red); }
+
+/* ===== SEDER ORDER ===== */
+.order-pool {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  min-height: 54px; background: var(--bg2); border: 2px dashed var(--border);
+  border-radius: 12px; padding: 10px; margin-bottom: 14px;
+  justify-content: center; align-content: flex-start;
+}
+.order-drop {
+  display: flex; flex-wrap: wrap; gap: 7px;
+  min-height: 70px; background: #f0faf5; border: 2px dashed #a8dfc0;
+  border-radius: 12px; padding: 10px; align-content: flex-start;
+  margin-bottom: 12px;
+}
+.siman-chip {
+  background: var(--gold-pale); border: 1.5px solid var(--border);
+  color: var(--text); border-radius: 18px; padding: 6px 14px;
+  font-size: 0.88rem; font-weight: 600; cursor: pointer;
+  font-family: 'Heebo', sans-serif; transition: all 0.2s;
+}
+.siman-chip:hover:not(:disabled) { background: var(--gold); color: white; transform: scale(1.05); }
+.siman-chip.placed { background: var(--green-bg); border-color: #a8dfc0; color: #0f5c30; cursor: default; }
+.check-btn {
+  display: block; margin: 8px auto;
+  background: var(--blue); color: white; border: none;
+  border-radius: 26px; padding: 11px 30px; font-size: 0.97rem; font-weight: 700;
+  cursor: pointer; font-family: 'Heebo', sans-serif; transition: all 0.25s;
+}
+.check-btn:hover { background: #144d90; transform: scale(1.03); }
+.order-feedback {
+  text-align: center; padding: 12px; border-radius: 10px;
+  font-weight: 700; font-size: 0.95rem; display: none; margin-top: 8px;
+}
+.order-feedback.show { display: block; animation: fade-up 0.3s; }
+.order-feedback.ok { background: var(--green-bg); border:1px solid #a8e0c0; color: #0f5c30; }
+.order-feedback.err { background: var(--red-bg); border:1px solid #f0b8b0; color: #7a1010; }
+
+/* review */
+.review-item {
+  display: flex; gap: 12px; align-items: flex-start;
+  padding: 9px 0; border-bottom: 1px solid var(--border2);
+}
+.review-num {
+  min-width: 26px; height: 26px; border-radius: 50%;
+  background: var(--gold); color: white;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.72rem; font-weight: 900; flex-shrink: 0; margin-top: 2px;
+}
+.review-name { font-family:'Frank Ruhl Libre',serif; font-size:0.97rem; font-weight:700; color:var(--text); }
+.review-desc { font-size:0.82rem; color:var(--text3); margin-top:2px; line-height:1.5; }
+
+/* ===== COMPLETION ===== */
+#completion {
+  justify-content: center; text-align: center; gap: 20px;
+  background: radial-gradient(ellipse at 50% 0%, #fff8e0 0%, var(--bg) 70%);
+}
+.trophy { font-size: 5rem; animation: float 2s ease-in-out infinite; }
+.final-title { font-family:'Frank Ruhl Libre',serif; font-size:2.2rem; font-weight:900; color:var(--gold); }
+.final-pts {
+  font-family:'Frank Ruhl Libre',serif; font-size:1.6rem; color:var(--text2);
+}
+.confetti-row { font-size: 1.8rem; }
+
+/* UTIL */
+@media(max-width:480px){
+  .plate-svg-wrap,.plate-circle{width:260px;height:260px;}
+  .topics-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+<div class="top-deco"></div>
+
+<!-- ============ WELCOME ============ -->
+<div class="screen active" id="welcome">
+  <div class="welcome-emoji">🫓</div>
+  <div class="title-main">פסח חסידי</div>
+  <div class="title-sub">משחק לימודי לקראת החג</div>
+  <div class="welcome-desc">
+    בכל תחנה תלמדי חומר חדש ואחר כך תענה על שאלות!
+    לכל תשובה נכונה מגיעות לך נקודות ⭐
+  </div>
+  <div class="chips-wrap">
+    <span class="chip">🕯️ בדיקת חמץ</span>
+    <span class="chip">📜 מכירת חמץ</span>
+    <span class="chip">📅 שבת הגדול</span>
+    <span class="chip">🔥 שריפת חמץ</span>
+    <span class="chip">📖 תפילת מנחה</span>
+    <span class="chip">🕯️ הדלקת נרות</span>
+    <span class="chip">🍽️ קערת הסדר</span>
+    <span class="chip">📋 סימני הסדר</span>
+  </div>
+  <button class="start-btn" onclick="showMenu()">▶ בואי נתחיל!</button>
+</div>
+
+<!-- ============ MENU ============ -->
+<div class="screen" id="menu">
+  <div class="menu-top">
+    <div class="menu-title">🌟 בחרי נושא</div>
+    <div class="score-row">
+      <div class="score-pill">⭐ <span id="menu-pts">0</span> נקודות</div>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-track"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+      <div class="progress-label" id="prog-label">0 מתוך 8 הושלמו</div>
+    </div>
+  </div>
+  <br>
+  <div class="topics-grid" id="topics-grid"></div>
+</div>
+
+<!-- ============ ACTIVITY ============ -->
+<div class="screen" id="activity">
+  <button class="back-btn" onclick="showMenu()">← חזרה לתפריט</button>
+  <div class="act-header">
+    <div class="act-emoji" id="act-emoji"></div>
+    <div class="act-title" id="act-title"></div>
+  </div>
+  <div class="act-content" id="act-content"></div>
+</div>
+
+<!-- ============ COMPLETION ============ -->
+<div class="screen" id="completion">
+  <div class="trophy">🏆</div>
+  <div class="final-title">כל הכבוד!</div>
+  <div class="confetti-row">🎊 🌟 🎉 ✨ 🎊</div>
+  <div class="final-pts">השגת <strong id="final-pts">0</strong> נקודות!</div>
+  <p style="color:var(--text2);max-width:480px;line-height:1.7;font-size:1rem">
+    סיימת את כל הנושאים! עכשיו את מוכנה לפסח כמו מומחית חסידית אמיתית 🌟
+  </p>
+  <button class="start-btn" onclick="resetAll()">🔄 שחקי שוב</button>
+</div>
+
+<!-- POPUP -->
+<div id="food-popup" style="display:none" class="popup-overlay" onclick="closePopup(event)">
+  <div class="popup-card" id="popup-card">
+    <button class="popup-close" onclick="closePopup()">✕</button>
+    <div class="popup-big-emoji" id="p-emoji"></div>
+    <div class="popup-name" id="p-name"></div>
+    <div class="popup-desc" id="p-desc"></div>
+  </div>
+</div>
+
+<script>
+// ===== DATA =====
+let score = 0;
+let done = new Set();
+
+const TOPICS = [
+  { id:'bitul',  emoji:'🕯️', title:'בדיקת חמץ - ביטול',  desc:'מה חייבים לעשות אחרי הבדיקה?' },
+  { id:'mechira', emoji:'📜', title:'מכירת חמץ',         desc:'למה בכלל מוכרים חמץ לגוי?' },
+  { id:'shabbat', emoji:'📅', title:'שבת הגדול',          desc:'מאיפה בא השם המיוחד הזה?' },
+  { id:'srefah',  emoji:'🔥', title:'שריפת חמץ',          desc:'מה אומרים בשעה שהחמץ בוער?' },
+  { id:'mincha',  emoji:'📖', title:'תפילת מנחה',         desc:'מה עושים בסוף ערב פסח?' },
+  { id:'ner',     emoji:'🕯️', title:'הדלקת הנר',          desc:'הנוסח המדויק של הברכה' },
+  { id:'keara',   emoji:'🍽️', title:'קערת הסדר',          desc:'לחצי על כל מאכל ותגלי!' },
+  { id:'simanim', emoji:'📋', title:'סימני הסדר',         desc:'למה ליל הסדר? מה הסדר?' },
+];
+
+// ===== SCREENS =====
+function showScreen(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); window.scrollTo(0,0); }
+
+function showMenu(){
+  document.getElementById('menu-pts').textContent = score;
+  document.getElementById('prog-fill').style.width = (done.size/8*100)+'%';
+  document.getElementById('prog-label').textContent = done.size+' מתוך 8 הושלמו';
+  const grid = document.getElementById('topics-grid');
+  grid.innerHTML = '';
+  TOPICS.forEach(t=>{
+    const d = done.has(t.id);
+    const c = document.createElement('div');
+    c.className='topic-card'+(d?' done':'');
+    c.innerHTML=`
+      ${d?'<div class="done-badge">✓</div>':''}
+      <div class="card-emoji">${t.emoji}</div>
+      <div class="card-title">${t.title}</div>
+      <div class="card-desc">${t.desc}</div>`;
+    c.onclick=()=>openActivity(t.id);
+    grid.appendChild(c);
+  });
+  showScreen('menu');
+}
+
+function openActivity(id){
+  const t = TOPICS.find(x=>x.id===id);
+  document.getElementById('act-emoji').textContent = t.emoji;
+  document.getElementById('act-title').textContent = t.title;
+  document.getElementById('act-content').innerHTML = ACTS[id]();
+  showScreen('activity');
+  if(id==='keara') buildPlate();
+  if(id==='simanim') setTimeout(()=>{ if(document.getElementById('sim-order-section')){}}, 50);
+}
+
+function finish(id, pts){
+  if(!done.has(id)){ done.add(id); score+=pts; }
+  if(done.size===8){ setTimeout(()=>{ document.getElementById('final-pts').textContent=score; showScreen('completion'); },1200); }
+  else{ showMenu(); }
+}
+
+function resetAll(){ score=0; done.clear(); showMenu(); }
+
+// ===== QUIZ ENGINE =====
+const FB = {
+  bitul:{
+    q1:{ok:'✅ נכון! הביטול הוא עניין פנימי בלב - להחליט שהחמץ שברשותך כאילו אינו קיים ואינו חשוב כלל.', err:'❌ לא בדיוק. הביטול הוא החלטה פנימית בלב - שהחמץ שברשותה כאילו אינו, ואינו חשוב כלל.'},
+    q2:{ok:'✅ נכון! אמרה אחרי בדיקת לילה - רק על מה שלא מצאה. מי שלא מבינה ארמית - תאמר בשפה שמבינה!', err:'❌ לא נכון. ביטול ראשון נאמר אחרי הבדיקה בלילה, על מה שלא נמצא. ומי שאינה מבינה ארמית - תאמר בשפה המובנת לה.'},
+    q3:{ok:'✅ מצוין! נר שעווה ונוצת עוף - הנוצה עוזרת לאסוף מהחורים והסדקים שהיד לא מגיעה אליהם.', err:'❌ לא נכון. בודקים לאור נר שעווה ועל ידי נוצת עוף, כדי לאסוף חמץ מהחורים והסדקים.'},
+  },
+  mechira:{
+    q1:{ok:'✅ מדויק! מלבד האיסור לאכול, אסור גם להחזיק חמץ - "בל יראה ובל ימצא".', err:'❌ לא נכון. יש איסור מיוחד: "בל יראה ובל ימצא" - אסור אפילו להחזיק חמץ ברשותנו, לכן מוכרים.'},
+    q2:{ok:'✅ בדיוק! ולכן גם אחרי הפסח החמץ יהיה מותר - כי במשך הפסח הוא היה שייך לגוי.', err:'❌ לא נכון. מוכרים לגוי, כדי שהחמץ לא יהיה ברשותנו בפסח. ואחרי הפסח הרב קונה בחזרה.'},
+  },
+  shabbat:{
+    q1:{ok:'✅ נכון! "נקרא כן לפי שנעשה בו נס גדול, למכה מצרים בבכוריהם" - והיתה בו התחלת הגאולה והניסים.', err:'❌ לא נכון. שבת הגדול נקראת כך כי נעשה בה נס גדול - "למכה מצרים בבכוריהם" - והיתה בה התחלת הגאולה והניסים.'},
+    q2:{ok:'✅ כן! מנהג חב"ד לומר חלק מההגדה - מ"עבדים היינו" עד "לכפר על כל עונותינו".', err:'❌ לא מדויק. אחרי מנחה בשבת הגדול אומרים קטע מההגדה - מ"עבדים היינו" עד "לכפר על כל עונותינו".'},
+  },
+  srefah:{
+    q1:{ok:'✅ נכון! הביטול נאמר בזמן שהאש נאחזת בחמץ - לפני שנשרף לגמרי.', err:'❌ לא נכון. צריך לאמר את הביטול בזמן שהאש כבר נאחזת בחמץ, לפני שנשרף לגמרי.'},
+    q2:{ok:'✅ מצוין! הביטול השני מקיף יותר - כולל גם מה שביערתי וגם מה שלא. המילה "דביערתיה" מוסיפה על הראשון!', err:'❌ לא נכון. בשריפה מוסיפים: "דביערתיה ודלא ביערתיה" - גם מה שביערתי. זה מה שחסר בביטול הלילה.'},
+    q3:{ok:'✅ נכון! כולם אומרים - אנשים, נשים, ילדים וילדות - גם מי שאינם ליד השריפה עצמה.', err:'❌ לא נכון. החוברת כותבת שעדיף שיאמרו כולם - אנשים, נשים, ילדים וילדות - גם מי שאינם ליד השריפה.'},
+  },
+  mincha:{
+    q1:{ok:'✅ נכון! הרבי הרש"ב ורבי הריי"צ נהגו לומר "סדר קרבן פסח" אחרי מנחה.', err:'❌ לא נכון. אחרי מנחה אומרים "סדר קרבן פסח" - וכך נהגו רביי חב"ד.'},
+    q2:{ok:'✅ בדיוק! הקריאה "תעלה במקום הקרבתו" ויתאבל על חורבן הבית ויתפלל לבנייתו.', err:'❌ לא נכון. מי שאומר קרבן פסח - קריאתו עולה כמו הקרבה ממש, ויתאבל על חורבן הבית.'},
+  },
+  ner:{
+    q1:{ok:'✅ נכון! "להדליק נר של יום טוב" - ביום טוב לא אומרים "שבת".', err:'❌ לא נכון. הנוסח הוא "להדליק נר של יום טוב" כי פסח הוא יום טוב.'},
+    q2:{ok:'✅ כן! מגיל שלוש - גיל חינוך. מדליקות ומברכות!', err:'❌ לא נכון. ילדות מגיל שלוש (גיל חינוך) כבר מדליקות ומברכות.'},
+  },
+  keara:{
+    q1:{ok:'✅ נכון! שתי מנות מרור - כי יש שתי מצוות: אחת לאכילת מרור בפני עצמה, ואחת לכורך.', err:'❌ לא נכון. שתי המנות הן אותו מרור בדיוק - אחת לאכילת מרור, ואחת לכורך. שתי מצוות נפרדות!'},
+  },
+  simanim:{
+    q1:{ok:'✅ נכון! "ליל הסדר" - כי יש סדר מדוקדק לכל המצוות הרבות של הלילה.', err:'❌ לא נכון. השם "ליל הסדר" הוא כי יש סדר מדוקדק לביצוע המצוות הרבות של הלילה הזה.'},
+  },
+};
+
+function check(act, qn, btn, res){
+  const opts = btn.parentElement.querySelectorAll('.opt');
+  opts.forEach(b=>b.disabled=true);
+  const fb = document.getElementById(`fb-${act}-${qn}`);
+  const nx = document.getElementById(`nx-${act}-${qn}`);
+  if(res==='ok'){
+    btn.classList.add('correct');
+    fb.className='feedback ok show';
+    fb.textContent=FB[act][qn].ok;
+    if(!done.has(act)) score+=5;
+  } else {
+    btn.classList.add('wrong');
+    fb.className='feedback err show';
+    fb.textContent=FB[act][qn].err;
+    opts.forEach(b=>{ if(b.dataset.ans==='ok') b.classList.add('correct'); });
+  }
+  nx.classList.add('show');
+}
+
+function nextQ(act, qCurr, qNext){
+  document.getElementById(`q-${act}-${qCurr}`).style.display='none';
+  document.getElementById(`q-${act}-${qNext}`).style.display='block';
+}
+
+function showTrans(btn, id){
+  const t=document.getElementById(id);
+  t.classList.toggle('show');
+  btn.textContent=t.classList.contains('show')?'🙈 הסתר תרגום':'👁️ ראי את התרגום';
+}
+
+// ===== ACTIVITIES =====
+const ACTS = {
+
+// -------- BITUL --------
+bitul: ()=>`
+<div class="quiz-box">
+  <div class="pts-badge">⭐ עד 15 נקודות</div>
+  <div class="teach-card">
+    <h3>📖 קצת רקע - קראי לפני!</h3>
+    <p>לאחר בדיקת חמץ - אסור להסתפק רק בבדיקה! חכמים תיקנו לומר <strong>ביטול</strong> - להכריז בלב שכל חמץ שברשותנו אינו חשוב לנו, הרי הוא כעפר הארץ.</p>
+    <div class="highlight-box">הרבי כותב: "ועיקר הביטול הוא בלב, שישים בלבו כל חמץ שברשותו הרי הוא כאילו אינו, ואינו חשוב כלום, והרי הוא כעפר."</div>
+    <p>📌 <strong>מתי אומרים?</strong> הביטול הראשון נאמר <strong>אחרי הבדיקה בלילה</strong> - רק על מה שלא מצאנו.<br>
+    📌 <strong>כיצד בודקים?</strong> לאור נר שעווה, על ידי <strong>נוצת עוף</strong> כדי לאסוף מהחורים והסדקים.<br>
+    📌 לפני הבדיקה מניחים <strong>עשרה פתיתי חמץ</strong> במקומות שונים בבית.<br>
+    📌 אם אינה מבינה ארמית - תאמר בשפה שמבינה!</p>
+  </div>
+
+  <div class="nusach-box">
+    <div class="nusach-label">📜 נוסח הביטול אחרי הבדיקה:</div>
+    <div class="nusach-text">
+      כָּל־חֲמִירָא וַחֲמִיעָא דְאִכָּא בְרְשׁוּתִי<br>
+      דְּלָא חֲמִיתֵיהּ <strong>וּדְלָא בִעַרְתִּיהּ</strong><br>
+      <strong>וּדְלָא יְדַעְנָא לֵיהּ</strong><br>
+      לִבְּטַל וְלֹהֵוִי הַפְקֵר כְּעַפְרָא דְאַרְעָא.
+    </div>
+    <button class="show-trans-btn" onclick="showTrans(this,'tr-bitul')">👁️ ראי את התרגום</button>
+    <div class="trans-box" id="tr-bitul">
+      <strong>תרגום:</strong><br>
+      כָּל־שְׂאוֹר וְחָמֵץ שֶׁיֵּשׁ בִּרְשׁוּתִי,<br>
+      שֶׁלֹא רָאִיתָיו, <strong>וְשָׁלֹא פְנִיתָיו</strong>,<br>
+      <strong>וְשָׁלָא יָדוּעַ לִי</strong>,<br>
+      יִבָּטֵל וִיהֵא הַפְקֵר כַּעֲפַר הָאָרֶץ.
+    </div>
+  </div>
+
+  <div id="q-bitul-q1">
+    <div class="q-label">שאלה 1</div>
+    <div class="quiz-q">מה עושים אחרי בדיקת חמץ, ולמה?</div>
+    <div class="options">
+      <button class="opt" data-ans="err" onclick="check('bitul','q1',this,'err')">שורפים מיד את כל החמץ</button>
+      <button class="opt" data-ans="ok"  onclick="check('bitul','q1',this,'ok')">אומרים ביטול - מכריזים שהחמץ שברשותנו אינו חשוב כלל</button>
+      <button class="opt" data-ans="err" onclick="check('bitul','q1',this,'err')">נותנים את החמץ לשכנים</button>
+      <button class="opt" data-ans="err" onclick="check('bitul','q1',this,'err')">מכסים את החמץ ושוכחים ממנו</button>
+    </div>
+    <div class="feedback" id="fb-bitul-q1"></div>
+    <button class="next-q-btn" id="nx-bitul-q1" onclick="nextQ('bitul','q1','q2')">לשאלה הבאה →</button>
+  </div>
+
+  <div id="q-bitul-q2" style="display:none">
+    <div class="q-label">שאלה 2</div>
+    <div class="quiz-q">על מה בדיוק מבטלים בביטול הראשון (בלילה), ומה עם מי שאינה מבינה ארמית?</div>
+    <div class="options">
+      <button class="opt" data-ans="err" onclick="check('bitul','q2',this,'err')">על כל החמץ בבית; מי שלא מבינה לא מחויבת בביטול</button>
+      <button class="opt" data-ans="ok"  onclick="check('bitul','q2',this,'ok')">על מה שלא מצאנו; מי שלא מבינה תאמר בשפה שמבינה</button>
+      <button class="opt" data-ans="err" onclick="check('bitul','q2',this,'err')">על כל החמץ; מי שלא מבינה תאמר בכל זאת ארמית</button>
+      <button class="opt" data-ans="err" onclick="check('bitul','q2',this,'err')">על מה שמצאנו; מי שלא מבינה תבקש מאחרת</button>
+    </div>
+    <div class="feedback" id="fb-bitul-q2"></div>
+    <button class="next-q-btn" id="nx-bitul-q2" onclick="nextQ('bitul','q2','q3')">לשאלה הבאה →</button>
+  </div>
+
+  <div id="q-bitul-q3" style="display:none">
+    <div class="q-label">שאלה 3</div>
+    <div class="quiz-q">במה בודקים את החמץ, ולמה?</div>
+    <div class="options">
+      <button class="opt" data-ans="err" onclick="check('bitul','q3',this,'err')">בפנס חזק - כדי לראות הכי טוב</button>
+      <button class="opt" data-ans="ok"  onclick="check('bitul','q3',this,'ok')">לאור נר שעווה ועל ידי נוצת עוף - כדי לאסוף מהחורים והסדקים</button>
+      <button class="opt" data-ans="err" onclick="check('bitul','q3',this,'err')">ביד בלבד - פשוט מחפשים</button>
+      <button class="opt" data-ans="err" onclick="check('bitul','q3',this,'err')">בנר ומטאטא - כדי לכבד</button>
+    </div>
+    <div class="feedback" id="fb-bitul-q3"></div>
+    <button class="next-q-btn" id="nx-bitul-q3" onclick="finish('bitul',15)">✅ סיימתי!</button>
+  </div>
+</div>`,
+
+// -------- MECHIRA --------
+mechira: ()=>`
+<div class="quiz-box">
+  <div class="pts-badge">⭐ עד 10 נקודות</div>
+  <div class="teach-card">
+    <h3>📖 למה מוכרים חמץ לגוי?</h3>
+    <p>מלבד איסור <strong>אכילת</strong> חמץ, יש בתורה שני איסורים נוספים: <strong>"בל יראה"</strong> ו<strong>"בל ימצא"</strong> - אסור להחזיק חמץ ברשותנו כלל בפסח!</p>
+    <p style="margin-top:8px">לכן - מוכרים את החמץ לגוי דרך הרב, ובכך הוא כבר לא שלנו. אחרי הפסח הרב קונה הכל בחזרה.</p>
+    <div class="highlight-box">
+      📌 טעם א': כדי לא לעבור על "בל יראה ובל ימצא"<br>
+      📌 טעם ב': כדי שהחמץ יהיה מותר לאחר הפסח
+    </div>
+    <p>הרבי הדגיש את חשיבות <strong>פרסום</strong> מכירת חמץ - יש בה זיכוי הרבים.</p>
+  </div>
+
+  <div id="q-mechira-q1">
+    <div class="q-label">שאלה 1</div>
+    <div class="quiz-q">מה הבעיה אם פשוט משאירים חמץ בבית בלי למכור - גם אם לא אוכלים?</div>
+    <div class="options">
+      <button class="opt" data-ans="err" onclick="check('mechira','q1',this,'err')">אין בעיה, העיקר שלא אוכלים</button>
+      <button class="opt" data-ans="ok"  onclick="check('mechira','q1',this,'ok')">עוברים על "בל יראה ובל ימצא" - אסור אפילו להחזיק חמץ</button>
+      <button class="opt" data-ans="err" onclick="check('mechira','q1',this,'err')">מותר לשמור בתנאי שנועלים את הארון</button>
+      <button class="opt" data-ans="err" onclick="check('mechira','q1',this,'err')">אסור רק אם החמץ שייך לבת מצווה ומעלה</button>
+    </div>
+    <div class="feedback" id="fb-mechira-q1"></div>
+    <button class="next-q-btn" id="nx-mechira-q1" onclick="nextQ('mechira','q1','q2')">לשאלה הבאה →</button>
+  </div>
+
+  <div id="q-mechira-q2" style="display:none">
+    <div class="q-label">שאלה 2</div>
+    <div class="quiz-q">מה קורה עם החמץ שנמכר - לאן הוא הולך ומה קורה אחרי פסח?</div>
+    <div class="options">
+      <button class="opt" data-ans="err" onclick="check('mechira','q2',this,'err')">הרב אוכל את החמץ</button>
+      <button class="opt" data-ans="err" onclick="check('mechira','q2',this,'err')">שולחים אותו למחסן מיוחד</button>
+      <button class="opt" data-ans="ok"  onclick="check('mechira','q2',this,'ok')">הרב מוכר לגוי, החמץ נשאר בבית אבל שייך לגוי, ואחרי פסח קונים בחזרה</button>
+      <button class="opt" data-ans="err" onclick="check('mechira','q2',this,'err')">זורקים לפח ומדברים על זה אחרי הפסח</button>
+    </div>
+    <div class="feedback" id="fb-mechira-q2"></div>
+    <button class="next-q-btn" id="nx-mechira-q2" onclick="finish('mechira',10)">✅ סיימתי!</button>
+  </div>
+</div>`,
+
+// -------- SHABBAT HAGADOL --------
+shabbat: ()=>`
+<div class="quiz-box">
+  <div class="pts-badge">⭐ עד 10 נקודות</div>
+  <div class="teach-card">
+    <h3>📖 שבת הגדול - למה "גדול"?</h3>
+    <p>השבת שלפני פסח נקראת <strong>"שבת הגדול"</strong>. נקראת כן לפי שנעשה בו נס גדול - <strong>"למכה מצרים בבכוריהם"</strong>. וקבעו נס זה לזיכרון לדורות בשבת שלפני פסח וקראוהו "שבת הגדול" מפני שהיתה בו <strong>התחלת הגאולה והניסים</strong>.</p>
+    <p style="margin-top:10px">📌 <strong>מנהג חב"ד:</strong> אחרי תפילת מנחה אומרים חלק מן ההגדה - מ<strong>"עבדים היינו"</strong> עד <strong>"לכפר על כל עונותינו"</strong>.</p>
+  </div>
+
+  <div id="q-shabbat-q1">
+    <div class="q-label">שאלה 1</div>
+    <div class="quiz-q">למה קוראים לה "שבת הגדול"?</div>
+    <div class="options">
+      <button class="opt" data-ans="err" onclick="check('shabbat','q1',this,'err')">כי הדרשה של הרב ארוכה במיוחד</button>
+      <button class="opt" data-ans="ok"  onclick="check('shabbat','q1',this,'ok')">כי נעשה בה נס גדול - "למכה מצרים בבכוריהם", והיא היתה התחלת הגאולה והניסים</button>
+      <button class="opt" data-ans="err" onclick="check('shabbat','q1',this,'err')">כי קוראים בה פרשה גדולה</button>
+      <button class="opt" data-ans="err" onclick="check('shabbat','q1',this,'err')">כי היא הראשונה בחודש ניסן</button>
+    </div>
+    <div class="feedback" id="fb-shabbat-q1"></div>
+    <button class="next-q-btn" id="nx-shabbat-q1" onclick="nextQ('shabbat','q1','q2')">לשאלה הבאה →</button>
+  </div>
+
+  <div id="q-shabbat-q2" style="display:none">
+    <div class="q-label">שאלה 2</div>
+    <div class="quiz-q">מה אומרים אחרי מנחה בשבת הגדול לפי מנהג חב"ד?</div>
+    <div class="options">
+      <button class="opt" data-ans="err" onclick="check('shabbat','q2',this,'err')">ספר יונה כולו</button>
+      <button class="opt" data-ans="err" onclick="check('shabbat','q2',this,'err')">כל ספר תהילים</button>
+      <button class="opt" data-ans="ok"  onclick="check('shabbat','q2',this,'ok')">חלק מההגדה - מ"עבדים היינו" עד "לכפר על כל עונותינו"</button>
+      <button class="opt" data-ans="err" onclick="check('shabbat','q2',this,'err')">אין שום מנהג מיוחד לאחר מנחה</button>
+    </div>
+    <div class="feedback" id="fb-shabbat-q2"></div>
+    <button class="next-q-btn" id="nx-shabbat-q2" onclick="finish('shabbat',10)">✅ סיימתי!</button>
+  </div>
+</div>`,
+
+// -------- SREFAH --------
+srefah: ()=>`
+<div class="quiz-box">
+  <div class="pts-badge">⭐ עד 15 נקודות</div>
+  <div class="teach-card">
+    <h3>📖 נוסח הביטול בשריפת חמץ</h3>
+    <p>בבוקר ערב פסח שורפים את החמץ. כאשר <strong>האש נאחזת</strong> בחמץ - לפני שנשרף לגמרי - אומרים ביטול שני, שהוא <strong>מקיף יותר</strong> מהראשון.</p>
+    <div class="highlight-box">את נוסח הביטול עדיף שיאמרו <strong>כולם - אנשים, נשים, ילדים וילדות</strong> - בזמן שריפת החמץ, גם אלו שאינם נמצאים ליד השריפה עצמה.</div>
+  </div>
+
+  <div class="nusach-box">
+    <div class="nusach-label">🔥 נוסח הביטול בשריפת חמץ:</div>
+    <div class="nusach-text">
+      כָּל חֲמִירָא וַחֲמִיעָא דְּאִיכָּא בִרְשׁוּתִי<br>
+      דַּחֲזִיתֵהּ <strong>וּדְלָא חֲזִיתֵהּ</strong><br>
+      דַּחֲמִיתֵהּ <strong>וּדְלָא חֲמִיתֵהּ</strong><br>
+      <span style="color:var(--gold)">דְּבִיעַרְתֵּהּ <strong>וּדְלָא בִיעַרְתֵּהּ</strong></span><br>
+      לִבְטֵל וְלֶהֱוֵי הֶפְקֵר כְּעַפְרָא דְאַרְעָא
+    </div>
+    <button class="show-trans-btn" onclick="showTrans(this,'tr-srefah')">👁️ ראי את התרגום</button>
+    <div class="trans-box" id="tr-srefah">
+      <strong>תרגום:</strong><br>
+      כל שאור וחמץ שיש ברשותי –<br>
+      שראיתיו <strong>ושלא ראיתיו</strong> (מעולם),<br>
+      שראיתיו <strong>ושלא ראיתיו</strong> (כעת),<br>
+      <span style="color:var(--blue)">שפניתיו <strong>ושלא פניתיו</strong></span> –<br>
+      יתבטל ויהיה הפקר כעפר הארץ.
+    </div>
+  </div>
+
+  <div id="q-srefah-q1" style="margin-top:14px">
+    <div class="q-label">שאלה 1</div>
+    <div class="quiz-q">מתי בדיוק אומרים את נוסח הביטול בשריפת חמץ?</div>
+    <div class="options">
+      <button class="opt" data-ans="err" onclick="check('srefah','q1',this,'err')">לפני שמדליקים את האש</button>
+      <button class="opt" data-ans="ok"  onclick="check('srefah','q1',this,'ok')">כשהאש כבר נאחזת בחמץ - לפני שנשרף לגמרי</button>
+      <button class="opt" data-ans="err" onclick="check('srefah','q1',this,'err')">אחרי שהחמץ נשרף לגמרי</button>
+      <button class="opt" data-ans="err" onclick="check('srefah','q1',this,'err')">כל הלילה לפני</button>
+    </div>
+    <div class="feedback" id="fb-srefah-q1"></div>
+    <button class="next-q-btn" id="nx-srefah-q1" onclick="nextQ('srefah','q1','q2')">לשאלה הבאה →</button>
+  </div>
+
+  <div id="q-srefah-q2" style="display:none">
+    <div class="q-label">שאלה 2</div>
+    <div class="quiz-q">מה מוסיף הביטול בשריפה על ביטול הלילה - מה שאין בו?</div>
+    <div class="options">
+      <button class="opt" data-ans="err" onclick="check('srefah','q2',this,'err')">שניהם זהים בדיוק</button>
+      <button class="opt" data-ans="ok"  onclick="check('srefah','q2',this,'ok')">ביטול השריפה כולל גם "דביערתיה" - את החמץ שכבר ביערנו, לא רק מה שלא ביערנו</button>
+      <button class="opt" data-ans="err" onclick="check('srefah','q2',this,'err')">ביטול הלילה יותר מקיף</button>
+      <button class="opt" data-ans="err" onclick="check('srefah','q2',this,'err')">ביטול השריפה קצר יותר</button>
+    </div>
+    <div class="feedback" id="fb-srefah-q2"></div>
+    <button class="next-q-btn" id="nx-srefah-q2" onclick="nextQ('srefah','q2','q3')">לשאלה הבאה →</button>
+  </div>
+
+  <div id="q-srefah-q3" style="display:none">
+    <div class="q-label">שאלה 3</div>
+    <div class="quiz-q">מי חייב לומר את נוסח הביטול בשריפת חמץ?</div>
+    <div class="options">
+      <button class="opt" data-ans="err" onclick="check('srefah','q3',this,'err')">רק מי שעומד ליד האש</button>
+      <button class="opt" data-ans="err" onclick="check('srefah','q3',this,'err')">רק האבא</button>
+      <button class="opt" data-ans="ok"  onclick="check('srefah','q3',this,'ok')">כולם - אנשים, נשים, ילדים וילדות - גם מי שאינם ליד השריפה</button>
+      <button class="opt" data-ans="err" onclick="check('srefah','q3',this,'err')">רק מי שמחזיק את החמץ</button>
+    </div>
+    <div class="feedback" id="fb-srefah-q3"></div>
+    <button class="next-q-btn" id="nx-srefah-q3" onclick="finish('srefah',15)">✅ סיימתי!</button>
+  </div>
+</div>`,
+
+// -------- MINCHA --------
+mincha: ()=>`
+<div class="quiz-box">
+  <div class="pts-badge">⭐ עד 10 נקודות</div>
+  <div class="teach-card">
+    <h3>📖 תפילת מנחה - סדר קרבן פסח</h3>
+    <p>בזמן שבית המקדש היה קיים, היו מקריבים <strong>קרבן פסח</strong> בארבעה עשר בניסן אחרי חצות. כיום, אחרי תפילת <strong>מנחה בערב פסח</strong> - אומרים <strong>"סדר קרבן פסח"</strong>.</p>
+    <div class="highlight-box">
+      "כל הקורא סדר קרבן פסח - תעלה קריאתו כאילו הקריב קרבן פסח!"<br>
+      ויתאבל על חורבן הבית ויתפלל לבנייתו במהרה.
+    </div>
+    <p>📌 <strong>כך נהגו:</strong> הרבי הרש"ב ורבי הריי"צ - שניהם נהגו לומר סדר קרבן פסח.</p>
+  </div>
+
+  <div id="q-mincha-q1">
+    <div class="q-label">שאלה 1</div>
+    <div class="quiz-q">מה אומרים אחרי תפילת מנחה בערב פסח?</div>
+    <div class="options">
+      <button class="opt" data-ans="err" onclick="check('mincha','q1',this,'err')">אמירת תהילים</button>
+      <button class="opt" data-ans="ok"  onclick="check('mincha','q1',this,'ok')">סדר קרבן פסח - לזכר הקרבן שנהגו להביא בבית המקדש</button>
+      <button class="opt" data-ans="err" onclick="check('mincha','q1',this,'err')">חלק מההגדה</button>
+      <button class="opt" data-ans="err" onclick="check('mincha','q1',this,'err')">אין שום דבר מיוחד</button>
+    </div>
+    <div class="feedback" id="fb-mincha-q1"></div>
+    <button class="next-q-btn" id="nx-mincha-q1" onclick="nextQ('mincha','q1','q2')">לשאלה הבאה →</button>
+  </div>
+
+  <div id="q-mincha-q2" style="display:none">
+    <div class="q-label">שאלה 2</div>
+    <div class="quiz-q">מה מיוחד באמירת סדר קרבן פסח - מה מבטיחים לנו עליה?</div>
+    <div class="options">
+      <button class="opt" data-ans="err" onclick="check('mincha','q2',this,'err')">זה רק מנהג ללא משמעות מיוחדת</button>
+      <button class="opt" data-ans="err" onclick="check('mincha','q2',this,'err')">מקבלים מתנה מיוחדת</button>
+      <button class="opt" data-ans="ok"  onclick="check('mincha','q2',this,'ok')">קריאתו עולה "כאילו הקריב קרבן פסח ממש", ויתפלל לבניין הבית</button>
+      <button class="opt" data-ans="err" onclick="check('mincha','q2',this,'err')">מי שאומר זוכה לאכול מצה כפולה</button>
+    </div>
+    <div class="feedback" id="fb-mincha-q2"></div>
+    <button class="next-q-btn" id="nx-mincha-q2" onclick="finish('mincha',10)">✅ סיימתי!</button>
+  </div>
+</div>`,
+
+// -------- NER --------
+ner: ()=>`
+<div class="quiz-box">
+  <div class="pts-badge">⭐ עד 10 נקודות</div>
+  <div class="teach-card">
+    <h3>📖 הדלקת נרות יום טוב</h3>
+    <p>כל אשה ובת מדליקה נרות ליום טוב ומברכת. הנוסח שונה מעט משבת!</p>
+  </div>
+
+  <div class="nusach-box">
+    <div class="nusach-label">🕯️ הנוסח:</div>
+    <div class="nusach-text">
+      בָּרוּךְ אַתָּה ה' אֱלֹקֵינוּ מֶלֶךְ הָעוֹלָם<br>
+      אֲשֶׁר קִדְּשָׁנוּ בְּמִצְוֹתָיו וְצִוָּנוּ<br>
+      <strong style="color:var(--gold); font-size:1.2em">לְהַדְלִיק נֵר שֶׁל יוֹם טוֹב</strong>
+    </div>
+    <div style="margin-top:8px; color:var(--text3); font-size:0.9rem">
+      לאחר מכן מברכים גם <strong style="color:var(--gold)">שהחיינו</strong>
+    </div>
+  </div>
+
+  <div class="teach-card" style="margin-top:12px">
+    <p>📌 ילדות מגיל <strong>שלוש</strong> (גיל חינוך) - מדליקות ומברכות!<br>
+    📌 ביום טוב שחל בשבת - אומרים: "להדליק נר של שבת ויום טוב".</p>
+  </div>
+
+  <div id="q-ner-q1">
+    <div class="q-label">שאלה 1</div>
+    <div class="quiz-q">מה הנוסח המדויק של ברכת הדלקת הנר בפסח?</div>
+    <div class="options">
+      <button class="opt" data-ans="err" onclick="check('ner','q1',this,'err')">"להדליק נר של שבת"</button>
+      <button class="opt" data-ans="ok"  onclick="check('ner','q1',this,'ok')">"להדליק נר של יום טוב"</button>
+      <button class="opt" data-ans="err" onclick="check('ner','q1',this,'err')">"להדליק נר של שבת ויום טוב"</button>
+      <button class="opt" data-ans="err" onclick="check('ner','q1',this,'err')">"להדליק נר של פסח"</button>
+    </div>
+    <div class="feedback" id="fb-ner-q1"></div>
+    <button class="next-q-btn" id="nx-ner-q1" onclick="nextQ('ner','q1','q2')">לשאלה הבאה →</button>
+  </div>
+
+  <div id="q-ner-q2" style="display:none">
+    <div class="q-label">שאלה 2</div>
+    <div class="quiz-q">מאיזה גיל ילדות מדליקות ומברכות?</div>
+    <div class="options">
+      <button class="opt" data-ans="err" onclick="check('ner','q2',this,'err')">רק מגיל בת מצווה</button>
+      <button class="opt" data-ans="err" onclick="check('ner','q2',this,'err')">מגיל שש</button>
+      <button class="opt" data-ans="ok"  onclick="check('ner','q2',this,'ok')">מגיל שלוש - גיל חינוך</button>
+      <button class="opt" data-ans="err" onclick="check('ner','q2',this,'err')">רק אמהות, ילדות לא</button>
+    </div>
+    <div class="feedback" id="fb-ner-q2"></div>
+    <button class="next-q-btn" id="nx-ner-q2" onclick="finish('ner',10)">✅ סיימתי!</button>
+  </div>
+</div>`,
+
+// -------- KEARA --------
+keara: ()=>`
+<div class="quiz-box">
+  <div class="pts-badge">⭐ עד 10 נקודות</div>
+  <div class="teach-card">
+    <h3>📖 קערת הסדר - לחצי ותגלי!</h3>
+    <p>בקערת הסדר מניחים <strong>שישה מינים</strong>. לכל אחד טעם משלו. שימי לב - יש <strong>שני מינים של מרור</strong>! לחצי על כל מאכל בקערה!</p>
+  </div>
+  <div class="plate-outer">
+    <div class="plate-hint">👆 לחצי על כל מאכל לגלות עליו</div>
+    <div class="plate-svg-wrap" id="plate-wrap">
+      <div class="plate-circle"><div class="plate-center">קערת<br>הסדר</div></div>
+    </div>
+  </div>
+  <div id="q-keara-q1" style="margin-top:18px">
+    <div class="q-label">שאלה</div>
+    <div class="quiz-q">למה יש בקערה <strong>שתי מנות מרור</strong> אם הן אותו הדבר בדיוק?</div>
+    <div class="options">
+      <button class="opt" data-ans="err" onclick="check('keara','q1',this,'err')">סתם מנהג - אפשר להסתפק באחד</button>
+      <button class="opt" data-ans="err" onclick="check('keara','q1',this,'err')">אחד גדול ואחד קטן</button>
+      <button class="opt" data-ans="ok"  onclick="check('keara','q1',this,'ok')">כי המרור משמש לשתי מצוות נפרדות - אחד לאכילת מרור, ואחד לכורך</button>
+      <button class="opt" data-ans="err" onclick="check('keara','q1',this,'err')">כדי שיהיה מספיק לכולם בשולחן</button>
+    </div>
+    <div class="feedback" id="fb-keara-q1"></div>
+    <button class="next-q-btn" id="nx-keara-q1" onclick="finish('keara',10)">✅ סיימתי!</button>
+  </div>
+</div>`,
+
+// -------- SIMANIM --------
+simanim: ()=>`
+<div>
+  <div class="quiz-box" style="margin-bottom:14px">
+    <div class="pts-badge">⭐ עד 15 נקודות</div>
+    <div class="teach-card">
+      <h3>📖 למה נקרא "ליל הסדר"?</h3>
+      <p>בליל הסדר מקיימים מצוות רבות ומגוונות - קידוש, הגדה, מצה, מרור, ועוד ועוד! כדי לא לשכוח כלום ולעשות הכל בסדר הנכון, קבעו לנו <strong>סדר מדוקדק</strong>.<br>
+      לכן נקרא הלילה <strong>"ליל הסדר"</strong> - הלילה של הסדר.</p>
+      <p style="margin-top:8px">ויש לנו <strong>סימנים</strong> - שמות קצרים לכל שלב:</p>
+      <div class="highlight-box">קדש ורחץ כרפס יחץ מגיד רחצה מוציא מצה מרור כורך שולחן עורך צפון ברך הלל נרצה</div>
+    </div>
+
+    <div id="q-simanim-q1">
+      <div class="q-label">שאלה</div>
+      <div class="quiz-q">למה קוראים ללילה הזה "ליל הסדר"?</div>
+      <div class="options">
+        <button class="opt" data-ans="err" onclick="check('simanim','q1',this,'err')">כי אוכלים לפי סדר האותיות</button>
+        <button class="opt" data-ans="ok"  onclick="check('simanim','q1',this,'ok')">כי יש סדר מדוקדק לביצוע המצוות הרבות של הלילה</button>
+        <button class="opt" data-ans="err" onclick="check('simanim','q1',this,'err')">כי הבית מסודר לכבוד החג</button>
+        <button class="opt" data-ans="err" onclick="check('simanim','q1',this,'err')">כי "סדר" הוא שם של אחד הנשיאים</button>
+      </div>
+      <div class="feedback" id="fb-simanim-q1"></div>
+      <button class="next-q-btn" id="nx-simanim-q1" onclick="showOrderGame()">למשחק הסדר! →</button>
+    </div>
+  </div>
+
+  <div id="sim-order-section" style="display:none">
+    <div class="quiz-box">
+      <div class="quiz-q" style="font-size:1.1rem">🎯 סדרי את הסימנים בסדר הנכון!</div>
+      <p style="color:var(--text3);font-size:0.88rem;margin-bottom:10px;text-align:center">לחצי על הסימנים לפי הסדר - מהראשון לאחרון</p>
+      <div class="order-pool" id="sim-pool"></div>
+      <div style="color:var(--text3);font-size:0.82rem;margin-bottom:6px;text-align:center">הסדר שלך:</div>
+      <div class="order-drop" id="sim-drop"></div>
+      <button class="check-btn" onclick="checkOrder()">✔ בדקי</button>
+      <div class="order-feedback" id="order-fb"></div>
+      <button class="next-q-btn" id="order-next" onclick="finish('simanim',15)" style="display:none;margin:10px auto">✅ סיימתי!</button>
+    </div>
+    <div class="quiz-box" style="margin-top:12px">
+      <div style="font-family:'Frank Ruhl Libre',serif;font-size:1.1rem;font-weight:700;color:var(--gold);margin-bottom:10px">📋 סקירה: כל הסימנים</div>
+      <div id="siman-review"></div>
+    </div>
+  </div>
+</div>`
+};
+
+// ===== PLATE =====
+const FOODS = [
+  { emoji:'🥚', name:'ביצה',   pct:{x:30, y:28},
+    desc:'ביצה מבושלת קשה - זכר לקרבן חגיגה. מניחים אותה על הקערה כשהיא בקליפתה.' },
+  { emoji:'🍖', name:'זרוע',   pct:{x:70, y:28},
+    desc:'חלק מצוואר עוף צלוי על האש - זכר לקרבן פסח. מדקדקים שלא לאכול אותה - גם למחרת היום!' },
+  { emoji:'🥬', name:'מרור',   pct:{x:50, y:50},
+    desc:'חסה ותמכא (חריין) - שניהם למרור. זכר למרירות חיי אבותינו במצרים.' },
+  { emoji:'🧅', name:'כרפס',   pct:{x:22, y:65},
+    desc:'בצל חי (או תפוח אדמה מבושל) - טובלים במי מלח. כרפס הוא נוטריקון: ס\' פרך - לזכר ששים ריבוא שעבדו עבודת פרך.' },
+  { emoji:'🟤', name:'חרוסת',  pct:{x:78, y:65},
+    desc:'עיסה מתפוחים ואגסים מרוסקים ואגוזים טחונים - זכר לטיט. צריכה להיות עבה! אין מוסיפים יין עכשיו - רק לפני שטובלים בה את המרור מרככים ביין.' },
+  { emoji:'🥬', name:'מרור',   pct:{x:50, y:80},
+    desc:'חסה ותמכא (חריין) - גם הם מרור! מיוחד לכורך. כורכים מצה ומרור יחד - "כן עשה הלל".' },
+];
+
+function buildPlate(){
+  const wrap = document.getElementById('plate-wrap');
+  if(!wrap || wrap.dataset.built) return;
+  wrap.dataset.built='1';
+  const SIZE = wrap.offsetWidth || 300;
+  FOODS.forEach(f=>{
+    const el=document.createElement('div');
+    el.className='food-pin';
+    el.style.left=f.pct.x+'%';
+    el.style.top=f.pct.y+'%';
+    el.innerHTML=`<div class="pin-emoji">${f.emoji}</div><div class="pin-label">${f.name}</div>`;
+    el.onclick=()=>openPopup(f);
+    wrap.appendChild(el);
+  });
+}
+
+function openPopup(f){
+  document.getElementById('p-emoji').textContent=f.emoji;
+  document.getElementById('p-name').textContent=f.name;
+  document.getElementById('p-desc').textContent=f.desc;
+  document.getElementById('food-popup').style.display='flex';
+}
+function closePopup(e){
+  if(!e||e.target===document.getElementById('food-popup')||e.target.closest('.popup-close'))
+    document.getElementById('food-popup').style.display='none';
+}
+
+// ===== SEDER ORDER =====
+const CORRECT_ORDER=['קדש','ורחץ','כרפס','יחץ','מגיד','רחצה','מוציא','מצה','מרור','כורך','שולחן עורך','צפון','ברך','הלל','נרצה'];
+const DESCRIPTIONS={
+  'קדש':'קידוש על היין - כוס ראשונה',
+  'ורחץ':'נטילת ידיים ללא ברכה',
+  'כרפס':'אכילת ירק טבול במי מלח',
+  'יחץ':'פריסת המצה האמצעית - הגדולה לאפיקומן',
+  'מגיד':'סיפור יציאת מצרים - כוס שנייה',
+  'רחצה':'נטילת ידיים לסעודה עם ברכה',
+  'מוציא':'ברכת "המוציא" על המצה',
+  'מצה':'ברכת "על אכילת מצה" ואכילתה',
+  'מרור':'ברכה על אכילת מרור',
+  'כורך':'מצה ומרור ביחד - "כן עשה הלל"',
+  'שולחן עורך':'סעודת החג',
+  'צפון':'אכילת האפיקומן - לפני חצות',
+  'ברך':'ברכת המזון - כוס שלישית',
+  'הלל':'פרקי ההלל - כוס רביעית',
+  'נרצה':'סיום הסדר - "לשנה הבאה בירושלים"',
+};
+
+let chosen=[];
+
+function showOrderGame(){
+  document.getElementById('sim-order-section').style.display='block';
+  chosen=[];
+  const pool=document.getElementById('sim-pool');
+  const drop=document.getElementById('sim-drop');
+  pool.innerHTML=''; drop.innerHTML='';
+  // shuffle
+  [...CORRECT_ORDER].sort(()=>Math.random()-0.5).forEach(s=>{
+    const b=document.createElement('button');
+    b.className='siman-chip'; b.textContent=s;
+    b.onclick=()=>pickSiman(s,b);
+    pool.appendChild(b);
+  });
+  // build review
+  const rev=document.getElementById('siman-review');
+  rev.innerHTML=CORRECT_ORDER.map((s,i)=>`
+    <div class="review-item">
+      <div class="review-num">${i+1}</div>
+      <div><div class="review-name">${s}</div><div class="review-desc">${DESCRIPTIONS[s]}</div></div>
+    </div>`).join('');
+  document.getElementById('sim-order-section').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function pickSiman(name,btn){
+  if(chosen.includes(name)) return;
+  chosen.push(name);
+  btn.disabled=true; btn.classList.add('placed');
+  const drop=document.getElementById('sim-drop');
+  const span=document.createElement('span');
+  span.className='siman-chip placed';
+  span.textContent=chosen.length+'. '+name;
+  drop.appendChild(span);
+}
+
+function checkOrder(){
+  const fb=document.getElementById('order-fb');
+  if(chosen.length<CORRECT_ORDER.length){
+    fb.className='order-feedback show err';
+    fb.textContent='⚠️ לא בחרת את כל הסימנים עדיין!'; return;
+  }
+  const ok=chosen.every((s,i)=>s===CORRECT_ORDER[i]);
+  if(ok){
+    fb.className='order-feedback show ok';
+    fb.innerHTML='🎉 מושלם! הסדר נכון לחלוטין!';
+    document.getElementById('order-next').style.display='block';
+    if(!done.has('simanim')) score+=5;
+  } else {
+    fb.className='order-feedback show err';
+    fb.innerHTML='❌ לא לגמרי... נסי שוב! הסתכלי בסקירה למטה 👇';
+    chosen=[];
+    document.getElementById('sim-drop').innerHTML='';
+    document.querySelectorAll('#sim-pool .siman-chip').forEach(c=>{c.disabled=false;c.classList.remove('placed');});
+  }
+}
+
+// ===== INIT =====
+showMenu();
+const obs=new MutationObserver(()=>{
+  if(document.getElementById('plate-wrap')&&!document.getElementById('plate-wrap').dataset.built)
+    buildPlate();
+});
+obs.observe(document.getElementById('act-content'),{childList:true,subtree:true});
+</script>
+</body>
+</html>
