@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>כלי קריאה מתקנת — AI למורה</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;900&family=Frank+Ruhl+Libre:wght@400;700;900&display=swap');
+
+  :root {
+    --ink: #1a1a2e;
+    --deep: #16213e;
+    --mid: #0f3460;
+    --gold: #e2b04a;
+    --gold-light: #f5d07a;
+    --teal: #53c8b8;
+    --teal-light: #a8e6de;
+    --rose: #e8677a;
+    --cream: #faf8f3;
+    --parchment: #f0ead8;
+    --border: rgba(226,176,74,0.25);
+    --glass: rgba(255,255,255,0.06);
+    --shadow: 0 8px 32px rgba(0,0,0,0.35);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Heebo', sans-serif;
+    background: var(--ink);
+    color: var(--cream);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Decorative background */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background:
+      radial-gradient(ellipse 60% 40% at 80% 20%, rgba(83,200,184,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 60% at 10% 80%, rgba(226,176,74,0.07) 0%, transparent 60%),
+      repeating-linear-gradient(45deg, transparent, transparent 60px, rgba(255,255,255,0.012) 60px, rgba(255,255,255,0.012) 61px);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrapper { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding: 0 20px 60px; }
+
+  /* ── HEADER ── */
+  header {
+    padding: 40px 0 30px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 36px;
+  }
+  .logo-row {
+    display: flex; align-items: center; justify-content: center; gap: 14px;
+    margin-bottom: 8px;
+  }
+  .logo-icon {
+    width: 52px; height: 52px; border-radius: 14px;
+    background: linear-gradient(135deg, var(--gold) 0%, var(--teal) 100%);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px; box-shadow: 0 4px 18px rgba(83,200,184,0.35);
+  }
+  h1 {
+    font-family: 'Frank Ruhl Libre', serif;
+    font-size: clamp(1.7rem, 4vw, 2.4rem);
+    font-weight: 900;
+    background: linear-gradient(120deg, var(--gold-light), var(--teal-light));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .subtitle {
+    font-size: 0.95rem; color: rgba(250,248,243,0.55);
+    letter-spacing: 0.04em; margin-top: 4px;
+  }
+
+  /* ── TABS ── */
+  .tabs {
+    display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 28px;
+  }
+  .tab-btn {
+    padding: 9px 18px; border-radius: 40px; border: 1px solid var(--border);
+    background: var(--glass); color: rgba(250,248,243,0.65);
+    font-family: 'Heebo', sans-serif; font-size: 0.88rem; font-weight: 500;
+    cursor: pointer; transition: all 0.22s; backdrop-filter: blur(6px);
+    display: flex; align-items: center; gap: 7px;
+  }
+  .tab-btn:hover { border-color: var(--teal); color: var(--teal-light); }
+  .tab-btn.active {
+    background: linear-gradient(120deg, rgba(83,200,184,0.18), rgba(226,176,74,0.12));
+    border-color: var(--teal); color: var(--cream);
+    box-shadow: 0 0 16px rgba(83,200,184,0.2);
+  }
+  .tab-emoji { font-size: 1rem; }
+
+  /* ── CARD ── */
+  .card {
+    background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+    border-radius: 20px; padding: 28px;
+    backdrop-filter: blur(10px); box-shadow: var(--shadow);
+    margin-bottom: 20px;
+  }
+  .card-title {
+    font-size: 1.05rem; font-weight: 700; color: var(--gold-light);
+    margin-bottom: 16px; display: flex; align-items: center; gap: 9px;
+  }
+
+  /* ── INPUT AREA ── */
+  .input-section { margin-bottom: 20px; }
+  label { font-size: 0.88rem; color: rgba(250,248,243,0.6); display: block; margin-bottom: 8px; }
+
+  textarea {
+    width: 100%; min-height: 130px; border-radius: 14px;
+    border: 1px solid var(--border); background: rgba(255,255,255,0.05);
+    color: var(--cream); font-family: 'Heebo', sans-serif; font-size: 1rem;
+    line-height: 1.7; padding: 16px; resize: vertical;
+    transition: border-color 0.2s; outline: none;
+    direction: rtl;
+  }
+  textarea:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(83,200,184,0.15); }
+  textarea::placeholder { color: rgba(250,248,243,0.3); }
+
+  /* ── FILE / IMAGE UPLOAD ── */
+  .upload-row {
+    display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px;
+  }
+  .upload-btn {
+    padding: 9px 18px; border-radius: 12px; border: 1px dashed var(--border);
+    background: rgba(255,255,255,0.03); color: rgba(250,248,243,0.6);
+    font-family: 'Heebo', sans-serif; font-size: 0.88rem;
+    cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px;
+  }
+  .upload-btn:hover { border-color: var(--gold); color: var(--gold-light); background: rgba(226,176,74,0.07); }
+  input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+
+  .file-preview {
+    margin-top: 12px; padding: 12px 16px; border-radius: 12px;
+    background: rgba(83,200,184,0.08); border: 1px solid rgba(83,200,184,0.2);
+    font-size: 0.88rem; color: var(--teal-light); display: none;
+  }
+  .img-preview { max-width: 100%; max-height: 200px; border-radius: 10px; margin-top: 10px; display: none; }
+
+  /* ── SETTINGS ROW ── */
+  .settings-row {
+    display: flex; gap: 12px; flex-wrap: wrap; margin: 16px 0;
+    align-items: flex-end;
+  }
+  .select-group { display: flex; flex-direction: column; gap: 6px; flex: 1; min-width: 140px; }
+  select {
+    padding: 9px 14px; border-radius: 10px; border: 1px solid var(--border);
+    background: rgba(255,255,255,0.06); color: var(--cream);
+    font-family: 'Heebo', sans-serif; font-size: 0.88rem; outline: none;
+    cursor: pointer;
+  }
+  select:focus { border-color: var(--teal); }
+
+  /* ── MAIN BUTTON ── */
+  .btn-main {
+    width: 100%; padding: 15px; border-radius: 14px; border: none;
+    background: linear-gradient(120deg, var(--teal) 0%, #3ab5a6 50%, var(--gold) 100%);
+    color: var(--ink); font-family: 'Heebo', sans-serif; font-size: 1.05rem;
+    font-weight: 700; cursor: pointer; transition: all 0.22s;
+    box-shadow: 0 4px 20px rgba(83,200,184,0.3);
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+  }
+  .btn-main:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(83,200,184,0.4); }
+  .btn-main:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+  /* ── LOADING ── */
+  .loading {
+    display: none; text-align: center; padding: 28px;
+    color: rgba(250,248,243,0.5); font-size: 0.95rem;
+  }
+  .spinner {
+    width: 38px; height: 38px; border-radius: 50%; margin: 0 auto 14px;
+    border: 3px solid rgba(83,200,184,0.2);
+    border-top-color: var(--teal);
+    animation: spin 0.9s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── RESULT ── */
+  .result-box {
+    display: none; margin-top: 20px;
+  }
+  .result-content {
+    background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+    border-radius: 16px; padding: 24px;
+    font-size: 1rem; line-height: 1.8; color: var(--cream);
+    direction: rtl; white-space: pre-wrap;
+  }
+
+  /* ── SECTION BLOCKS inside result ── */
+  .res-section {
+    margin-bottom: 22px; padding-bottom: 22px;
+    border-bottom: 1px solid rgba(226,176,74,0.12);
+  }
+  .res-section:last-child { border-bottom: none; margin-bottom: 0; }
+  .res-section-title {
+    font-size: 1rem; font-weight: 700; margin-bottom: 12px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .res-section-title.gold { color: var(--gold-light); }
+  .res-section-title.teal { color: var(--teal-light); }
+  .res-section-title.rose { color: #f5a8b2; }
+
+  .word-card {
+    display: inline-block; margin: 4px 4px 4px 0;
+    padding: 6px 14px; border-radius: 20px;
+    background: rgba(83,200,184,0.1); border: 1px solid rgba(83,200,184,0.25);
+    font-size: 0.9rem; color: var(--teal-light);
+  }
+  .morpheme-tag {
+    display: inline-block; margin: 3px;
+    padding: 4px 10px; border-radius: 8px;
+    background: rgba(226,176,74,0.12); border: 1px solid rgba(226,176,74,0.25);
+    font-size: 0.82rem; color: var(--gold-light);
+  }
+
+  /* ── ACTION BUTTONS ── */
+  .action-row {
+    display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px;
+  }
+  .btn-sec {
+    padding: 8px 18px; border-radius: 10px;
+    border: 1px solid var(--border); background: var(--glass);
+    color: rgba(250,248,243,0.7); font-family: 'Heebo', sans-serif; font-size: 0.85rem;
+    cursor: pointer; transition: all 0.18s; display: flex; align-items: center; gap: 6px;
+  }
+  .btn-sec:hover { border-color: var(--gold); color: var(--gold-light); background: rgba(226,176,74,0.07); }
+
+  /* ── TAB PANELS ── */
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* ── FLUENCY specific ── */
+  .fluency-sentence {
+    padding: 14px 18px; border-radius: 12px; margin-bottom: 10px;
+    background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+    font-size: 1.1rem; font-family: 'Frank Ruhl Libre', serif;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  }
+  .tick-btn {
+    width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--border);
+    background: transparent; cursor: pointer; font-size: 1rem;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    transition: all 0.18s;
+  }
+  .tick-btn.done { background: rgba(83,200,184,0.2); border-color: var(--teal); }
+  .tick-btn:hover { border-color: var(--teal); }
+
+  /* ── COPY indicator ── */
+  .copied-toast {
+    position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+    padding: 10px 24px; border-radius: 30px;
+    background: var(--teal); color: var(--ink); font-weight: 700;
+    font-size: 0.9rem; opacity: 0; transition: opacity 0.3s; pointer-events: none;
+    z-index: 99;
+  }
+  .copied-toast.show { opacity: 1; }
+
+  /* Responsive */
+  @media(max-width:520px) {
+    .card { padding: 18px; }
+    .settings-row { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <header>
+    <div class="logo-row">
+      <div class="logo-icon">📖</div>
+      <h1>כלי קריאה מתקנת</h1>
+    </div>
+    <p class="subtitle">עוזר AI למורה • קריאה מדויקת • שטף • אוצר מילים • מורפולוגיה</p>
+  </header>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('vocab')">
+      <span class="tab-emoji">🔤</span> אוצר מילים ומורפולוגיה
+    </button>
+    <button class="tab-btn" onclick="switchTab('comprehension')">
+      <span class="tab-emoji">💬</span> שאלות הבנה
+    </button>
+    <button class="tab-btn" onclick="switchTab('accuracy')">
+      <span class="tab-emoji">🎯</span> תיקון קריאה
+    </button>
+    <button class="tab-btn" onclick="switchTab('fluency')">
+      <span class="tab-emoji">⚡</span> תרגול שטף
+    </button>
+  </div>
+
+  <!-- ═══════════════════════════════ -->
+  <!-- PANEL: VOCAB -->
+  <!-- ═══════════════════════════════ -->
+  <div id="panel-vocab" class="panel active">
+    <div class="card">
+      <div class="card-title">🔤 אוצר מילים וניתוח מורפולוגי</div>
+
+      <div class="input-section">
+        <label>הדבק טקסט לניתוח — או העלה קובץ / תמונה:</label>
+        <textarea id="vocab-text" placeholder="הדבק כאן טקסט לניתוח אוצר מילים ומורפולוגיה...&#10;הכלי יזהה מילים מאתגרות, ינתח שורשים, משקלים, תחיליות וסיומות."></textarea>
+
+        <div class="upload-row">
+          <button class="upload-btn" onclick="document.getElementById('vocab-img-input').click()">🖼️ העלה תמונה</button>
+          <input type="file" id="vocab-img-input" accept="image/*" onchange="handleImage(this,'vocab')">
+          <button class="upload-btn" onclick="document.getElementById('vocab-file-input').click()">📄 העלה קובץ</button>
+          <input type="file" id="vocab-file-input" accept=".txt,.pdf,.doc,.docx" onchange="handleFile(this,'vocab')">
+        </div>
+        <div class="file-preview" id="vocab-file-preview"></div>
+        <img class="img-preview" id="vocab-img-preview" alt="">
+      </div>
+
+      <div class="settings-row">
+        <div class="select-group">
+          <label>רמת כיתה</label>
+          <select id="vocab-level">
+            <option value="ז">כיתה ז׳</option>
+            <option value="ח" selected>כיתה ח׳</option>
+          </select>
+        </div>
+        <div class="select-group">
+          <label>עומק ניתוח</label>
+          <select id="vocab-depth">
+            <option value="בסיסי">בסיסי — מילים קשות בלבד</option>
+            <option value="מעמיק" selected>מעמיק — שורש + משקל + הקשר</option>
+            <option value="מלא">מלא — מורפולוגיה מפורטת</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="btn-main" id="vocab-btn" onclick="runVocab()">
+        🔍 נתח אוצר מילים ומורפולוגיה
+      </button>
+    </div>
+
+    <div class="loading" id="vocab-loading">
+      <div class="spinner"></div>
+      מנתח את הטקסט...
+    </div>
+
+    <div class="result-box" id="vocab-result">
+      <div class="card">
+        <div class="card-title">📋 תוצאות הניתוח</div>
+        <div class="result-content" id="vocab-result-content"></div>
+        <div class="action-row">
+          <button class="btn-sec" onclick="copyResult('vocab-result-content')">📋 העתק</button>
+          <button class="btn-sec" onclick="printResult('vocab-result-content')">🖨️ הדפס</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════ -->
+  <!-- PANEL: COMPREHENSION -->
+  <!-- ═══════════════════════════════ -->
+  <div id="panel-comprehension" class="panel">
+    <div class="card">
+      <div class="card-title">💬 שאלות הבנת הנקרא</div>
+
+      <div class="input-section">
+        <label>הדבק טקסט — הכלי יייצר שאלות הבנה מותאמות:</label>
+        <textarea id="comp-text" placeholder="הדבק כאן את הטקסט לקריאה...&#10;הכלי ייצור שאלות ברמות שונות: פשוטות, מסיקות וביקורתיות."></textarea>
+
+        <div class="upload-row">
+          <button class="upload-btn" onclick="document.getElementById('comp-img-input').click()">🖼️ העלה תמונה</button>
+          <input type="file" id="comp-img-input" accept="image/*" onchange="handleImage(this,'comp')">
+          <button class="upload-btn" onclick="document.getElementById('comp-file-input').click()">📄 העלה קובץ</button>
+          <input type="file" id="comp-file-input" accept=".txt,.pdf,.doc,.docx" onchange="handleFile(this,'comp')">
+        </div>
+        <div class="file-preview" id="comp-file-preview"></div>
+        <img class="img-preview" id="comp-img-preview" alt="">
+      </div>
+
+      <div class="settings-row">
+        <div class="select-group">
+          <label>כמות שאלות</label>
+          <select id="comp-count">
+            <option value="5">5 שאלות</option>
+            <option value="8" selected>8 שאלות</option>
+            <option value="12">12 שאלות</option>
+          </select>
+        </div>
+        <div class="select-group">
+          <label>רמות שאלות</label>
+          <select id="comp-type">
+            <option value="מעורב" selected>מעורב — כל הרמות</option>
+            <option value="פשוטות">פשוטות — מידע ישיר</option>
+            <option value="הסקה">הסקה ופרשנות</option>
+            <option value="ביקורתי">ביקורתי ויצירתי</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="btn-main" id="comp-btn" onclick="runComp()">
+        💬 צור שאלות הבנה
+      </button>
+    </div>
+
+    <div class="loading" id="comp-loading">
+      <div class="spinner"></div>
+      בונה שאלות הבנה...
+    </div>
+
+    <div class="result-box" id="comp-result">
+      <div class="card">
+        <div class="card-title">📋 שאלות הבנה</div>
+        <div class="result-content" id="comp-result-content"></div>
+        <div class="action-row">
+          <button class="btn-sec" onclick="copyResult('comp-result-content')">📋 העתק</button>
+          <button class="btn-sec" onclick="printResult('comp-result-content')">🖨️ הדפס</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════ -->
+  <!-- PANEL: ACCURACY -->
+  <!-- ═══════════════════════════════ -->
+  <div id="panel-accuracy" class="panel">
+    <div class="card">
+      <div class="card-title">🎯 תיקון קריאה ומילים מאתגרות</div>
+
+      <div class="input-section">
+        <label>הדבק טקסט — הכלי יסמן נקודות מאתגרות לקריאה מדויקת:</label>
+        <textarea id="acc-text" placeholder="הדבק טקסט לניתוח קריאה מדויקת...&#10;הכלי יזהה: ניקוד חסר, מילים דומות, צורות דקדוקיות מבלבלות, וייתן הנחיות קריאה."></textarea>
+
+        <div class="upload-row">
+          <button class="upload-btn" onclick="document.getElementById('acc-img-input').click()">🖼️ העלה תמונה</button>
+          <input type="file" id="acc-img-input" accept="image/*" onchange="handleImage(this,'acc')">
+          <button class="upload-btn" onclick="document.getElementById('acc-file-input').click()">📄 העלה קובץ</button>
+          <input type="file" id="acc-file-input" accept=".txt,.pdf,.doc,.docx" onchange="handleFile(this,'acc')">
+        </div>
+        <div class="file-preview" id="acc-file-preview"></div>
+        <img class="img-preview" id="acc-img-preview" alt="">
+      </div>
+
+      <div class="settings-row">
+        <div class="select-group">
+          <label>סוג קושי עיקרי</label>
+          <select id="acc-focus">
+            <option value="כללי" selected>כללי — הכל</option>
+            <option value="ניקוד">ניקוד ואותיות קריאה</option>
+            <option value="תחיליות וסיומות">תחיליות וסיומות</option>
+            <option value="מילים דומות">מילים דומות ומבלבלות</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="btn-main" id="acc-btn" onclick="runAccuracy()">
+        🎯 נתח נקודות מאתגרות
+      </button>
+    </div>
+
+    <div class="loading" id="acc-loading">
+      <div class="spinner"></div>
+      מנתח נקודות קריאה...
+    </div>
+
+    <div class="result-box" id="acc-result">
+      <div class="card">
+        <div class="card-title">📋 ניתוח קריאה מדויקת</div>
+        <div class="result-content" id="acc-result-content"></div>
+        <div class="action-row">
+          <button class="btn-sec" onclick="copyResult('acc-result-content')">📋 העתק</button>
+          <button class="btn-sec" onclick="printResult('acc-result-content')">🖨️ הדפס</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════ -->
+  <!-- PANEL: FLUENCY -->
+  <!-- ═══════════════════════════════ -->
+  <div id="panel-fluency" class="panel">
+    <div class="card">
+      <div class="card-title">⚡ תרגול שטף קריאה</div>
+
+      <div class="input-section">
+        <label>הדבק טקסט — הכלי יחלץ משפטים לתרגול שטף חוזר:</label>
+        <textarea id="flu-text" placeholder="הדבק טקסט לתרגול שטף...&#10;הכלי יייצר משפטים קצרים, בינוניים וארוכים לקריאה חוזרת."></textarea>
+
+        <div class="upload-row">
+          <button class="upload-btn" onclick="document.getElementById('flu-img-input').click()">🖼️ העלה תמונה</button>
+          <input type="file" id="flu-img-input" accept="image/*" onchange="handleImage(this,'flu')">
+          <button class="upload-btn" onclick="document.getElementById('flu-file-input').click()">📄 העלה קובץ</button>
+          <input type="file" id="flu-file-input" accept=".txt,.pdf,.doc,.docx" onchange="handleFile(this,'flu')">
+        </div>
+        <div class="file-preview" id="flu-file-preview"></div>
+        <img class="img-preview" id="flu-img-preview" alt="">
+      </div>
+
+      <div class="settings-row">
+        <div class="select-group">
+          <label>אורך משפטים</label>
+          <select id="flu-len">
+            <option value="קצרים">קצרים בלבד</option>
+            <option value="מעורב" selected>מעורב</option>
+            <option value="ארוכים">ארוכים וסבוכים</option>
+          </select>
+        </div>
+        <div class="select-group">
+          <label>כמות משפטים</label>
+          <select id="flu-count">
+            <option value="6">6 משפטים</option>
+            <option value="10" selected>10 משפטים</option>
+            <option value="15">15 משפטים</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="btn-main" id="flu-btn" onclick="runFluency()">
+        ⚡ צור משפטי שטף
+      </button>
+    </div>
+
+    <div class="loading" id="flu-loading">
+      <div class="spinner"></div>
+      מכין משפטי שטף...
+    </div>
+
+    <div class="result-box" id="flu-result">
+      <div class="card">
+        <div class="card-title">📋 משפטים לתרגול שטף</div>
+        <div id="flu-sentences-container"></div>
+        <div class="action-row">
+          <button class="btn-sec" onclick="copyResult('flu-sentences-container')">📋 העתק</button>
+          <button class="btn-sec" onclick="printResult('flu-sentences-container')">🖨️ הדפס</button>
+          <button class="btn-sec" onclick="resetTicks()">🔄 אפס סימונים</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /wrapper -->
+
+<div class="copied-toast" id="copied-toast">✓ הועתק!</div>
+
+<script>
+// ── STATE ──
+const state = {
+  vocab: { text: '', imageData: null, imageType: null },
+  comp:  { text: '', imageData: null, imageType: null },
+  acc:   { text: '', imageData: null, imageType: null },
+  flu:   { text: '', imageData: null, imageType: null },
+};
+
+// ── TABS ──
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+  document.getElementById('panel-' + tab).classList.add('active');
+}
+
+// ── FILE / IMAGE HANDLING ──
+function handleImage(input, key) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const dataUrl = e.target.result;
+    const base64 = dataUrl.split(',')[1];
+    state[key].imageData = base64;
+    state[key].imageType = file.type;
+    const preview = document.getElementById(key + '-img-preview');
+    preview.src = dataUrl;
+    preview.style.display = 'block';
+    document.getElementById(key + '-file-preview').style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+}
+
+function handleFile(input, key) {
+  const file = input.files[0];
+  if (!file) return;
+  const preview = document.getElementById(key + '-file-preview');
+  preview.textContent = '📄 ' + file.name + ' — הקובץ נטען, הכלי יחלץ ממנו טקסט';
+  preview.style.display = 'block';
+  // Read as text
+  const reader = new FileReader();
+  reader.onload = e => {
+    const txt = e.target.result;
+    const ta = document.getElementById(key + '-text');
+    if (ta.value.trim() === '') ta.value = txt;
+  };
+  reader.readAsText(file, 'UTF-8');
+}
+
+// ── API CALL ──
+async function callClaude(systemPrompt, userContent) {
+  const messages = [{ role: 'user', content: userContent }];
+  const body = {
+    model: 'claude-sonnet-4-20250514',
+    max_tokens: 1000,
+    system: systemPrompt,
+    messages
+  };
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+  const data = await res.json();
+  return data.content?.map(c => c.text || '').join('') || '';
+}
+
+function buildUserContent(key, textVal, extraText) {
+  const s = state[key];
+  if (s.imageData) {
+    return [
+      { type: 'image', source: { type: 'base64', media_type: s.imageType, data: s.imageData } },
+      { type: 'text', text: extraText + '\n\nאנא חלץ את הטקסט מהתמונה ובצע עליו את המשימה.' }
+    ];
+  }
+  return extraText;
+}
+
+function setLoading(key, on) {
+  document.getElementById(key + '-loading').style.display = on ? 'block' : 'none';
+  document.getElementById(key + '-btn').disabled = on;
+}
+function showResult(key) {
+  document.getElementById(key + '-result').style.display = 'block';
+  document.getElementById(key + '-result').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ── VOCAB ──
+async function runVocab() {
+  const text = document.getElementById('vocab-text').value.trim();
+  const level = document.getElementById('vocab-level').value;
+  const depth = document.getElementById('vocab-depth').value;
+  if (!text && !state.vocab.imageData) return alert('נא להכניס טקסט או תמונה');
+
+  setLoading('vocab', true);
+
+  const system = `אתה עוזר מומחה להוראה מתקנת בעברית לתלמידות בכיתות ז-ח מקדמת.
+תפקידך לנתח טקסטים מבחינת אוצר מילים ומורפולוגיה לצורך הכנת שיעור.
+השפה: עברית בלבד. כתוב תשובה מובנית וברורה שמורה יכולה להציג בכיתה.`;
+
+  const prompt = `כיתה: ${level} | עומק: ${depth}
+
+טקסט לניתוח:
+${text}
+
+אנא צור ניתוח מורפולוגי ואוצר מילים מובנה:
+
+**🔤 מילים מאתגרות ואוצר מילים**
+רשום 8-12 מילים מרכזיות מהטקסט עם הסבר קצר ומשפט דוגמה.
+
+**🌱 ניתוח מורפולוגי**
+לכל אחת מ-5 מילים בחורות:
+- שורש
+- משקל (אם רלוונטי)
+- תחילית / סיומת (אם יש)
+- מה הוסיפו לשורש
+
+**🔗 משפחת מילים**
+בחר 3-4 שורשים מהטקסט והצג מילים נוספות מאותו שורש.
+
+**💡 טיפים למורה לשיעור**
+הצע 2-3 פעילויות קצרות סביב המילים.`;
+
+  try {
+    const userContent = buildUserContent('vocab', text, prompt);
+    const result = await callClaude(system, userContent);
+    document.getElementById('vocab-result-content').textContent = result;
+    showResult('vocab');
+  } catch(e) {
+    alert('שגיאה בחיבור ל-AI. נסי שוב.');
+  }
+  setLoading('vocab', false);
+}
+
+// ── COMPREHENSION ──
+async function runComp() {
+  const text = document.getElementById('comp-text').value.trim();
+  const count = document.getElementById('comp-count').value;
+  const type = document.getElementById('comp-type').value;
+  if (!text && !state.comp.imageData) return alert('נא להכניס טקסט');
+
+  setLoading('comp', true);
+
+  const system = `אתה עוזר מומחה להוראה מתקנת בעברית לתלמידות בכיתות ז-ח.
+צור שאלות הבנת הנקרא מקצועיות ומדורגות, המתאימות להוראה מתקנת.`;
+
+  const prompt = `כמות שאלות: ${count} | סוג: ${type}
+
+טקסט:
+${text}
+
+צור ${count} שאלות הבנת הנקרא. לכל שאלה ציין את הרמה: [ישיר] / [הסקה] / [ביקורתי].
+
+פורמט:
+**שאלות הבנה**
+1. [רמה] שאלה...
+2. [רמה] שאלה...
+...
+
+**🔑 תשובות לעיון המורה**
+1. תשובה קצרה...
+...
+
+**🎯 מיקוד להוראה מתקנת**
+ציין אלו שאלות מאתגרות במיוחד תלמידות עם קשיי קריאה ולמה.`;
+
+  try {
+    const userContent = buildUserContent('comp', text, prompt);
+    const result = await callClaude(system, userContent);
+    document.getElementById('comp-result-content').textContent = result;
+    showResult('comp');
+  } catch(e) {
+    alert('שגיאה. נסי שוב.');
+  }
+  setLoading('comp', false);
+}
+
+// ── ACCURACY ──
+async function runAccuracy() {
+  const text = document.getElementById('acc-text').value.trim();
+  const focus = document.getElementById('acc-focus').value;
+  if (!text && !state.acc.imageData) return alert('נא להכניס טקסט');
+
+  setLoading('acc', true);
+
+  const system = `אתה מומחה לאבחון ותיקון קריאה בעברית לתלמידות ז-ח עם קשיי קריאה.
+מטרתך לעזור למורה לזהות נקודות מאתגרות ולהכין כלים לקריאה מדויקת.`;
+
+  const prompt = `סוג קושי עיקרי: ${focus}
+
+טקסט:
+${text}
+
+צור ניתוח קריאה מדויקת:
+
+**⚠️ מילים מאתגרות לקריאה**
+רשום 10-15 מילים מהטקסט שעשויות לגרום לשגיאות קריאה, עם הסבר למה הן מאתגרות.
+
+**🔡 דפוסים פונולוגיים לתשומת לב**
+זהה דפוסי אות/הגה מאתגרים בטקסט (למשל: ע/א, כ/ח/ח, צורות נקודות).
+
+**📝 הכנה לקריאה — לפני השיעור**
+5 הנחיות קצרות שהמורה תאמר לתלמידות לפני הקריאה.
+
+**✅ רשימת בדיקה לזמן הקריאה**
+4-5 דברים שהמורה תמתין להם ותתקן בזמן הקריאה.`;
+
+  try {
+    const userContent = buildUserContent('acc', text, prompt);
+    const result = await callClaude(system, userContent);
+    document.getElementById('acc-result-content').textContent = result;
+    showResult('acc');
+  } catch(e) {
+    alert('שגיאה. נסי שוב.');
+  }
+  setLoading('acc', false);
+}
+
+// ── FLUENCY ──
+async function runFluency() {
+  const text = document.getElementById('flu-text').value.trim();
+  const len = document.getElementById('flu-len').value;
+  const count = document.getElementById('flu-count').value;
+  if (!text && !state.flu.imageData) return alert('נא להכניס טקסט');
+
+  setLoading('flu', true);
+
+  const system = `אתה מומחה לתרגול שטף קריאה בעברית לתלמידות ז-ח עם קשיי שטף.
+חלץ ובנה משפטים לתרגול חוזר — ברורים, מאתגרים ומתאימים להוראה מתקנת.`;
+
+  const prompt = `אורך משפטים: ${len} | כמות: ${count}
+
+טקסט מקור:
+${text}
+
+חלץ ${count} משפטים מהטקסט (או בנה מתוכו) לתרגול שטף קריאה חוזר.
+לכל משפט ציין: [קצר] / [בינוני] / [ארוך]
+
+פורמט — משפט אחד בכל שורה:
+1. [קצר] המשפט כאן
+2. [בינוני] המשפט כאן
+...
+
+בסוף הוסף:
+**💡 הוראות לתרגול שטף**
+שלושה שלבי תרגול קצרים שהמורה תוכל להשתמש בהם.`;
+
+  try {
+    const userContent = buildUserContent('flu', text, prompt);
+    const result = await callClaude(system, userContent);
+    // Parse into interactive sentences
+    buildFluentSentences(result);
+    document.getElementById('flu-result').style.display = 'block';
+    document.getElementById('flu-result').scrollIntoView({ behavior: 'smooth' });
+  } catch(e) {
+    alert('שגיאה. נסי שוב.');
+  }
+  setLoading('flu', false);
+}
+
+function buildFluentSentences(text) {
+  const container = document.getElementById('flu-sentences-container');
+  container.innerHTML = '';
+  const lines = text.split('\n').filter(l => l.trim());
+  lines.forEach((line, i) => {
+    const isSentence = /^\d+\./.test(line.trim());
+    if (isSentence) {
+      const div = document.createElement('div');
+      div.className = 'fluency-sentence';
+      div.innerHTML = `<span style="flex:1">${line.replace(/\[.*?\]/g, s => `<span style="font-size:0.75rem;color:var(--teal-light);margin-left:6px">${s}</span>`)}</span>
+        <button class="tick-btn" onclick="toggleTick(this)" title="סמן כנקרא">✓</button>`;
+      container.appendChild(div);
+    } else {
+      const p = document.createElement('p');
+      p.style.cssText = 'padding:10px 0;color:rgba(250,248,243,0.6);font-size:0.92rem;border-top:1px solid var(--border);margin-top:12px';
+      p.textContent = line;
+      container.appendChild(p);
+    }
+  });
+}
+
+function toggleTick(btn) {
+  btn.classList.toggle('done');
+  btn.textContent = btn.classList.contains('done') ? '✓' : '✓';
+  btn.style.color = btn.classList.contains('done') ? 'var(--teal)' : '';
+}
+
+function resetTicks() {
+  document.querySelectorAll('.tick-btn').forEach(b => {
+    b.classList.remove('done');
+    b.style.color = '';
+  });
+}
+
+// ── COPY / PRINT ──
+function copyResult(id) {
+  const el = document.getElementById(id);
+  navigator.clipboard.writeText(el.innerText || el.textContent).then(() => {
+    const toast = document.getElementById('copied-toast');
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2000);
+  });
+}
+
+function printResult(id) {
+  const content = document.getElementById(id).innerHTML;
+  const win = window.open('', '_blank');
+  win.document.write(`<html dir="rtl"><head><meta charset="UTF-8">
+    <style>body{font-family:Arial,sans-serif;padding:30px;direction:rtl;line-height:1.8}
+    h1,h2,h3{color:#1a1a2e}</style></head>
+    <body>${content}</body></html>`);
+  win.document.close();
+  win.print();
+}
+</script>
+</body>
+</html>
