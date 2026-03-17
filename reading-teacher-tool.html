@@ -2,8 +2,14 @@
 <html dir="rtl" lang="he">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>כלי קריאה מתקנת — AI למורה</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="קריאה מתקנת">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#1a1a2e">
+<link rel="manifest" href="data:application/json;charset=utf-8,%7B%22name%22%3A%22%D7%9B%D7%9C%D7%99%20%D7%A7%D7%A8%D7%99%D7%90%D7%94%20%D7%9E%D7%AA%D7%A7%D7%A0%D7%AA%22%2C%22short_name%22%3A%22%D7%A7%D7%A8%D7%99%D7%90%D7%94%20%D7%9E%D7%AA%D7%A7%D7%A0%D7%AA%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%231a1a2e%22%2C%22theme_color%22%3A%22%231a1a2e%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fpng%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAABmJLR0QA%2FwD%2FAP%2BgvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH6AEQCgseUv7fkgAAAB1pVFh0Q29tbWVudAAAAAAAQ3JlYXRlZCB3aXRoIEdJTVBkLmUHAAABtUlEQVR42u3BMQEAAADCoPVP7WsIoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAeAMBuAABHgAAAABJRU5ErkJggg%3D%3D%22%2C%22sizes%22%3A%22128x128%22%2C%22type%22%3A%22image%2Fpng%22%7D%5D%7D">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;900&family=Frank+Ruhl+Libre:wght@400;700;900&display=swap');
 
@@ -262,15 +268,56 @@
   }
   .copied-toast.show { opacity: 1; }
 
+  /* ── API KEY SECTION ── */
+  .api-key-section {
+    background: rgba(232,103,122,0.08); border: 1px solid rgba(232,103,122,0.3);
+    border-radius: 16px; padding: 20px 24px; margin-bottom: 24px;
+    display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+    transition: box-shadow 0.3s;
+  }
+  .api-key-label {
+    font-size: 0.9rem; color: #f5a8b2; font-weight: 600; white-space: nowrap;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .api-key-input {
+    flex: 1; min-width: 220px; padding: 10px 14px; border-radius: 10px;
+    border: 1px solid rgba(232,103,122,0.4); background: rgba(255,255,255,0.05);
+    color: var(--cream); font-family: 'Heebo', sans-serif; font-size: 0.9rem;
+    outline: none; letter-spacing: 0.05em;
+  }
+  .api-key-input:focus { border-color: var(--rose); box-shadow: 0 0 0 3px rgba(232,103,122,0.15); }
+  .api-key-hint { font-size: 0.78rem; color: rgba(250,248,243,0.4); width: 100%; }
+
   /* Responsive */
   @media(max-width:520px) {
     .card { padding: 18px; }
     .settings-row { flex-direction: column; }
   }
+  /* ── INSTALL BANNER ── */
+  #install-banner {
+    display: none; align-items: center; justify-content: space-between;
+    background: linear-gradient(120deg, rgba(83,200,184,0.15), rgba(226,176,74,0.1));
+    border: 1px solid var(--teal); border-radius: 16px;
+    padding: 14px 20px; margin-bottom: 20px; gap: 12px; flex-wrap: wrap;
+  }
+  #install-banner span { font-size: 0.9rem; color: var(--teal-light); }
+  #install-btn {
+    padding: 9px 20px; border-radius: 10px; border: none;
+    background: var(--teal); color: var(--ink);
+    font-family: 'Heebo', sans-serif; font-weight: 700; font-size: 0.9rem;
+    cursor: pointer; white-space: nowrap;
+  }
+
 </style>
 </head>
 <body>
 <div class="wrapper">
+
+  <!-- INSTALL BANNER -->
+  <div id="install-banner">
+    <span>📲 הוסיפי למסך הבית כאפליקציה!</span>
+    <button id="install-btn">➕ התקיני</button>
+  </div>
 
   <header>
     <div class="logo-row">
@@ -279,6 +326,18 @@
     </div>
     <p class="subtitle">עוזר AI למורה • קריאה מדויקת • שטף • אוצר מילים • מורפולוגיה</p>
   </header>
+
+  <!-- API KEY -->
+  <div class="api-key-section" id="api-key-section">
+    <div class="api-key-label">🔑 מפתח API של Google Gemini</div>
+    <input class="api-key-input" id="api-key-input" type="password"
+      placeholder="AIza..." autocomplete="off" 
+      oninput="document.getElementById('api-key-section').style.boxShadow='none'; saveApiKey()">
+    <div class="api-key-hint">
+      המפתח נשמר רק בדפדפן שלך ולא נשלח לשום מקום אחר. 
+      קבלי מפתח חינמי לגמרי בכתובת: aistudio.google.com/apikey
+    </div>
+  </div>
 
   <!-- TABS -->
   <div class="tabs">
@@ -543,6 +602,17 @@
 <div class="copied-toast" id="copied-toast">✓ הועתק!</div>
 
 <script>
+// ── API KEY PERSISTENCE ──
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem('anthropic_api_key');
+  if (saved) document.getElementById('api-key-input').value = saved;
+});
+
+function saveApiKey() {
+  const val = document.getElementById('api-key-input').value.trim();
+  if (val) localStorage.setItem('anthropic_api_key', val);
+}
+
 // ── STATE ──
 const state = {
   vocab: { text: '', imageData: null, imageType: null },
@@ -593,22 +663,51 @@ function handleFile(input, key) {
   reader.readAsText(file, 'UTF-8');
 }
 
-// ── API CALL ──
+// ── API CALL (Gemini) ──
 async function callClaude(systemPrompt, userContent) {
-  const messages = [{ role: 'user', content: userContent }];
+  const apiKey = document.getElementById('api-key-input').value.trim();
+  if (!apiKey) {
+    document.getElementById('api-key-section').scrollIntoView({behavior:'smooth'});
+    document.getElementById('api-key-input').focus();
+    document.getElementById('api-key-section').style.boxShadow = '0 0 0 3px rgba(232,103,122,0.5)';
+    throw new Error('נא להכניס API key');
+  }
+
+  // Build Gemini parts
+  let parts = [];
+  if (Array.isArray(userContent)) {
+    // has image
+    for (const item of userContent) {
+      if (item.type === 'image') {
+        parts.push({ inlineData: { mimeType: item.source.media_type, data: item.source.data } });
+      } else if (item.type === 'text') {
+        parts.push({ text: item.text });
+      }
+    }
+  } else {
+    parts.push({ text: userContent });
+  }
+
   const body = {
-    model: 'claude-sonnet-4-20250514',
-    max_tokens: 1000,
-    system: systemPrompt,
-    messages
+    system_instruction: { parts: [{ text: systemPrompt }] },
+    contents: [{ role: 'user', parts }],
+    generationConfig: { maxOutputTokens: 1500, temperature: 0.4 }
   };
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body)
-  });
+
+  const res = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    }
+  );
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err?.error?.message || 'שגיאה בחיבור ל-API (קוד ' + res.status + ')');
+  }
   const data = await res.json();
-  return data.content?.map(c => c.text || '').join('') || '';
+  return data.candidates?.[0]?.content?.parts?.map(p => p.text || '').join('') || '';
 }
 
 function buildUserContent(key, textVal, extraText) {
@@ -673,7 +772,7 @@ ${text}
     document.getElementById('vocab-result-content').textContent = result;
     showResult('vocab');
   } catch(e) {
-    alert('שגיאה בחיבור ל-AI. נסי שוב.');
+    if (e.message !== 'נא להכניס API key') alert('שגיאה: ' + e.message);
   }
   setLoading('vocab', false);
 }
@@ -716,7 +815,7 @@ ${text}
     document.getElementById('comp-result-content').textContent = result;
     showResult('comp');
   } catch(e) {
-    alert('שגיאה. נסי שוב.');
+    if (e.message !== 'נא להכניס API key') alert('שגיאה: ' + e.message);
   }
   setLoading('comp', false);
 }
@@ -757,7 +856,7 @@ ${text}
     document.getElementById('acc-result-content').textContent = result;
     showResult('acc');
   } catch(e) {
-    alert('שגיאה. נסי שוב.');
+    if (e.message !== 'נא להכניס API key') alert('שגיאה: ' + e.message);
   }
   setLoading('acc', false);
 }
@@ -799,7 +898,7 @@ ${text}
     document.getElementById('flu-result').style.display = 'block';
     document.getElementById('flu-result').scrollIntoView({ behavior: 'smooth' });
   } catch(e) {
-    alert('שגיאה. נסי שוב.');
+    if (e.message !== 'נא להכניס API key') alert('שגיאה: ' + e.message);
   }
   setLoading('flu', false);
 }
@@ -858,6 +957,47 @@ function printResult(id) {
   win.document.close();
   win.print();
 }
+</script>
+<script>
+// ── SERVICE WORKER (PWA offline support) ──
+if ('serviceWorker' in navigator) {
+  const swCode = `
+    const CACHE = 'kria-v1';
+    self.addEventListener('install', e => {
+      e.waitUntil(caches.open(CACHE).then(c => c.addAll(['/'])));
+      self.skipWaiting();
+    });
+    self.addEventListener('fetch', e => {
+      e.respondWith(
+        fetch(e.request).catch(() => caches.match(e.request))
+      );
+    });
+  `;
+  const blob = new Blob([swCode], {type: 'application/javascript'});
+  const swUrl = URL.createObjectURL(blob);
+  navigator.serviceWorker.register(swUrl).catch(() => {});
+}
+
+// ── INSTALL PROMPT ──
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  document.getElementById('install-banner').style.display = 'flex';
+});
+document.addEventListener('DOMContentLoaded', () => {
+  const btn = document.getElementById('install-btn');
+  if (btn) {
+    btn.addEventListener('click', async () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        deferredPrompt = null;
+        document.getElementById('install-banner').style.display = 'none';
+      }
+    });
+  }
+});
 </script>
 </body>
 </html>
