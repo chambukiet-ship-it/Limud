@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>היאור – עורק החיים של מצרים</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;600;700;900&display=swap');
+  :root {
+    --blue-deep: #0a2a5e;
+    --blue-mid: #1a4a8a;
+    --blue-light: #3a7bd5;
+    --gold: #e8c84a;
+    --sand-light: #fdf7ed;
+    --correct: #2d7a4a;
+    --wrong: #c0392b;
+    --text-dark: #1a1a2e;
+    --radius: 16px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Heebo', sans-serif; background: linear-gradient(160deg, #0a2a5e 0%, #1a4a8a 40%, #2d6a9a 100%); min-height: 100vh; color: var(--text-dark); padding-bottom: 40px; }
+
+  .header { background: linear-gradient(135deg, #0a2a5e, #1a4a8a); padding: 22px 20px 16px; text-align: center; border-bottom: 3px solid var(--gold); }
+  .header-icon { font-size: 38px; margin-bottom: 4px; }
+  .header h1 { color: var(--gold); font-size: 21px; font-weight: 900; line-height: 1.2; }
+  .header .subtitle { color: rgba(255,255,255,0.75); font-size: 13px; margin-top: 4px; }
+
+  .tabs { display: flex; background: rgba(0,0,0,0.3); border-bottom: 2px solid var(--gold); position: sticky; top: 0; z-index: 100; }
+  .tab-btn { flex: 1; padding: 11px 4px; background: none; border: none; color: rgba(255,255,255,0.6); font-family: 'Heebo', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.2s; }
+  .tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); background: rgba(255,255,255,0.05); }
+
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* TEXT PAGE */
+  .text-page { padding: 14px; }
+  .text-section { background: var(--sand-light); border-radius: var(--radius); margin-bottom: 12px; overflow: hidden; box-shadow: 0 4px 18px rgba(0,0,0,0.25); }
+  .text-section-header { background: var(--blue-mid); color: var(--gold); font-size: 14px; font-weight: 700; padding: 10px 14px; display: flex; align-items: center; gap: 7px; }
+  .text-body { padding: 13px 15px; font-size: 15px; line-height: 1.85; color: #1a2a3a; }
+  .text-body p { margin-bottom: 9px; }
+  .text-body p:last-child { margin-bottom: 0; }
+  .text-body ul { padding-right: 18px; margin-top: 5px; }
+  .text-body li { margin-bottom: 7px; line-height: 1.7; }
+  .text-body strong { color: var(--blue-deep); }
+
+  /* ID PAGE */
+  .id-page { padding: 14px; }
+
+  .id-card-wrap { background: var(--sand-light); border-radius: var(--radius); overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.3); margin-bottom: 14px; }
+  .id-card-header { background: linear-gradient(135deg, #0a2a5e, #1a4a8a); padding: 14px 16px; display: flex; align-items: center; gap: 10px; border-bottom: 3px solid var(--gold); }
+  .id-card-header-icon { font-size: 28px; }
+  .id-card-header h2 { color: var(--gold); font-size: 17px; font-weight: 900; }
+  .id-card-header p { color: rgba(255,255,255,0.7); font-size: 12px; }
+
+  /* Paragraph-style ID text */
+  .id-para-body { padding: 16px 16px 6px; font-size: 15px; line-height: 2.2; color: #1a2a3a; }
+  .id-para-body p { margin-bottom: 10px; }
+
+  /* Inline blank */
+  .blank-wrap { display: inline-flex; align-items: center; gap: 2px; }
+  .id-blank {
+    display: inline-block;
+    min-width: 130px;
+    background: white;
+    border: 2px solid #a0b4d0;
+    border-radius: 8px;
+    padding: 3px 10px;
+    font-family: 'Heebo', sans-serif;
+    font-size: 14px;
+    color: var(--text-dark);
+    vertical-align: middle;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7' viewBox='0 0 10 7'%3E%3Cpath fill='%231a4a8a' d='M5 7L0 0h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: left 8px center;
+    cursor: pointer;
+    transition: border-color 0.2s, background-color 0.2s;
+  }
+  .id-blank:focus { outline: none; border-color: var(--blue-light); }
+  .id-blank.correct { border-color: var(--correct); background-color: #e8f5ee; color: var(--correct); font-weight: 700; }
+  .id-blank.wrong { border-color: var(--wrong); background-color: #fdeaea; color: var(--wrong); }
+
+  .id-check-btn { display: block; width: calc(100% - 28px); margin: 8px 14px 14px; background: var(--blue-mid); color: white; border: none; border-radius: 12px; padding: 13px; font-family: 'Heebo', sans-serif; font-size: 15px; font-weight: 700; cursor: pointer; }
+  .id-check-btn:disabled { background: #aaa; cursor: default; }
+  .id-result { margin: 0 14px 14px; padding: 14px; border-radius: 12px; display: none; font-size: 14px; line-height: 1.7; }
+  .id-result.show { display: block; }
+  .id-result.good { background: #e8f5ee; border: 1px solid var(--correct); color: #1a5c33; }
+  .id-result.ok { background: #fff8e1; border: 1px solid #f0b429; color: #7a5000; }
+  .id-result.bad { background: #fdeaea; border: 1px solid var(--wrong); color: #8b1a1a; }
+  .id-result-title { font-size: 18px; font-weight: 900; margin-bottom: 5px; }
+
+  /* QUIZ PAGE */
+  .progress-bar-wrap { background: rgba(255,255,255,0.15); height: 8px; }
+  .progress-bar-fill { height: 100%; background: var(--gold); transition: width 0.5s ease; }
+  .progress-text { text-align: center; color: rgba(255,255,255,0.85); font-size: 13px; padding: 7px; background: rgba(0,0,0,0.15); }
+  .score-badge { display: flex; justify-content: center; gap: 12px; padding: 10px 20px; background: rgba(0,0,0,0.2); }
+  .badge { background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.25); border-radius: 20px; padding: 5px 14px; color: white; font-size: 13px; font-weight: 600; }
+  .badge span { color: var(--gold); }
+  .section-title { background: var(--gold); color: var(--blue-deep); text-align: center; font-size: 13px; font-weight: 700; padding: 7px 20px; }
+  .card { background: var(--sand-light); border-radius: var(--radius); margin: 12px 14px 0; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+  .q-number { background: var(--blue-mid); color: var(--gold); font-size: 12px; font-weight: 700; padding: 7px 14px; display: flex; align-items: center; gap: 6px; }
+  .q-number .qtype { background: rgba(255,255,255,0.15); border-radius: 8px; padding: 2px 8px; font-size: 11px; color: rgba(255,255,255,0.8); font-weight: 400; }
+  .q-text { padding: 13px 15px 9px; font-size: 15px; font-weight: 600; line-height: 1.5; color: var(--blue-deep); }
+  .text-ref { background: linear-gradient(135deg,#e8f4fd,#d4eaf7); border-right: 4px solid var(--blue-light); margin: 0 14px 10px; padding: 9px 12px; border-radius: 0 8px 8px 0; font-size: 13px; color: #2c4a6e; line-height: 1.6; font-style: italic; }
+  .text-ref::before { content: '📖 מהטקסט: '; font-style: normal; font-weight: 700; color: var(--blue-mid); }
+  .options { padding: 4px 14px 14px; display: flex; flex-direction: column; gap: 8px; }
+  .opt-btn { background: white; border: 2px solid #d0d8e8; border-radius: 12px; padding: 10px 13px; font-family: 'Heebo',sans-serif; font-size: 14px; font-weight: 500; color: var(--text-dark); text-align: right; cursor: pointer; transition: all 0.2s; display: flex; align-items: flex-start; gap: 10px; line-height: 1.4; }
+  .opt-btn .opt-letter { background: #e8eef8; color: var(--blue-mid); font-weight: 700; font-size: 13px; min-width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+  .opt-btn.correct { background: #e8f5ee; border-color: var(--correct); color: var(--correct); }
+  .opt-btn.correct .opt-letter { background: var(--correct); color: white; }
+  .opt-btn.wrong { background: #fdeaea; border-color: var(--wrong); color: var(--wrong); }
+  .opt-btn.wrong .opt-letter { background: var(--wrong); color: white; }
+  .opt-btn:disabled { cursor: default; }
+  .sub-questions { padding: 0 14px 14px; display: flex; flex-direction: column; gap: 10px; }
+  .sub-q { background: white; border-radius: 10px; border: 2px solid #d8e4f0; overflow: hidden; }
+  .sub-q-title { background: #eaf0f8; padding: 8px 12px; font-size: 13px; font-weight: 700; color: var(--blue-deep); }
+  .sub-q .options { padding: 7px 10px 10px; gap: 6px; }
+  .sub-q .opt-btn { font-size: 13px; padding: 8px 11px; }
+  .check-options { padding: 4px 14px 14px; display: flex; flex-direction: column; gap: 8px; }
+  .check-btn { background: white; border: 2px solid #d0d8e8; border-radius: 12px; padding: 10px 13px; font-family: 'Heebo',sans-serif; font-size: 14px; color: var(--text-dark); text-align: right; cursor: pointer; transition: all 0.2s; display: flex; align-items: flex-start; gap: 10px; line-height: 1.4; }
+  .check-box { min-width: 22px; height: 22px; border: 2px solid #b0bcd0; border-radius: 5px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; font-size: 13px; }
+  .check-btn.selected .check-box { background: var(--blue-light); border-color: var(--blue-light); color: white; }
+  .check-btn.correct-check { background: #e8f5ee; border-color: var(--correct); }
+  .check-btn.correct-check .check-box { background: var(--correct); border-color: var(--correct); color: white; }
+  .check-btn.wrong-check { background: #fdeaea; border-color: var(--wrong); }
+  .check-btn.wrong-check .check-box { background: var(--wrong); border-color: var(--wrong); color: white; }
+  .submit-check { margin: 0 14px 14px; background: var(--blue-mid); color: white; border: none; border-radius: 12px; padding: 12px; font-family: 'Heebo',sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; width: calc(100% - 28px); }
+  .submit-check:disabled { background: #aaa; cursor: default; }
+  .feedback { margin: 0 14px 14px; padding: 12px 14px; border-radius: 10px; font-size: 14px; line-height: 1.6; display: none; animation: fadeUp 0.3s ease; }
+  .feedback.show { display: block; }
+  .feedback.correct-fb { background: #e8f5ee; border: 1px solid var(--correct); color: #1a5c33; }
+  .feedback.wrong-fb { background: #fdeaea; border: 1px solid var(--wrong); color: #8b1a1a; }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
+  .final-screen { display: none; margin: 20px 14px; background: var(--sand-light); border-radius: var(--radius); padding: 28px 20px; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+  .final-screen.show { display: block; }
+  .final-emoji { font-size: 52px; margin-bottom: 8px; }
+  .final-title { font-size: 21px; font-weight: 900; color: var(--blue-deep); margin-bottom: 6px; }
+  .final-score { font-size: 44px; font-weight: 900; color: var(--blue-mid); margin: 8px 0; }
+  .final-score span { font-size: 19px; color: #666; font-weight: 400; }
+  .final-msg { font-size: 15px; color: #555; line-height: 1.6; margin: 8px 0 18px; }
+  .share-btn { background: #25D366; color: white; border: none; border-radius: 50px; padding: 12px 24px; font-family: 'Heebo',sans-serif; font-size: 15px; font-weight: 700; cursor: pointer; }
+  .restart-btn { background: var(--blue-mid); color: white; border: none; border-radius: 50px; padding: 10px 22px; font-family: 'Heebo',sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 10px; display: inline-block; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-icon">🌊</div>
+  <h1>היאור – עורק החיים של מצרים</h1>
+  <div class="subtitle">היסטוריה · גיאוגרפיה · ארכאולוגיה</div>
+</div>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="showPage('text',this)">📖 קרא</button>
+  <button class="tab-btn" onclick="showPage('id',this)">🪪 תעודת זהות</button>
+  <button class="tab-btn" onclick="showPage('quiz',this)">✏️ שאלון</button>
+</div>
+
+<!-- ====== TEXT PAGE ====== -->
+<div class="page active" id="page-text">
+  <div class="text-page">
+    <div class="text-section">
+      <div class="text-section-header">🗺️ גיאוגרפיה והשפעה על התרבות</div>
+      <div class="text-body">
+        <p>היאור, הנהר הארוך ביותר בעולם, זורם לאורך <strong>6,650 קילומטרים</strong> ממרכז אפריקה ועד לים התיכון, חוצה את לב ליבה של מצרים. יותר מנהר, הוא עורק החיים של המדינה, מקור קיומה ומקור השראה לאגדות, מיתוסים ופולחן.</p>
+        <p>מצרים, מדינה <strong>צחיחה</strong> ברובה, תלויה כולה ביאור. הוא מספק את המים הדרושים לחקלאות, לשתייה ולתחבורה.</p>
+        <p>היאור אינו זורם באופן אחיד לאורך כל השנה. מדי שנה, בחודשי הקיץ, הוא <strong>מוצף</strong>. ההצפות הפקידו שכבה עבה של סחף עשיר במינרלים על גדות הנהר, שהפך את האדמה לפורייה במיוחד.</p>
+        <p>המצרים למדו לחיות עם ההצפות, פיתחו <strong>מערכות השקיה מתוחכמות</strong> ובנו סכרים ותעלות. היאור היה מקור השראה לאמנות, למיתולוגיה ולפולחן.</p>
+      </div>
+    </div>
+    <div class="text-section">
+      <div class="text-section-header">✡️ היאור והיהודים במצרים</div>
+      <div class="text-body">
+        <p>בתקופת יציאת מצרים, היאור שיחק תפקיד מרכזי בחיי היהודים. פרעה שלט על גדותיו, על מקורות המים ועל החקלאות.</p>
+        <p>בני ישראל, כעבדים, הועסקו בעבודות פרך קשות הקשורות ליאור, כגון בניית ערים ומחסני תבואה.</p>
+        <p>היאור היה גם <strong>זירת פעולה</strong> של עשר המכות – המים הפכו לדם, הצפרדעים עלו מהיאור.</p>
+        <p>היאור, שהיה מקור חיים למצרים, היה <strong>מקור סבל ומכה</strong> עבור בני ישראל. הוא סימל את העבדות, את הדיכוי ואת הכאב.</p>
+      </div>
+    </div>
+    <div class="text-section">
+      <div class="text-section-header">🏛️ היאור בארכאולוגיה</div>
+      <div class="text-body">
+        <p>הארכאולוגיה מאשרת את חשיבותו של היאור. ממצאים ארכאולוגיים חושפים את מערכות ההשקיה המתוחכמות שפיתחו המצרים ואת הידע שלהם בגיאוגרפיה.</p>
+        <p>חפירות לאורך גדות היאור חשפו <strong>מידע רב על חיי היומיום</strong> של המצרים, על התרבות שלהם ועל האמונות שלהם.</p>
+        <p>היאור אינו רק נהר, אלא <strong>מקור של ידע היסטורי וארכאולוגי רב ערך</strong>.</p>
+      </div>
+    </div>
+    <div class="text-section">
+      <div class="text-section-header">📋 פרטים על היאור</div>
+      <div class="text-body">
+        <ul>
+          <li><strong>היאור העליון</strong> (דרום) – רחב ואיטי יותר. <strong>היאור התחתון</strong> (צפון) – צר ומהיר יותר.</li>
+          <li>רוב הערים הגדולות הוקמו לאורך גדות היאור, בזכות גישתו למים ולסחף הפורה.</li>
+          <li>היאור שימש כ<strong>דרך תחבורה ראשית</strong> – סירות וספינות נשאו סחורות ואנשים.</li>
+          <li>בימינו היאור מתמודד עם: <strong>זיהום מים, ירידה בכמות המים, ובניית סכרים</strong>.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== ID CARD PAGE ====== -->
+<div class="page" id="page-id">
+  <div class="id-page">
+    <div class="id-card-wrap">
+      <div class="id-card-header">
+        <div class="id-card-header-icon">🪪</div>
+        <div>
+          <h2>תעודת זהות של הטקסט</h2>
+          <p>השלימי את החסר מתוך הטקסט</p>
+        </div>
+      </div>
+
+      <div class="id-para-body">
+
+        <p>
+          הטקסט שלפנינו נקרא
+          <span class="blank-wrap">
+            <select class="id-blank" id="b1">
+              <option value="">– כותרת –</option>
+              <option value="w">מצרים העתיקה – חיים ליד הנהר</option>
+              <option value="c">היאור: עורק החיים של מצרים</option>
+              <option value="w">נהרות העולם וחשיבותם</option>
+            </select>
+          </span>.
+          הטקסט עוסק בנושא
+          <span class="blank-wrap">
+            <select class="id-blank" id="b2">
+              <option value="">– במה –</option>
+              <option value="w">בניית הפירמידות במצרים העתיקה</option>
+              <option value="w">מסעות הגילויים של אפריקה</option>
+              <option value="c">חשיבות היאור – גיאוגרפיה, היסטוריה וארכאולוגיה</option>
+            </select>
+          </span>.
+        </p>
+
+        <p>
+          הטקסט מיועד ל
+          <span class="blank-wrap">
+            <select class="id-blank" id="b3">
+              <option value="">– נמען –</option>
+              <option value="w">חוקרי ארכאולוגיה</option>
+              <option value="c">תלמידים הלומדים על מצרים ויציאת מצרים</option>
+              <option value="w">מורים למדעי הסביבה</option>
+            </select>
+          </span>,
+          והוא נכתב על ידי
+          <span class="blank-wrap">
+            <select class="id-blank" id="b4">
+              <option value="">– מוען –</option>
+              <option value="w">ארכאולוג שחקר את היאור</option>
+              <option value="c">מחבר חומרי לימוד (קיט שומרות)</option>
+              <option value="w">עיתונאי מצרי</option>
+            </select>
+          </span>.
+        </p>
+
+        <p>
+          מבחינת סוג הטקסט, זהו טקסט
+          <span class="blank-wrap">
+            <select class="id-blank" id="b5">
+              <option value="">– סוג הטקסט –</option>
+              <option value="w">ספרותי–עלילתי</option>
+              <option value="w">שכנועי–עיתונאי</option>
+              <option value="c">מידעי–הסברתי</option>
+            </select>
+          </span>,
+          שכן מטרתו
+          <span class="blank-wrap">
+            <select class="id-blank" id="b6">
+              <option value="">– מטרה –</option>
+              <option value="w">לבדר ולשעשע את הקורא</option>
+              <option value="c">להעביר מידע עובדתי ולהסביר תופעות</option>
+              <option value="w">לשכנע את הקורא לשמור על הסביבה</option>
+            </select>
+          </span>.
+        </p>
+
+      </div>
+    </div>
+
+    <button class="id-check-btn" id="idBtn" onclick="checkID()">✅ בדקי את תעודת הזהות</button>
+    <div class="id-result" id="idResult"></div>
+  </div>
+</div>
+
+<!-- ====== QUIZ PAGE ====== -->
+<div class="page" id="page-quiz">
+  <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progressBar" style="width:0%"></div></div>
+  <div class="progress-text" id="progressText">שאלה 1 מתוך 10</div>
+  <div class="score-badge">
+    <div class="badge">✅ נכון: <span id="scoreCorrect">0</span></div>
+    <div class="badge">❌ שגוי: <span id="scoreWrong">0</span></div>
+  </div>
+
+  <div class="section-title">📍 חלק א׳ – גיאוגרפיה והשפעה על התרבות</div>
+
+  <div class="card" id="q1">
+    <div class="q-number">שאלה 1 <span class="qtype">שאלת בחירה</span></div>
+    <div class="q-text">מהו אורכו של היאור?</div>
+    <div class="text-ref">"זורם לאורך 6,650 קילומטרים ממרכז אפריקה ועד לים התיכון"</div>
+    <div class="options">
+      <button class="opt-btn" onclick="answer(this,'q1',false)"><span class="opt-letter">א</span>4,500 ק"מ</button>
+      <button class="opt-btn" onclick="answer(this,'q1',false)"><span class="opt-letter">ב</span>5,900 ק"מ</button>
+      <button class="opt-btn" onclick="answer(this,'q1',true)"><span class="opt-letter">ג</span>6,650 ק"מ</button>
+      <button class="opt-btn" onclick="answer(this,'q1',false)"><span class="opt-letter">ד</span>7,200 ק"מ</button>
+    </div>
+    <div class="feedback" id="fb-q1"></div>
+  </div>
+
+  <div class="card" id="q2">
+    <div class="q-number">שאלה 2 <span class="qtype">שאלת בחירה</span></div>
+    <div class="q-text">מה גרם להצפות השנתיות להיות מועילות לחקלאות?</div>
+    <div class="text-ref">"הן הפקידו שכבה עבה של סחף עשיר במינרלים על גדות הנהר, שהפך את האדמה לפורייה במיוחד."</div>
+    <div class="options">
+      <button class="opt-btn" onclick="answer(this,'q2',false)"><span class="opt-letter">א</span>הן נקו את האדמה מעשבי בר</button>
+      <button class="opt-btn" onclick="answer(this,'q2',true)"><span class="opt-letter">ב</span>הן הניחו סחף עשיר במינרלים שהפרה את האדמה</button>
+      <button class="opt-btn" onclick="answer(this,'q2',false)"><span class="opt-letter">ג</span>הן הביאו גשמים רבים לאזורים מרוחקים</button>
+      <button class="opt-btn" onclick="answer(this,'q2',false)"><span class="opt-letter">ד</span>הן שטפו חרקים מזיקים</button>
+    </div>
+    <div class="feedback" id="fb-q2"></div>
+  </div>
+
+  <div class="card" id="q3">
+    <div class="q-number">שאלה 3 <span class="qtype">שאלה מורחבת – 3 סעיפים</span></div>
+    <div class="q-text">מדוע היאור חשוב כל כך למצרים? (שלוש סיבות)</div>
+    <div class="text-ref">"הוא מספק את המים הדרושים לחקלאות, לשתייה, ולתחבורה..."</div>
+    <div class="sub-questions">
+      <div class="sub-q"><div class="sub-q-title">סעיף א׳</div><div class="options">
+        <button class="opt-btn" onclick="answerSub(this,'q3a',true)"><span class="opt-letter">א</span>מספק מים לחקלאות ולשתייה</button>
+        <button class="opt-btn" onclick="answerSub(this,'q3a',false)"><span class="opt-letter">ב</span>משמש מקום לבניית פירמידות</button>
+        <button class="opt-btn" onclick="answerSub(this,'q3a',false)"><span class="opt-letter">ג</span>מגן מפני פלישות אויב</button>
+      </div></div>
+      <div class="sub-q"><div class="sub-q-title">סעיף ב׳</div><div class="options">
+        <button class="opt-btn" onclick="answerSub(this,'q3b',false)"><span class="opt-letter">א</span>מקור לסחורות יקרות</button>
+        <button class="opt-btn" onclick="answerSub(this,'q3b',true)"><span class="opt-letter">ב</span>שימש כדרך תחבורה ראשית</button>
+        <button class="opt-btn" onclick="answerSub(this,'q3b',false)"><span class="opt-letter">ג</span>סיפק מזג אוויר קריר</button>
+      </div></div>
+      <div class="sub-q"><div class="sub-q-title">סעיף ג׳</div><div class="options">
+        <button class="opt-btn" onclick="answerSub(this,'q3c',false)"><span class="opt-letter">א</span>שימש כמקום לינה לעולי רגל</button>
+        <button class="opt-btn" onclick="answerSub(this,'q3c',true)"><span class="opt-letter">ב</span>היה מקור השראה לאמנות, מיתולוגיה ופולחן</button>
+        <button class="opt-btn" onclick="answerSub(this,'q3c',false)"><span class="opt-letter">ג</span>סיפק עצים לספינות מלחמה</button>
+      </div></div>
+    </div>
+    <div class="feedback" id="fb-q3"></div>
+  </div>
+
+  <div class="section-title">✡️ חלק ב׳ – היאור ובני ישראל</div>
+
+  <div class="card" id="q4">
+    <div class="q-number">שאלה 4 <span class="qtype">שאלת בחירה</span></div>
+    <div class="q-text">איזו טענה משקפת את הקשר המורכב בין היאור לבני ישראל?</div>
+    <div class="text-ref">"היאור, שהיה מקור חיים למצרים, היה מקור סבל ומכה עבור בני ישראל."</div>
+    <div class="options">
+      <button class="opt-btn" onclick="answer(this,'q4',false)"><span class="opt-letter">א</span>היאור היה מקור חיים לשני העמים באופן שווה</button>
+      <button class="opt-btn" onclick="answer(this,'q4',true)"><span class="opt-letter">ב</span>למצרים – מקור חיים; לבני ישראל – מקור סבל ודיכוי</button>
+      <button class="opt-btn" onclick="answer(this,'q4',false)"><span class="opt-letter">ג</span>היאור לא השפיע על חיי בני ישראל</button>
+      <button class="opt-btn" onclick="answer(this,'q4',false)"><span class="opt-letter">ד</span>לבני ישראל לא היה כל קשר ליאור</button>
+    </div>
+    <div class="feedback" id="fb-q4"></div>
+  </div>
+
+  <div class="card" id="q5">
+    <div class="q-number">שאלה 5 <span class="qtype">שאלה מורחבת – 2 סעיפים</span></div>
+    <div class="q-text">כאשר מכת דם פגעה ביאור – אלו מתפקידיו נפגעו?</div>
+    <div class="text-ref">"הוא מספק את המים הדרושים לחקלאות, לשתייה, ולתחבורה..."</div>
+    <div class="sub-questions">
+      <div class="sub-q"><div class="sub-q-title">סעיף א׳</div><div class="options">
+        <button class="opt-btn" onclick="answerSub(this,'q5a',false)"><span class="opt-letter">א</span>המסחר עם ארצות אחרות</button>
+        <button class="opt-btn" onclick="answerSub(this,'q5a',true)"><span class="opt-letter">ב</span>אספקת המים לשתייה ולחקלאות</button>
+        <button class="opt-btn" onclick="answerSub(this,'q5a',false)"><span class="opt-letter">ג</span>בניית הפירמידות</button>
+      </div></div>
+      <div class="sub-q"><div class="sub-q-title">סעיף ב׳</div><div class="options">
+        <button class="opt-btn" onclick="answerSub(this,'q5b',true)"><span class="opt-letter">א</span>ניצול היאור כדרך תחבורה</button>
+        <button class="opt-btn" onclick="answerSub(this,'q5b',false)"><span class="opt-letter">ב</span>הפולחן הדתי לאלוהי מצרים</button>
+        <button class="opt-btn" onclick="answerSub(this,'q5b',false)"><span class="opt-letter">ג</span>הגנה על הגבולות מפני אויבים</button>
+      </div></div>
+    </div>
+    <div class="feedback" id="fb-q5"></div>
+  </div>
+
+  <div class="section-title">🏛️ חלק ג׳ – ארכאולוגיה ופרטים</div>
+
+  <div class="card" id="q6">
+    <div class="q-number">שאלה 6 <span class="qtype">שאלת בחירה</span></div>
+    <div class="q-text">מה ההבדל בין היאור העליון לתחתון?</div>
+    <div class="text-ref">"היאור העליון, הזורם בדרום מצרים, הוא נהר רחב ואיטי יותר, בעוד שהיאור התחתון, הזורם בצפון, הוא צר ומהיר יותר."</div>
+    <div class="options">
+      <button class="opt-btn" onclick="answer(this,'q6',false)"><span class="opt-letter">א</span>העליון בצפון ומהיר; התחתון בדרום ואיטי</button>
+      <button class="opt-btn" onclick="answer(this,'q6',true)"><span class="opt-letter">ב</span>העליון בדרום – רחב ואיטי; התחתון בצפון – צר ומהיר</button>
+      <button class="opt-btn" onclick="answer(this,'q6',false)"><span class="opt-letter">ג</span>שניהם זהים באורך ובמהירות</button>
+      <button class="opt-btn" onclick="answer(this,'q6',false)"><span class="opt-letter">ד</span>העליון עמוק יותר ועשיר יותר בדגים</button>
+    </div>
+    <div class="feedback" id="fb-q6"></div>
+  </div>
+
+  <div class="card" id="q7">
+    <div class="q-number">שאלה 7 <span class="qtype">שאלת בחירה</span></div>
+    <div class="q-text">מה מסיק הטקסט לגבי התפתחות החברה המצרית בעקבות ההצפות?</div>
+    <div class="text-ref">"המצרים למדו לחיות עם ההצפות, פיתחו מערכות השקיה מתוחכמות ובנו סכרים ותעלות..."</div>
+    <div class="options">
+      <button class="opt-btn" onclick="answer(this,'q7',false)"><span class="opt-letter">א</span>ההצפות גרמו לחוסר יציבות כלכלית מתמדת</button>
+      <button class="opt-btn" onclick="answer(this,'q7',false)"><span class="opt-letter">ב</span>ההצפות לא השפיעו כלל על החברה</button>
+      <button class="opt-btn" onclick="answer(this,'q7',true)"><span class="opt-letter">ג</span>ההצפות תרמו להתפתחות חקלאית וטכנולוגית מתקדמת</button>
+      <button class="opt-btn" onclick="answer(this,'q7',false)"><span class="opt-letter">ד</span>ההצפות הובילו לתרבות מוגבלת עקב תלות בנהר</button>
+    </div>
+    <div class="feedback" id="fb-q7"></div>
+  </div>
+
+  <div class="card" id="q8">
+    <div class="q-number">שאלה 8 <span class="qtype">סמני V – יש תשובה בטקסט?</span></div>
+    <div class="q-text">לאיזו מהשאלות הבאות יש תשובה בטקסט? (סמני את כל הנכונות)</div>
+    <div class="check-options" id="checks-q8">
+      <button class="check-btn" onclick="toggleCheck(this)"><span class="check-box">✓</span>מה היה תפקידו של היאור בחיי היהודים במצרים?</button>
+      <button class="check-btn" onclick="toggleCheck(this)"><span class="check-box">✓</span>מהם האתגרים שאיתם מתמודד היאור בימינו?</button>
+      <button class="check-btn" onclick="toggleCheck(this)"><span class="check-box">✓</span>כיצד השפיע היאור על הסחר במצרים העתיקה?</button>
+      <button class="check-btn" onclick="toggleCheck(this)"><span class="check-box">✓</span>כיצד השפיעו שינויים אקלימיים על זרימת היאור?</button>
+      <button class="check-btn" onclick="toggleCheck(this)"><span class="check-box">✓</span>מהי חשיבות הממצאים הארכאולוגיים לאורך גדות היאור?</button>
+    </div>
+    <button class="submit-check" id="submit-q8" onclick="submitCheck()">בדקי תשובות</button>
+    <div class="feedback" id="fb-q8"></div>
+  </div>
+
+  <div class="section-title">🔍 חלק ד׳ – הבנה ומסקנות</div>
+
+  <div class="card" id="q9">
+    <div class="q-number">שאלה 9 <span class="qtype">שאלת בחירה</span></div>
+    <div class="q-text">הטקסט מכנה את היאור "עורק החיים של מצרים". מה הכי מסביר את הדימוי?</div>
+    <div class="options">
+      <button class="opt-btn" onclick="answer(this,'q9',false)"><span class="opt-letter">א</span>היאור עבר בתוך הערים כמו צינור מים</button>
+      <button class="opt-btn" onclick="answer(this,'q9',true)"><span class="opt-letter">ב</span>כפי שעורק מוביל חיים לגוף – היאור הוביל מים, מזון ותחבורה לכל מצרים</button>
+      <button class="opt-btn" onclick="answer(this,'q9',false)"><span class="opt-letter">ג</span>היאור היה אדום כמו דם בגלל המינרלים</button>
+      <button class="opt-btn" onclick="answer(this,'q9',false)"><span class="opt-letter">ד</span>היאור היה הדרך היחידה לצאת ממצרים</button>
+    </div>
+    <div class="feedback" id="fb-q9"></div>
+  </div>
+
+  <div class="card" id="q10">
+    <div class="q-number">שאלה 10 <span class="qtype">שאלה מורחבת – 2 סעיפים</span></div>
+    <div class="q-text">ממצאים ארכאולוגיים לאורך גדות היאור – מה הם חשפו?</div>
+    <div class="text-ref">"חפירות ארכאולוגיות חשפו מידע רב על חיי היומיום של המצרים, על התרבות שלהם ועל האמונות שלהם."</div>
+    <div class="sub-questions">
+      <div class="sub-q"><div class="sub-q-title">סעיף א׳</div><div class="options">
+        <button class="opt-btn" onclick="answerSub(this,'q10a',true)"><span class="opt-letter">א</span>מידע על חיי היומיום, תרבות ואמונות המצרים</button>
+        <button class="opt-btn" onclick="answerSub(this,'q10a',false)"><span class="opt-letter">ב</span>תיעוד מלחמות בין מצרים ובני ישראל</button>
+        <button class="opt-btn" onclick="answerSub(this,'q10a',false)"><span class="opt-letter">ג</span>שמות פרעונים שלא היו ידועים</button>
+      </div></div>
+      <div class="sub-q"><div class="sub-q-title">סעיף ב׳</div><div class="options">
+        <button class="opt-btn" onclick="answerSub(this,'q10b',false)"><span class="opt-letter">א</span>שהמצרים לא השתמשו בסכרים</button>
+        <button class="opt-btn" onclick="answerSub(this,'q10b',true)"><span class="opt-letter">ב</span>מערכות ההשקיה המתוחכמות שפיתחו המצרים</button>
+        <button class="opt-btn" onclick="answerSub(this,'q10b',false)"><span class="opt-letter">ג</span>שבני ישראל בנו פירמידות ליד היאור</button>
+      </div></div>
+    </div>
+    <div class="feedback" id="fb-q10"></div>
+  </div>
+
+  <div class="final-screen" id="finalScreen">
+    <div class="final-emoji" id="finalEmoji">🌊</div>
+    <div class="final-title">סיימת את השאלון!</div>
+    <div class="final-score" id="finalScore">0 <span>/ 10</span></div>
+    <div class="final-msg" id="finalMsg"></div>
+    <button class="share-btn" onclick="shareResult()">📲 שתפי בוואטסאפ</button><br>
+    <button class="restart-btn" onclick="location.reload()">🔄 התחילי מחדש</button>
+  </div>
+  <div style="height:20px"></div>
+</div>
+
+<script>
+function showPage(name, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ID CARD
+function checkID() {
+  const answers = { b1:'c', b2:'c', b3:'c', b4:'c', b5:'c', b6:'c' };
+  let correct = 0;
+  Object.keys(answers).forEach(id => {
+    const el = document.getElementById(id);
+    el.disabled = true;
+    if (el.value === answers[id]) { el.classList.add('correct'); correct++; }
+    else { el.classList.add('wrong'); }
+  });
+  document.getElementById('idBtn').disabled = true;
+  const res = document.getElementById('idResult');
+  res.classList.add('show');
+  const total = Object.keys(answers).length;
+  const pct = Math.round(correct / total * 100);
+  if (pct === 100) {
+    res.className = 'id-result show good';
+    res.innerHTML = '<div class="id-result-title">🏆 מושלם! ' + correct + '/' + total + '</div>תעודת הזהות הושלמה בצורה מושלמת!';
+  } else if (pct >= 60) {
+    res.className = 'id-result show ok';
+    res.innerHTML = '<div class="id-result-title">👍 כמעט! ' + correct + '/' + total + '</div>בדקי את השדות האדומים וחזרי לטקסט.';
+  } else {
+    res.className = 'id-result show bad';
+    res.innerHTML = '<div class="id-result-title">📖 ' + correct + '/' + total + ' – כדאי לחזור לטקסט</div>קראי שוב את עמוד "קרא" ונסי שוב.';
+  }
+}
+
+// QUIZ
+let scoreCorrect = 0, scoreWrong = 0;
+let answeredQ = new Set();
+const TOTAL = 10;
+const subs = { q3:{a:null,b:null,c:null}, q5:{a:null,b:null}, q10:{a:null,b:null} };
+const fbs = {
+  q1:{ c:'✅ נכון! 6,650 ק"מ – הנהר הארוך בעולם.', w:'❌ לא נכון. הטקסט: "זורם לאורך 6,650 קילומטרים".' },
+  q2:{ c:'✅ מצוין! הסחף העשיר במינרלים הפרה את האדמה.', w:'❌ הסיבה היא הסחף העשיר במינרלים על גדות הנהר.' },
+  q3:{ c:'✅ יפה! שלוש הסיבות: מים, תחבורה, והשראה תרבותית.', w:'❌ לא נכון בחלק מהסעיפים. חזרי לטקסט.' },
+  q4:{ c:'✅ נכון! למצרים – חיים; לבני ישראל – עבדות וכאב.', w:'❌ הטקסט מדגיש את הפער הגדול בין שני העמים.' },
+  q5:{ c:'✅ נכון! מכת דם פגעה בשתייה, חקלאות ותחבורה.', w:'❌ הפגיעה הייתה בשתייה, חקלאות ותחבורה.' },
+  q6:{ c:'✅ נכון! עליון (דרום) – רחב ואיטי; תחתון (צפון) – צר ומהיר.', w:'❌ שימי לב: עליון = דרום, תחתון = צפון.' },
+  q7:{ c:'✅ מעולה! ההצפות הובילו לפיתוח מערכות השקיה, סכרים ותעלות.', w:'❌ הטקסט מדגיש התפתחות חקלאית וטכנולוגית.' },
+  q8:{ c:'✅ יפה! שתי שאלות עם תשובה בטקסט: תפקיד היאור ליהודים + אתגרי היאור בימינו.', w:'❌ בטקסט יש תשובה רק ל: תפקיד היאור ליהודים + אתגרים בימינו.' },
+  q9:{ c:'✅ מצוין! כמו עורק המוביל חיים לגוף – כך היאור הוביל הכל לכל מצרים.', w:'❌ הדימוי מתייחס לתפקיד היאור כמוביל חיים (מים, מזון, תחבורה) לכל המדינה.' },
+  q10:{ c:'✅ נכון! חיי יומיום, תרבות, אמונות, ומערכות השקיה.', w:'❌ חזרי לקטע הארכאולוגיה בטקסט.' }
+};
+
+function answer(btn, qId, ok) {
+  if (answeredQ.has(qId)) return;
+  answeredQ.add(qId);
+  const card = document.getElementById(qId);
+  const btns = card.querySelectorAll('.opt-btn');
+  btns.forEach(b => b.disabled = true);
+  if (ok) { btn.classList.add('correct'); scoreCorrect++; showFB(qId,true); }
+  else {
+    btn.classList.add('wrong'); scoreWrong++;
+    btns.forEach(b => { if (b.onclick.toString().includes(',true)')) b.classList.add('correct'); });
+    showFB(qId,false);
+  }
+  updateScore(); checkDone();
+}
+
+function answerSub(btn, subId, ok) {
+  const qId = subId.replace(/[abc]$/,'');
+  const key = subId.slice(-1);
+  if (subs[qId][key] !== null) return;
+  subs[qId][key] = ok;
+  const opts = btn.closest('.sub-q').querySelector('.options');
+  opts.querySelectorAll('.opt-btn').forEach(b => b.disabled = true);
+  if (ok) btn.classList.add('correct');
+  else { btn.classList.add('wrong'); opts.querySelectorAll('.opt-btn').forEach(b => { if (b.onclick.toString().includes(',true)')) b.classList.add('correct'); }); }
+  const keys = Object.keys(subs[qId]);
+  if (keys.every(k => subs[qId][k] !== null) && !answeredQ.has(qId)) {
+    answeredQ.add(qId);
+    if (keys.every(k => subs[qId][k])) { scoreCorrect++; showFB(qId,true); }
+    else { scoreWrong++; showFB(qId,false); }
+    updateScore(); checkDone();
+  }
+}
+
+function toggleCheck(btn) {
+  if (btn.classList.contains('correct-check') || btn.classList.contains('wrong-check')) return;
+  btn.classList.toggle('selected');
+}
+const correctChecks = [0,1,4];
+function submitCheck() {
+  const btns = document.querySelectorAll('#checks-q8 .check-btn');
+  document.getElementById('submit-q8').disabled = true;
+  let good = true;
+  btns.forEach((btn,i) => {
+    const sel = btn.classList.contains('selected');
+    const should = correctChecks.includes(i);
+    btn.onclick = null;
+    if (should && sel) { btn.classList.add('correct-check'); btn.querySelector('.check-box').textContent = '✓'; }
+    else if (!should && !sel) { btn.classList.add('correct-check'); }
+    else { btn.classList.add('wrong-check'); good = false; }
+  });
+  if (!answeredQ.has('q8')) {
+    answeredQ.add('q8');
+    if (good) { scoreCorrect++; showFB('q8',true); }
+    else { scoreWrong++; showFB('q8',false); }
+    updateScore(); checkDone();
+  }
+}
+
+function showFB(qId, ok) {
+  const fb = document.getElementById('fb-'+qId);
+  fb.className = 'feedback show ' + (ok ? 'correct-fb' : 'wrong-fb');
+  fb.innerHTML = (ok?'🎉 ':'📖 ') + (ok ? fbs[qId].c : fbs[qId].w);
+  updateProgress();
+}
+function updateScore() {
+  document.getElementById('scoreCorrect').textContent = scoreCorrect;
+  document.getElementById('scoreWrong').textContent = scoreWrong;
+}
+function updateProgress() {
+  const done = answeredQ.size;
+  document.getElementById('progressBar').style.width = (done/TOTAL*100)+'%';
+  document.getElementById('progressText').textContent = done < TOTAL ? 'שאלה '+(done+1)+' מתוך '+TOTAL : 'סיימת! 🎉';
+}
+function checkDone() { if (answeredQ.size >= TOTAL) setTimeout(showFinal, 800); }
+function showFinal() {
+  const pct = Math.round(scoreCorrect/TOTAL*100);
+  const d = pct>=90?['🏆','מדהים! שליטה מעולה בחומר!']:pct>=70?['🌟','כל הכבוד! הבנה טובה של הטקסט.']:pct>=50?['📚','לא רע! כדאי לחזור לקטעים המסומנים.']:['💪','חשוב לחזור על הטקסט בעמוד "קרא".'];
+  document.getElementById('finalEmoji').textContent = d[0];
+  document.getElementById('finalScore').innerHTML = scoreCorrect+' <span>/ '+TOTAL+'</span>';
+  document.getElementById('finalMsg').textContent = d[1];
+  const fs = document.getElementById('finalScreen');
+  fs.classList.add('show');
+  fs.scrollIntoView({behavior:'smooth'});
+}
+function shareResult() {
+  const t = `🌊 היאור – עורק החיים של מצרים\n✅ ענית נכון על ${scoreCorrect} מתוך ${TOTAL} שאלות\n📖 לימוד אינטראקטיבי`;
+  window.open('https://wa.me/?text='+encodeURIComponent(t),'_blank');
+}
+updateProgress();
+</script>
+</body>
+</html>
