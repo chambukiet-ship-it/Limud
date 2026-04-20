@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>בתו של רבי עקיבא – שיעור עברית</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@300;400;500;700;900&family=Heebo:wght@300;400;600;800&display=swap');
+
+  :root {
+    --gold:#c9962b; --gold-light:#e8c96a; --deep:#1a1008;
+    --parchment:#f5edd6; --brown:#6b3f12; --brown-mid:#9c6530;
+    --red:#8b2020; --ink:#2a1a08; --green:#2d7a3a; --green-bg:#e8f5eb;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Frank Ruhl Libre',serif;background:var(--deep);color:var(--ink);overflow:hidden;height:100vh;width:100vw}
+
+  /* SLIDES */
+  .slide{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .6s;padding:28px 36px}
+  .slide.active{opacity:1;pointer-events:all}
+  .bg-dark{background:linear-gradient(135deg,#0f0a04,#2a1508)}
+  .bg-parch{background:radial-gradient(ellipse at 20% 80%,#d4b06622,transparent 60%),linear-gradient(160deg,#f7f0dc,#eeddb8,#e4cfa0)}
+  .bg-scroll{background:url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23c9962b' fill-opacity='0.06'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E"),linear-gradient(160deg,#f7f0dc,#eeddb8,#e4cfa0)}
+
+  .divider{width:100%;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:10px 0}
+  .divider-thin{width:60%;height:1px;background:linear-gradient(90deg,transparent,var(--gold-light),transparent);margin:6px auto}
+  .sec-icon{width:34px;height:34px;background:var(--brown);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.95rem;color:var(--parchment);flex-shrink:0}
+  .sec-head{display:flex;align-items:center;gap:10px;margin-bottom:4px}
+
+  @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes glow{0%,100%{text-shadow:0 0 20px #c9962b44}50%{text-shadow:0 0 42px #c9962b99}}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+  .slide.active .a1{animation:fadeUp .5s ease .05s both}
+  .slide.active .a2{animation:fadeUp .5s ease .18s both}
+  .slide.active .a3{animation:fadeUp .5s ease .30s both}
+  .slide.active .a4{animation:fadeUp .5s ease .42s both}
+  .slide.active .a5{animation:fadeUp .5s ease .54s both}
+
+  /* NAV */
+  .nav{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);display:flex;gap:10px;align-items:center;z-index:200;background:#000b;padding:7px 16px;border-radius:40px;backdrop-filter:blur(10px)}
+  .nav button{background:none;border:1.5px solid var(--gold);color:var(--gold-light);font-family:'Heebo',sans-serif;font-size:.8rem;padding:5px 14px;border-radius:20px;cursor:pointer;transition:all .2s}
+  .nav button:hover{background:var(--gold);color:var(--deep)}
+  .slide-ind{color:#a08040;font-family:'Heebo',sans-serif;font-size:.76rem;min-width:50px;text-align:center}
+
+  /* ── SLIDE 1 ── */
+  .title-frame{border:2px solid var(--gold);padding:42px 62px;text-align:center;position:relative;max-width:760px;box-shadow:0 0 60px #c9962b33,inset 0 0 40px #c9962b11}
+  .title-frame::before,.title-frame::after{content:'✦';position:absolute;color:var(--gold);font-size:1.3rem}
+  .title-frame::before{top:-11px;right:-11px}.title-frame::after{bottom:-11px;left:-11px}
+  .corner{position:absolute;width:26px;height:26px;border-color:var(--gold);border-style:solid}
+  .tl{top:-2px;left:-2px;border-width:2px 0 0 2px}.br{bottom:-2px;right:-2px;border-width:0 2px 2px 0}
+
+  /* ── MATCHING GAME (slide 3) ── */
+  .match-wrap{display:grid;grid-template-columns:1fr 1fr;gap:14px 36px;max-width:820px;width:100%;margin-top:8px}
+  .match-col{display:flex;flex-direction:column;gap:9px}
+  .match-col-title{font-family:'Heebo',sans-serif;font-size:.74rem;font-weight:800;letter-spacing:2px;color:var(--brown-mid);text-align:center;margin-bottom:2px}
+  .mi{padding:10px 16px;border-radius:4px;cursor:pointer;text-align:center;user-select:none;transition:all .2s;border:2px solid transparent;background:white;box-shadow:0 2px 8px #0001}
+  .mi.word{font-weight:700;color:var(--brown);font-size:1.05rem}
+  .mi.meaning{font-family:'Heebo',sans-serif;font-size:.88rem;color:#3a2a10;line-height:1.4}
+  .mi:hover{border-color:var(--gold-light);box-shadow:0 4px 14px #c9962b22}
+  .mi.selected{border-color:var(--gold);background:#fdf4de;box-shadow:0 4px 16px #c9962b44}
+  .mi.matched{border-color:var(--green)!important;background:var(--green-bg)!important;cursor:default;pointer-events:none}
+  .mi.wrong{border-color:var(--red)!important;background:#fde8e8!important;animation:shake .35s}
+  .dagesh{font-size:.68rem;color:var(--red);font-family:'Heebo',sans-serif;display:block;margin-top:2px}
+  .match-footer{display:flex;align-items:center;gap:16px;margin-top:8px;font-family:'Heebo',sans-serif;font-size:.84rem;color:var(--brown)}
+  .btn-reset{background:var(--brown);color:var(--parchment);border:none;padding:5px 14px;border-radius:20px;cursor:pointer;font-family:'Heebo',sans-serif;font-size:.78rem}
+  .btn-reset:hover{background:var(--brown-mid)}
+  .match-congrats{display:none;margin-top:8px;padding:9px 20px;background:var(--green);color:white;border-radius:6px;font-family:'Heebo',sans-serif;font-size:.96rem;font-weight:700;text-align:center;animation:fadeUp .4s}
+
+  /* ── TEXT SLIDE 4 ── */
+  .text-cols{display:grid;grid-template-columns:1fr 1fr;gap:22px;max-width:860px;width:100%}
+  .tp{background:white;border-radius:2px;padding:18px 20px;box-shadow:0 4px 20px #0002}
+  .tp.orig{border-top:4px solid var(--brown)}.tp.adpt{border-top:4px solid var(--gold)}
+  .pl{font-family:'Heebo',sans-serif;font-size:.73rem;font-weight:800;letter-spacing:2px;margin-bottom:9px}
+  .mt{font-size:.88rem;line-height:1.85;color:var(--ink)}.mt strong{color:var(--red);background:#8b202011;padding:0 2px}
+
+  /* ── READING TABLE slide 5 ── */
+  .kwt{width:100%;max-width:810px;border-collapse:collapse;background:white;box-shadow:0 4px 22px #0002}
+  .kwt thead tr{background:var(--brown);color:var(--parchment)}
+  .kwt thead th{padding:10px 14px;font-family:'Heebo',sans-serif;font-weight:700;font-size:.85rem}
+  .kwt tbody tr{border-bottom:1px solid #e0cfa0}
+  .kwt tbody tr:nth-child(even){background:#fdf8ee}
+  .kwt tbody tr:hover{background:#f5e8c0;transition:background .2s}
+  .kwt td{padding:9px 14px;font-size:.93rem;vertical-align:middle}
+  .kwt td:first-child{font-weight:700;color:var(--red);font-size:1rem;white-space:nowrap}
+  .kwt td:last-child{color:var(--brown-mid);font-family:'Heebo',sans-serif;font-size:.84rem}
+  .ph{font-size:.68rem;color:#aaa;font-family:'Heebo',sans-serif;display:block}
+
+  /* ── INTERACTIVE Q&A slide 6 ── */
+  .qa-wrap{width:100%;max-width:840px}
+  .qa-prog{height:5px;background:#e0cfa0;border-radius:3px;margin-bottom:12px;overflow:hidden}
+  .qa-bar{height:100%;background:linear-gradient(90deg,var(--gold),var(--brown-mid));border-radius:3px;transition:width .5s}
+  .qa-card{background:white;border-radius:6px;padding:20px 24px;box-shadow:0 4px 22px #0002;min-height:190px;border-top:4px solid var(--gold)}
+  .qa-top{display:flex;align-items:flex-start;gap:12px;margin-bottom:14px}
+  .qa-num{width:34px;height:34px;background:var(--brown);color:var(--parchment);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Heebo',sans-serif;font-weight:800;font-size:.95rem;flex-shrink:0}
+  .qa-badge{font-family:'Heebo',sans-serif;font-size:.68rem;color:white;padding:3px 9px;border-radius:20px;margin-right:auto;align-self:center}
+  .l-r{background:#5a8a3a}.l-u{background:var(--brown-mid)}.l-t{background:var(--red)}
+  .qa-q{font-size:1.1rem;line-height:1.6;color:var(--ink);flex:1}
+  .mc-opts{display:flex;flex-direction:column;gap:7px;margin-top:2px}
+  .mc-o{padding:9px 14px;border-radius:4px;border:2px solid #e0cfa0;cursor:pointer;font-family:'Heebo',sans-serif;font-size:.92rem;transition:all .2s;background:#fdf8ee;color:var(--ink);text-align:right}
+  .mc-o:hover{border-color:var(--gold-light);background:#fdf4de}
+  .mc-o.correct{border-color:var(--green)!important;background:var(--green-bg)!important;pointer-events:none}
+  .mc-o.wrong{border-color:var(--red)!important;background:#fde8e8!important;animation:shake .35s;pointer-events:none}
+  .reveal-btn{background:var(--brown);color:var(--parchment);border:none;padding:7px 20px;border-radius:20px;cursor:pointer;font-family:'Heebo',sans-serif;font-size:.85rem;margin-top:10px}
+  .reveal-btn:hover{background:var(--brown-mid)}
+  .open-ans{display:none;margin-top:10px;padding:11px 14px;background:var(--green-bg);border-right:4px solid var(--green);border-radius:4px;font-family:'Heebo',sans-serif;font-size:.88rem;color:#1a4a22;line-height:1.6}
+  .qa-nav{display:flex;gap:10px;justify-content:center;margin-top:12px;align-items:center}
+  .qa-nav button{background:var(--brown);color:var(--parchment);border:none;padding:6px 18px;border-radius:20px;cursor:pointer;font-family:'Heebo',sans-serif;font-size:.82rem;transition:background .2s}
+  .qa-nav button:hover{background:var(--brown-mid)}
+  .qa-nav button:disabled{opacity:.3;cursor:default}
+  .qa-sc{font-family:'Heebo',sans-serif;font-size:.82rem;color:var(--brown)}
+</style>
+</head>
+<body>
+
+<!-- ═══ 1: TITLE ═══ -->
+<div class="slide bg-dark active" id="s1">
+  <div class="title-frame a1">
+    <div class="corner tl"></div><div class="corner br"></div>
+    <div style="color:var(--gold);font-size:1.7rem;letter-spacing:10px;opacity:.7" class="a2">✦ ✦ ✦</div>
+    <div class="divider a2"></div>
+    <h1 style="font-size:3rem;font-weight:900;color:var(--gold-light);line-height:1.2;animation:glow 3s infinite" class="a3">בִּתּוֹ שֶׁל רַבִּי עֲקִיבָא</h1>
+    <h2 style="font-size:1.15rem;font-weight:300;color:#d4b566;letter-spacing:3px;font-family:'Heebo',sans-serif" class="a3">וְהַנָּחָשׁ</h2>
+    <div class="divider a4"></div>
+    <p style="font-size:.96rem;color:#a07840" class="a4">שיעור עברית — קריאה, הבנה ועושר לשוני</p>
+    <p style="font-size:.78rem;color:#7a5a2a;margin-top:6px" class="a5">על פי תלמוד בבלי, מסכת שבת, דף קנ"ו ע"ב</p>
+  </div>
+</div>
+
+<!-- ═══ 2: HOOK ═══ -->
+<div class="slide bg-parch" id="s2">
+  <div class="sec-head a1"><div class="sec-icon">🤔</div><h2 style="font-size:1.35rem;font-weight:900;color:var(--brown)">פתיחה — שאלה לחשיבה</h2></div>
+  <div class="divider-thin a1"></div>
+  <div class="a2" style="background:var(--deep);border-right:5px solid var(--gold);padding:24px 32px;max-width:730px;border-radius:2px;margin:10px 0">
+    <p style="font-size:1.6rem;font-weight:700;color:var(--parchment);line-height:1.65">
+      מה הייתן עושות לו <span style="color:var(--gold-light)">ידעתן מראש</span><br>שמשהו רע עומד לקרות לכן?
+    </p>
+  </div>
+  <div class="a3" style="max-width:710px;background:white;border-radius:2px;padding:16px 24px;box-shadow:0 2px 12px #0001;margin-top:8px">
+    <p style="font-size:.97rem;color:var(--ink);line-height:1.75">
+      📖 בסיפור שנקרא היום — <strong>חוזים בכוכבים</strong> מנבאים לרבי עקיבא שביום חתונת בתו יִשְׁכֶנָּה <strong>נחש</strong> והיא תמות.<br>
+      כיצד ניצלה? <span style="color:var(--red);font-weight:700">הכול בזכות מעשה אחד קטן...</span>
+    </p>
+  </div>
+  <div class="a4" style="margin-top:14px;text-align:center">
+    <div style="font-size:1.9rem;letter-spacing:20px">🐍 💛 🕯️</div>
+    <p style="font-family:'Heebo',sans-serif;font-size:.84rem;color:#9a7a4a;font-style:italic;margin-top:6px">קראו, חשבו, גלו...</p>
+  </div>
+</div>
+
+<!-- ═══ 3: MATCHING GAME ═══ -->
+<div class="slide bg-scroll" id="s3">
+  <div class="sec-head a1"><div class="sec-icon">🎯</div><h2 style="font-size:1.35rem;font-weight:900;color:var(--brown)">התאימו מילה לפירושה!</h2></div>
+  <div class="divider-thin a1"></div>
+  <p style="font-family:'Heebo',sans-serif;font-size:.8rem;color:#7a5a2a;margin-bottom:8px" class="a2">לחצו על מילה → ואז על הפירוש המתאים &nbsp;|&nbsp; ⚠️ דגש מסומן רק בבי"ת ובכ"ף</p>
+
+  <div class="match-wrap a2">
+    <div class="match-col">
+      <div class="match-col-title">מילה מן המדרש</div>
+      <div class="mi word" data-id="1" onclick="sel(this,'w')">הַכַּלְדִּיִּים<span class="dagesh">כַּ — כ' דגושה</span></div>
+      <div class="mi word" data-id="2" onclick="sel(this,'w')">יִשְׁכֶנָּה<span class="dagesh">שְׁכֶ — כ' רפה</span></div>
+      <div class="mi word" data-id="3" onclick="sel(this,'w')">הַמַּכְבֵּנָה<span class="dagesh">מַּ דגושה | כְ רפה</span></div>
+      <div class="mi word" data-id="4" onclick="sel(this,'w')">בַּכֹּתֶל<span class="dagesh">בַּ דגושה | כֹּ דגושה</span></div>
+      <div class="mi word" data-id="5" onclick="sel(this,'w')">וְקָרָא עַל הַפֶּתַח</div>
+      <div class="mi word" data-id="6" onclick="sel(this,'w')">וְאֵין שׁוֹמֵעַ לוֹ</div>
+      <div class="mi word" data-id="7" onclick="sel(this,'w')">נִגְרַר וּבָא הַנָּחָשׁ<span class="dagesh">וּבָא — בּ' דגושה</span></div>
+      <div class="mi word" data-id="8" onclick="sel(this,'w')">דֹּואֵג</div>
+    </div>
+    <div class="match-col">
+      <div class="match-col-title">פירוש</div>
+      <div class="mi meaning" data-id="3" onclick="sel(this,'m')">הסיכה המקשטת את הראש</div>
+      <div class="mi meaning" data-id="7" onclick="sel(this,'m')">נמשך ויצא הנחש המת</div>
+      <div class="mi meaning" data-id="1" onclick="sel(this,'m')">חוזים בכוכבים — מנבאי עתידות</div>
+      <div class="mi meaning" data-id="5" onclick="sel(this,'m')">דפק על הדלת, ביקש בפתח הבית</div>
+      <div class="mi meaning" data-id="8" onclick="sel(this,'m')">מודאג, חושש, פוחד</div>
+      <div class="mi meaning" data-id="2" onclick="sel(this,'m')">יכה / ישכה אותה</div>
+      <div class="mi meaning" data-id="6" onclick="sel(this,'m')">לא היה מי שהקשיב לו</div>
+      <div class="mi meaning" data-id="4" onclick="sel(this,'m')">בקיר — בסדק שבקיר</div>
+    </div>
+  </div>
+
+  <div class="match-footer a3">
+    <span>✅ <span id="mScore">0</span> / 8</span>
+    <button class="btn-reset" onclick="resetMatch()">🔄 התחל מחדש</button>
+    <span id="mFeed" style="color:var(--green);font-weight:700"></span>
+  </div>
+  <div class="match-congrats" id="mCongrats">🎉 כל הכבוד! התאמתן את כל המילים!</div>
+</div>
+
+<!-- ═══ 4: TEXT ═══ -->
+<div class="slide bg-parch" id="s4">
+  <div class="sec-head a1"><div class="sec-icon">📜</div><h2 style="font-size:1.3rem;font-weight:900;color:var(--brown)">טקסט המדרש — מקור ומעובד</h2></div>
+  <div class="divider-thin a1"></div>
+  <div class="text-cols a2">
+    <div class="tp orig">
+      <div class="pl" style="color:var(--brown)">📜 מדרש המקור</div>
+      <div class="mt">
+        רַ' עֲקִיבָא הָיְתָה לוֹ בַת.<br>אָמְרוּ לוֹ <strong>הַכַּלְדִּיִּים</strong>: אוֹתוֹ הַיּוֹם שֶׁתִּכָּנֵס לַחֻפָּה <strong>יִשְׁכֶנָּה</strong> נָחָשׁ וְתָמוּת.<br>הָיָה דוֹאֵג עַל הַדָּבָר הַרְבֵּה.<br><br>
+        בְּאוֹתוֹ הַיּוֹם נָטְלָה בִתּוֹ אֶת <strong>הַמַּכְבֵּנָה</strong> וְנָעֲצָה אוֹתָהּ <strong>בַּכֹּתֶל</strong>.<br>קָרָה שֶׁפָּגְעָה בְּעֵינוֹ שֶׁל נָחָשׁ.<br><br>
+        בַּבֹּקֶר כְּשֶׁנָּטְלָהּ — <strong>נִגְרַר וּבָא הַנָּחָשׁ</strong> אַחֲרֶיהָ.<br><br>
+        אָמַר לָהּ: מֶה עָשִׂית?<br>אָמְרָה לוֹ: בָּעֶרֶב בָּא עָנִי <strong>וְקָרָא עַל הַפֶּתַח</strong>, <strong>וְאֵין שׁוֹמֵעַ לוֹ</strong>.<br>עָמַדְתִּי וְנָטַלְתִּי מָנָה וּנְתַתִּיהָ לוֹ.<br><br>
+        אָמַר לָהּ: <strong>מִצְוָה עָשִׂית!</strong><br>"וּצְדָקָה תַּצִּיל מִמָּוֶת"
+      </div>
+    </div>
+    <div class="tp adpt">
+      <div class="pl" style="color:var(--gold)">✏️ מדרש מעובד</div>
+      <div class="mt">
+        בַּת הָיְתָה לוֹ לְרַבִּי עֲקִיבָא.<br>אָמְרוּ לוֹ <strong>חוֹזִים בַּכּוֹכָבִים</strong>: בְּיוֹם שֶׁבּוֹ תִּכָּנֵס בִּתְּךָ לַחֻפָּה, <strong>יַכִּישָׁהּ</strong> נָחָשׁ וְתָמוּת.<br>הָיָה רַבִּי עֲקִיבָא <strong>דוֹאֵג</strong> מְאֹד.<br><br>
+        בְּיוֹם חֲתֻנָּתָהּ, נָטְלָה בִתּוֹ אֶת <strong>הַסִּכָּה הַמְקַשֶּׁטֶת</strong> וְנָעֲצָה אוֹתָהּ בְּסֶדֶק שֶׁ<strong>בַּקִּיר</strong>.<br>הַסִּכָּה נִנְעֲצָה בְּעֵינוֹ שֶׁל נָחָשׁ חָבוּי שָׁם.<br><br>
+        בַּבֹּקֶר, כְּשֶׁהוֹצִיאָה אֶת הַסִּכָּה — <strong>נִמְשַׁךְ וְיָצָא הַנָּחָשׁ הַמֵּת</strong>.<br><br>
+        אָמַר לָהּ: מֶה עָשִׂית?<br>אָמְרָה לוֹ: בָּא עָנִי <strong>וְדָפַק עַל הַדֶּלֶת</strong>, וְלֹא הָיָה מִי שֶׁשָּׁמַע אוֹתוֹ.<br>נָתַתִּי לוֹ אֶת מְנָתִי.<br><br>
+        אָמַר לָהּ: <strong>מִצְוָה עָשִׂית</strong> וּבִזְכוּתָהּ נִצַּלְתְּ!<br>"צְדָקָה תַּצִּיל מִמָּוֶת"
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 5: READING TABLE ═══ -->
+<div class="slide bg-scroll" id="s5">
+  <div class="sec-head a1"><div class="sec-icon">🔍</div><h2 style="font-size:1.3rem;font-weight:900;color:var(--brown)">מיקוד קריאה — מקור ↔ מעובד</h2></div>
+  <div class="divider-thin a1"></div>
+  <p style="font-family:'Heebo',sans-serif;font-size:.78rem;color:#7a5a2a;margin-bottom:8px" class="a2">⚠️ הדגש מסומן רק בבי"ת ובכ"ף</p>
+  <table class="kwt a2">
+    <thead><tr><th>מילה מן המקור</th><th>בי"ת / כ"ף — דגושה או רפה?</th><th>פירוש מן המעובד</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>הַכַּלְדִּיִּים</td>
+        <td><strong style="color:var(--red)">כַּ — כ' דגושה</strong><span class="ph">כ' בתחילת מילה אחרי ה' הידיעה</span></td>
+        <td>חוֹזִים בַּכּוֹכָבִים</td>
+      </tr>
+      <tr>
+        <td>יִשְׁכֶנָּה</td>
+        <td><strong style="color:var(--green)">שְׁכֶ — כ' רפה</strong><span class="ph">כ' באמצע מילה אחרי שְׁ</span></td>
+        <td>יַכִּישָׁהּ — ישכה אותה</td>
+      </tr>
+      <tr>
+        <td>הַמַּכְבֵּנָה</td>
+        <td>מַּ דגושה &nbsp;|&nbsp; <strong style="color:var(--green)">כְ — רפה</strong><span class="ph">כ' אחרי עיצור — רפה</span></td>
+        <td>הַסִּכָּה הַמְקַשֶּׁטֶת אֶת רֹאשָׁהּ</td>
+      </tr>
+      <tr>
+        <td>בַּכֹּתֶל</td>
+        <td><strong style="color:var(--red)">בַּ דגושה</strong> &nbsp;|&nbsp; <strong style="color:var(--red)">כֹּ דגושה</strong><span class="ph">שתיהן בתחילת מילה / אחרי ה' הידיעה</span></td>
+        <td>בְּסֶדֶק שֶׁבַּקִּיר</td>
+      </tr>
+      <tr>
+        <td>נִגְרַר וּבָא הַנָּחָשׁ</td>
+        <td><strong style="color:var(--red)">וּבָּא — בּ' דגושה</strong><span class="ph">בּ' אחרי וּ — דגושה</span></td>
+        <td>נִמְשַׁךְ וְיָצָא הַנָּחָשׁ הַמֵּת</td>
+      </tr>
+      <tr>
+        <td>וְקָרָא עַל הַפֶּתַח</td>
+        <td>אין בי"ת / כ"ף<span class="ph">פֶּ — פ' דגושה (לא בגד-כפת לעניין קריאה)</span></td>
+        <td>דָּפַק עַל הַדֶּלֶת</td>
+      </tr>
+      <tr>
+        <td>וְאֵין שׁוֹמֵעַ לוֹ</td>
+        <td>אין בי"ת / כ"ף<span class="ph">עי"ן בסוף — נקראת</span></td>
+        <td>לֹא הָיָה מִי שֶׁשָּׁמַע אוֹתוֹ</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══ 6: INTERACTIVE Q&A ═══ -->
+<div class="slide bg-parch" id="s6">
+  <div class="sec-head a1"><div class="sec-icon">❓</div><h2 style="font-size:1.3rem;font-weight:900;color:var(--brown)">שאלות הבנה — שלוש רמות</h2></div>
+  <div class="divider-thin a1"></div>
+  <div class="qa-wrap a2">
+    <div class="qa-prog"><div class="qa-bar" id="qaBar" style="width:0%"></div></div>
+    <div class="qa-card" id="qaCard"></div>
+    <div class="qa-nav">
+      <button id="qPrev" onclick="qaGo(-1)" disabled>◄ הקודמת</button>
+      <span class="qa-sc" id="qaSc"></span>
+      <button id="qNext" onclick="qaGo(1)">הבאה ►</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 7: MORAL ═══ -->
+<div class="slide bg-dark" id="s7">
+  <div style="text-align:center;max-width:720px">
+    <span style="color:var(--gold-light);font-size:3.6rem;font-family:Georgia,serif;line-height:.4;display:block" class="a1">"</span>
+    <div style="font-size:2.7rem;font-weight:900;color:var(--gold-light);line-height:1.35;text-align:center" class="a2">
+      צְדָקָה <span style="color:var(--parchment)">תַּצִּיל</span> מִמָּוֶת
+    </div>
+    <span style="color:var(--gold-light);font-size:3.6rem;font-family:Georgia,serif;line-height:.5;display:block" class="a2">"</span>
+    <div class="divider a3"></div>
+    <p style="font-family:'Heebo',sans-serif;font-size:1rem;color:#c8a860;line-height:1.85;margin:12px 0" class="a3">
+      ✨ מדרש האגדה מלמד אותנו:<br>
+      <strong style="color:var(--parchment)">בידיה של האדם לשנות את גורלה</strong> — אפילו כשנגזרה גזרה,<br>מעשה טוב אחד יכול לבטל אותה.
+    </p>
+    <div style="display:flex;gap:30px;justify-content:center;margin-top:16px" class="a4">
+      <div style="text-align:center"><div style="font-size:1.9rem">🕯️</div><div style="font-family:'Heebo',sans-serif;font-size:.74rem;color:#9a7a4a">חתונה</div></div>
+      <div style="text-align:center"><div style="font-size:1.9rem">🍞</div><div style="font-family:'Heebo',sans-serif;font-size:.74rem;color:#9a7a4a">נתינה לעני</div></div>
+      <div style="text-align:center"><div style="font-size:1.9rem">🌟</div><div style="font-family:'Heebo',sans-serif;font-size:.74rem;color:#9a7a4a">הצלה</div></div>
+    </div>
+    <p style="font-family:'Heebo',sans-serif;font-size:.76rem;color:#6a4a20;margin-top:18px" class="a5">על פי תלמוד בבלי, מסכת שבת דף קנ"ו ע"ב</p>
+  </div>
+</div>
+
+<!-- NAV -->
+<div class="nav">
+  <button onclick="go(-1)">◄ הקודם</button>
+  <span class="slide-ind" id="ind">1 / 7</span>
+  <button onclick="go(1)">הבא ►</button>
+</div>
+
+<script>
+// ── SLIDE NAV ──
+let cur=0;
+const slides=document.querySelectorAll('.slide'), N=slides.length;
+function go(d){
+  slides[cur].classList.remove('active');
+  cur=(cur+d+N)%N;
+  slides[cur].classList.add('active');
+  document.getElementById('ind').textContent=`${cur+1} / ${N}`;
+  if(cur===5) renderQA();
+}
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key==='ArrowDown') go(1);
+  if(e.key==='ArrowLeft' ||e.key==='ArrowUp')   go(-1);
+});
+
+// ── MATCHING ──
+let sw=null,sm=null,mc=0;
+function sel(el,t){
+  if(el.classList.contains('matched')) return;
+  if(t==='w'){
+    document.querySelectorAll('.mi.word.selected').forEach(e=>e.classList.remove('selected'));
+    sw=null; el.classList.add('selected'); sw=el;
+  } else {
+    document.querySelectorAll('.mi.meaning.selected').forEach(e=>e.classList.remove('selected'));
+    sm=null; el.classList.add('selected'); sm=el;
+  }
+  if(sw&&sm){
+    if(sw.dataset.id===sm.dataset.id){
+      [sw,sm].forEach(e=>{e.classList.remove('selected');e.classList.add('matched')});
+      mc++; document.getElementById('mScore').textContent=mc;
+      document.getElementById('mFeed').textContent='✅ נכון!';
+      setTimeout(()=>document.getElementById('mFeed').textContent='',1100);
+      if(mc===8) document.getElementById('mCongrats').style.display='block';
+    } else {
+      [sw,sm].forEach(e=>e.classList.add('wrong'));
+      document.getElementById('mFeed').textContent='❌ נסי שוב';
+      setTimeout(()=>{
+        [sw,sm].forEach(e=>e.classList.remove('wrong','selected'));
+        document.getElementById('mFeed').textContent='';
+      },700);
+    }
+    sw=null; sm=null;
+  }
+}
+function resetMatch(){
+  mc=0; sw=null; sm=null;
+  document.querySelectorAll('.mi').forEach(e=>e.classList.remove('matched','selected','wrong'));
+  document.getElementById('mScore').textContent='0';
+  document.getElementById('mFeed').textContent='';
+  document.getElementById('mCongrats').style.display='none';
+}
+
+// ── Q&A ──
+const QS=[
+  {lv:'r',badge:'🔵 שליפה',
+   q:'מה ניבאו החוזים בכוכבים לרבי עקיבא על בתו?',
+   type:'mc',opts:['שתמצא אוצר גדול ביום חתונתה','שנחש ישכנה ביום חתונתה והיא תמות','שלא תתחתן לעולם','שתכנס לחופה בגשם'],cor:1},
+
+  {lv:'r',badge:'🔵 שליפה',
+   q:'מה עשתה בתו של רבי עקיבא עבור העני?',
+   type:'mc',opts:['הזמינה אותו לשבת בחתונה','הביאה לו מים','נתנה לו את מנת האוכל שלה','שלחה אותו לביתו'],cor:2},
+
+  {lv:'r',badge:'🔵 שליפה',
+   q:'כיצד מת הנחש?',
+   type:'mc',opts:['רבי עקיבא הרגו','בני החתונה גירשוהו','הסיכה ננעצה בעינו כשנסתתרה בסדק הקיר','ברח ומת בשדה'],cor:2},
+
+  {lv:'u',badge:'🟠 הבנה',
+   q:'מדוע היה מעשה הצדקה של הבת מיוחד דווקא אותו ערב?',
+   type:'open',
+   ans:'כולם היו שקועים בשמחת החתונה — קל היה מאוד להתעלם מהעני. הבת עצרה, שמה לב אליו, ונתנה לו את מנתה בדיוק ברגע שהכי קשה היה להתנתק מהסעודה.'},
+
+  {lv:'u',badge:'🟠 הבנה',
+   q:'מצאו שתי מילים משורש נ.ט.ל. במדרש. מה הקשר ביניהן?',
+   type:'open',
+   ans:'"נָטְלָה בִתּוֹ אֶת הַמַּכְבֵּנָה" (לקחה בערב) ו"כְּשֶׁנָּטְלָהּ" (כשהוציאה בבוקר). הקשר: אותה פעולה — לקיחת הסיכה — שבוצעה ב"תמימות", היא שגרמה להצלה. לקיחה אחת הצילה חיים!'},
+
+  {lv:'t',badge:'🔴 חשיבה',
+   q:'"צדקה תציל ממוות" — כיצד הצדקה הצילה גם את העני וגם את הבת?',
+   type:'mc',
+   opts:['הצילה רק את הבת — לעני לא היה סכנת מוות','הצילה את העני מרעב ומוות, ואת הבת ממוות עקב נשיכת הנחש','הצילה רק את העני — הבת ניצלה בנס אחר','הצדקה לא קשורה — זה רק צירוף מקרים'],cor:1},
+
+  {lv:'t',badge:'🔴 חשיבה',
+   q:'"הַכֹּל צָפוּי וְהָרְשׁוּת נְתוּנָה" — כיצד המדרש ממחיש אמירה זו?',
+   type:'open',
+   ans:'"הכל צפוי" — הכלדיים ראו את הגזרה מראש, והנחש אכן היה שם. "הרשות נתונה" — הבת בחרה לתת צדקה, ובחירתה שינתה את הגזרה. כוח שינוי הגורל נתון בידי האדם עצמו.'}
+];
+
+let qi=0, answered=new Array(QS.length).fill(false), inited=false;
+
+function renderQA(){
+  if(!inited){inited=true;qi=0;}
+  const q=QS[qi];
+  const done=answered.filter(Boolean).length;
+  document.getElementById('qaBar').style.width=(done/QS.length*100)+'%';
+  document.getElementById('qaSc').textContent=`שאלה ${qi+1} מתוך ${QS.length}`;
+  document.getElementById('qPrev').disabled=qi===0;
+  document.getElementById('qNext').disabled=qi===QS.length-1;
+  const lc=q.lv==='r'?'l-r':q.lv==='u'?'l-u':'l-t';
+  let h=`<div class="qa-top"><div class="qa-num">${qi+1}</div><div class="qa-q">${q.q}</div><span class="qa-badge ${lc}">${q.badge}</span></div>`;
+  if(q.type==='mc'){
+    h+=`<div class="mc-opts">`;
+    q.opts.forEach((o,i)=>{
+      let c='';
+      if(answered[qi]&&i===q.cor) c='correct';
+      h+=`<div class="mc-o ${c}" onclick="mcAns(this,${i})">${o}</div>`;
+    });
+    h+=`</div>`;
+  } else {
+    h+=`<button class="reveal-btn" onclick="revOpen()">💡 גלי תשובה</button><div class="open-ans" id="oAns">${q.ans}</div>`;
+  }
+  document.getElementById('qaCard').innerHTML=h;
+}
+function mcAns(el,i){
+  if(answered[qi]) return;
+  answered[qi]=true;
+  const cor=QS[qi].cor;
+  document.querySelectorAll('.mc-o').forEach((o,j)=>{
+    o.style.pointerEvents='none';
+    if(j===cor) o.classList.add('correct');
+  });
+  if(i!==cor) el.classList.add('wrong');
+  document.getElementById('qaBar').style.width=(answered.filter(Boolean).length/QS.length*100)+'%';
+}
+function revOpen(){
+  answered[qi]=true;
+  document.getElementById('oAns').style.display='block';
+  document.querySelector('.reveal-btn').style.display='none';
+  document.getElementById('qaBar').style.width=(answered.filter(Boolean).length/QS.length*100)+'%';
+}
+function qaGo(d){qi=Math.max(0,Math.min(QS.length-1,qi+d));renderQA();}
+renderQA();
+</script>
+</body>
+</html>
